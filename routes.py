@@ -396,7 +396,7 @@ def new_inventory():
     
     return render_template('inventory/new_inventory.html', form=form)
 
-@inventory_bp.route('/<int:inventory_id>/edit', methods=['GET'])
+@inventory_bp.route('/<int:inventory_id>/edit')
 @login_required
 def edit_inventory(inventory_id):
     inventory = Inventory.query.get_or_404(inventory_id)
@@ -423,7 +423,11 @@ def edit_inventory(inventory_id):
     
     all_items = Item.query.filter_by(deleted_at=None, is_active=True).all()
     
-    return render_template('inventory/edit_inventory.html', inventory=inventory, items=items, all_items=all_items)
+    return render_template('inventory/edit_inventory.html', 
+                         inventory=inventory, 
+                         items=items, 
+                         all_items=all_items,
+                         current_user=current_user)
 
 @inventory_bp.route('/<int:inventory_id>/update-item', methods=['POST'])
 @login_required
