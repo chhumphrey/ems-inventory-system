@@ -10,16 +10,9 @@
                 <i class="fas fa-clipboard-list me-2" style="color: #D32F2F;"></i>
                 Current Inventory
             </h2>
-            <div class="d-flex gap-2">
-                {% if current_user.is_admin %}
-                <a href="{{ url_for('inventory.import_tool') }}" class="btn btn-success">
-                    <i class="fas fa-file-import me-2"></i>Import Tool
-                </a>
-                {% endif %}
-                <a href="{{ url_for('inventory.new_inventory') }}" class="btn btn-primary" style="background-color: #1976D2; border-color: #1976D2;">
-                    <i class="fas fa-plus me-2"></i>New Count
-                </a>
-            </div>
+            <a href="{{ url_for('inventory.new_inventory') }}" class="btn btn-primary" style="background-color: #1976D2; border-color: #1976D2;">
+                <i class="fas fa-plus me-2"></i>New Count
+            </a>
         </div>
     </div>
 </div>
