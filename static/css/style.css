@@ -1,0 +1,198 @@
+/* EMS Inventory Management System - Custom Styles */
+
+:root {
+    --fire-red: #D32F2F;
+    --ems-blue: #1976D2;
+    --warning-yellow: #FFC107;
+    --safety-green: #4CAF50;
+    --alert-red: #F44336;
+    --caution-orange: #FF9800;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+    font-weight: 600;
+}
+
+.btn {
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--ems-blue);
+    border-color: var(--ems-blue);
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+}
+
+.btn-success {
+    background-color: var(--safety-green);
+    border-color: var(--safety-green);
+}
+
+.btn-warning {
+    background-color: var(--caution-orange);
+    border-color: var(--caution-orange);
+}
+
+.btn-danger {
+    background-color: var(--alert-red);
+    border-color: var(--alert-red);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.375em 0.75em;
+}
+
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.form-control, .form-select {
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--ems-blue);
+    box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+}
+
+/* EMS-specific styling */
+.ems-header {
+    background: linear-gradient(135deg, var(--fire-red) 0%, var(--ems-blue) 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+}
+
+.ems-card {
+    border-left: 4px solid var(--fire-red);
+}
+
+.ems-card.blue {
+    border-left-color: var(--ems-blue);
+}
+
+.ems-card.green {
+    border-left-color: var(--safety-green);
+}
+
+.ems-card.orange {
+    border-left-color: var(--caution-orange);
+}
+
+/* Status indicators */
+.status-expired {
+    color: var(--alert-red);
+    font-weight: bold;
+}
+
+.status-expiring-soon {
+    color: var(--caution-orange);
+    font-weight: bold;
+}
+
+.status-low-stock {
+    color: var(--warning-yellow);
+    font-weight: bold;
+}
+
+.status-good {
+    color: var(--safety-green);
+    font-weight: bold;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar, .btn, .card-header {
+        display: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .table {
+        font-size: 12px;
+    }
+}
+
+/* Custom animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Emergency alert styling */
+.emergency-alert {
+    background: linear-gradient(45deg, var(--alert-red), var(--caution-orange));
+    color: white;
+    border: none;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}

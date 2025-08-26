@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-chart-bar me-2" style="color: #D32F2F;"></i>
+            Inventory Reports
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #F44336;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Expired Items</h6>
+                        <h3 class="mb-0">{{ expired_items|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-times fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #FF9800;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Expiring Soon (30d)</h6>
+                        <h3 class="mb-0">{{ expiring_30_days|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #FFC107;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Expiring Soon (60d)</h6>
+                        <h3 class="mb-0">{{ expiring_60_days|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #1976D2;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Low Stock</h6>
+                        <h3 class="mb-0">{{ low_stock|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #F44336; color: white;">
+                <h5 class="mb-0"><i class="fas fa-calendar-times me-2"></i>Expired Items</h5>
+            </div>
+            <div class="card-body">
+                {% if expired_items %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Expiration Date</th>
+                                    <th>Lot Number</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in expired_items %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ item.location_name }}</span></td>
+                                        <td>{{ item.item_name }}</td>
+                                        <td><span class="badge bg-info">{{ item.quantity }}</span></td>
+                                        <td><span class="badge bg-danger">{{ item.expiration_date.strftime('%Y-%m-%d') }}</span></td>
+                                        <td>{{ item.lot_number or 'N/A' }}</td>
+                                        <td>
+                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">No expired items found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #FF9800; color: white;">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Items Expiring Soon</h5>
+            </div>
+            <div class="card-body">
+                <!-- 30 Days -->
+                <h6 class="text-warning mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Expiring in Next 30 Days
+                </h6>
+                {% if expiring_30_days %}
+                    <div class="table-responsive mb-4">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Expiration Date</th>
+                                    <th>Lot Number</th>
+                                    <th>Days Left</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in expiring_30_days %}
+                                    {% set days_left = (item.expiration_date - today).days %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ item.location_name }}</span></td>
+                                        <td>{{ item.item_name }}</td>
+                                        <td><span class="badge bg-info">{{ item.quantity }}</span></td>
+                                        <td><span class="badge bg-danger">{{ item.expiration_date.strftime('%Y-%m-%d') }}</span></td>
+                                        <td>{{ item.lot_number or 'N/A' }}</td>
+                                        <td>
+                                            <span class="badge {% if days_left <= 7 %}bg-danger{% elif days_left <= 14 %}bg-warning{% else %}bg-info{% endif %}">
+                                                {{ days_left }} days
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-2">No items expiring in the next 30 days.</p>
+                {% endif %}
+
+                <!-- 60 Days -->
+                <h6 class="text-warning mb-3">
+                    <i class="fas fa-clock me-2"></i>Expiring in 31-60 Days
+                </h6>
+                {% if expiring_60_days %}
+                    <div class="table-responsive mb-4">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Expiration Date</th>
+                                    <th>Lot Number</th>
+                                    <th>Days Left</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in expiring_60_days %}
+                                    {% set days_left = (item.expiration_date - today).days %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ item.location_name }}</span></td>
+                                        <td>{{ item.item_name }}</td>
+                                        <td><span class="badge bg-info">{{ item.quantity }}</span></td>
+                                        <td><span class="badge bg-warning">{{ item.expiration_date.strftime('%Y-%m-%d') }}</span></td>
+                                        <td>{{ item.lot_number or 'N/A' }}</td>
+                                        <td>
+                                            <span class="badge bg-info">{{ days_left }} days</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-2">No items expiring in 31-60 days.</p>
+                {% endif %}
+
+                <!-- 90 Days -->
+                <h6 class="text-info mb-3">
+                    <i class="fas fa-clock me-2"></i>Expiring in 61-90 Days
+                </h6>
+                {% if expiring_90_days %}
+                    <div class="table-responsive mb-4">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Expiration Date</th>
+                                    <th>Lot Number</th>
+                                    <th>Days Left</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in expiring_90_days %}
+                                    {% set days_left = (item.expiration_date - today).days %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ item.location_name }}</span></td>
+                                        <td>{{ item.item_name }}</td>
+                                        <td><span class="badge bg-info">{{ item.quantity }}</span></td>
+                                        <td><span class="badge bg-info">{{ item.expiration_date.strftime('%Y-%m-%d') }}</span></td>
+                                        <td>{{ item.lot_number or 'N/A' }}</td>
+                                        <td>
+                                            <span class="badge bg-info">{{ days_left }} days</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-2">No items expiring in 61-90 days.</p>
+                {% endif %}
+
+                <!-- 180 Days -->
+                <h6 class="text-secondary mb-3">
+                    <i class="fas fa-clock me-2"></i>Expiring in 91-180 Days
+                </h6>
+                {% if expiring_180_days %}
+                    <div class="table-responsive mb-4">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Expiration Date</th>
+                                    <th>Lot Number</th>
+                                    <th>Days Left</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in expiring_180_days %}
+                                    {% set days_left = (item.expiration_date - today).days %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ item.location_name }}</span></td>
+                                        <td>{{ item.item_name }}</td>
+                                        <td><span class="badge bg-info">{{ item.quantity }}</span></td>
+                                        <td><span class="badge bg-secondary">{{ item.expiration_date.strftime('%Y-%m-%d') }}</span></td>
+                                        <td>{{ item.lot_number or 'N/A' }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ days_left }} days</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-2">No items expiring in 91-180 days.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #1976D2; color: white;">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock Items</h5>
+            </div>
+            <div class="card-body">
+                {% if low_stock %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Item</th>
+                                    <th>Total Quantity</th>
+                                    <th>Minimum Threshold</th>
+                                    <th>Required Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in low_stock %}
+                                    <tr>
+                                        <td><span class="badge bg-primary">{{ item.location_name }}</span></td>
+                                        <td>{{ item.item_name }}</td>
+                                        <td>
+                                            <span class="badge {% if item.total_quantity == 0 %}bg-danger{% else %}bg-warning{% endif %}">
+                                                {{ item.total_quantity }}
+                                            </span>
+                                        </td>
+                                        <td><span class="badge bg-warning">{{ item.minimum_threshold }}</span></td>
+                                        <td>
+                                            {% if item.required_quantity > 0 %}
+                                                <span class="badge bg-info">{{ item.required_quantity }}</span>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.total_quantity == 0 %}
+                                                <span class="badge bg-danger">Out of Stock</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Below Threshold</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Update
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">No low stock items found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,632 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Inventory - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-edit me-2" style="color: #D32F2F;"></i>
+                Inventory Count - {{ inventory.location.name }}
+            </h2>
+            <div>
+                <a href="{{ url_for('inventory.inventory_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #1976D2; color: white;">
+                <h5 class="mb-0">
+                    <i class="fas fa-clipboard-check me-2"></i>
+                    Count Items at {{ inventory.location.name }}
+                </h5>
+                <small class="text-light">Started by {{ inventory.user.username }} on {{ inventory.inventory_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                <div id="inventorySummary" class="mt-2">
+                    <small class="text-light">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <span id="itemCount">0</span> items with total quantity: <span id="totalQuantity">0</span>
+                    </small>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Current Inventory Items Table -->
+                <div class="table-responsive mb-4">
+                    <h6 class="mb-3">
+                        <i class="fas fa-list me-2"></i>Current Inventory Items
+                    </h6>
+                    <table class="table table-striped" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Item #</th>
+                                <th>Manufacturer</th>
+                                <th>Required Qty</th>
+                                <th>Min Threshold</th>
+                                <th>Current Count</th>
+                                <th>Expiration Date</th>
+                                <th>Lot Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            {% for item_data in items %}
+                                {% set item = item_data.item %}
+                                <tr data-item-id="{{ item.id }}" data-inventory-item-id="{{ item_data.inventory_item_id }}">
+                                    <td>
+                                        <strong>{{ item.name }}</strong>
+                                        {% if item.is_required %}
+                                            <span class="badge bg-warning ms-2">Required</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.item_number or 'N/A' }}</td>
+                                    <td>{{ item.manufacturer or 'N/A' }}</td>
+                                    <td>
+                                        {% if item.is_required %}
+                                            <span class="badge bg-info">{{ item.required_quantity }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.minimum_threshold > 0 %}
+                                            <span class="badge bg-warning">{{ item.minimum_threshold }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <input type="number" 
+                                               class="form-control form-control-sm quantity-input" 
+                                               min="0" 
+                                               value="{{ item_data.current_quantity or 0 }}"
+                                               style="width: 80px;"
+                                               data-item-id="{{ item.id }}">
+                                    </td>
+                                    <td>
+                                        <input type="date" 
+                                               class="form-control form-control-sm expiration-input"
+                                               value="{{ item_data.current_expiration.strftime('%Y-%m-%d') if item_data.current_expiration else '' }}"
+                                               style="width: 140px;"
+                                               data-item-id="{{ item.id }}">
+                                    </td>
+                                    <td>
+                                        <input type="text" 
+                                               class="form-control form-control-sm lot-number-input"
+                                               value="{{ item_data.current_lot_number or '' }}"
+                                               placeholder="Lot #"
+                                               style="width: 120px;"
+                                               data-item-id="{{ item.id }}">
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="duplicateItemRow(this)">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItemRow(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Items Section -->
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-plus me-2"></i>Add Items to Inventory</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Add Existing Item</label>
+                                <input type="text" class="form-control" id="itemSearchInput" placeholder="Search items..." autocomplete="off">
+                                <div id="searchResults" class="list-group position-absolute" style="z-index: 1000; width: 100%; max-height: 200px; overflow-y: auto; display: none;"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Or Create New Item</label>
+                                <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal" data-bs-target="#newItemModal">
+                                    <i class="fas fa-plus me-2"></i>Create New Item
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Actions</label>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-primary" onclick="addSelectedItem()">
+                                        <i class="fas fa-plus me-2"></i>Add to Inventory
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #FF9800; color: white;">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Instructions</h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Changes are saved automatically as you type</li>
+                    <li>Enter the current count for each item at this location</li>
+                    <li>For items with expiration dates, enter the earliest expiration date</li>
+                    <li>Include lot numbers when available for tracking</li>
+                    <li>Items marked as "Required" must meet state standards</li>
+                    <li>Set quantity to 0 to remove an item from inventory</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Item Modal -->
+<div class="modal fade" id="newItemModal" tabindex="-1" aria-labelledby="newItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="newItemModalLabel">
+                    <i class="fas fa-plus me-2"></i>Create New Item
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newItemForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Name *</label>
+                                <input type="text" class="form-control" id="newItemName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Number</label>
+                                <input type="text" class="form-control" id="newItemNumber">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Manufacturer</label>
+                                <input type="text" class="form-control" id="newItemManufacturer">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newItemRequired">
+                                    <label class="form-check-label">Required by State Standards</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Required Quantity</label>
+                                <input type="number" class="form-control" id="newItemRequiredQty" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Minimum Threshold</label>
+                                <input type="number" class="form-control" id="newItemMinThreshold" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Quantity *</label>
+                                <input type="number" class="form-control" id="newItemQuantity" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Expiration Date</label>
+                                <input type="date" class="form-control" id="newItemExpiration">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Lot Number</label>
+                                <input type="text" class="form-control" id="newItemLotNumber" placeholder="Lot #">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="createAndAddNewItem()">
+                    <i class="fas fa-plus me-2"></i>Create & Add
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let allItemsData = [];
+let selectedItem = null;
+let updateTimeout = null;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    // Convert all_items from Jinja template to JavaScript array
+    {% for item in all_items %}
+    allItemsData.push({
+        id: {{ item.id }},
+        name: "{{ item.name }}",
+        item_number: "{{ item.item_number or '' }}",
+        manufacturer: "{{ item.manufacturer or '' }}",
+        is_required: {{ 'true' if item.is_required else 'false' }},
+        required_quantity: {{ item.required_quantity or 0 }},
+        minimum_threshold: {{ item.minimum_threshold or 0 }}
+    });
+    {% endfor %}
+    
+    setupSearch();
+    setupRealTimeUpdates();
+    updateInventorySummary();
+});
+
+function setupSearch() {
+    const searchInput = document.getElementById('itemSearchInput');
+    const searchResults = document.getElementById('searchResults');
+    
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        if (query.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        const filteredItems = allItemsData.filter(item => 
+            item.name.toLowerCase().includes(query) ||
+            (item.item_number && item.item_number.toLowerCase().includes(query)) ||
+            (item.manufacturer && item.manufacturer.toLowerCase().includes(query))
+        );
+        
+        displaySearchResults(filteredItems);
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+}
+
+function displaySearchResults(items) {
+    const searchResults = document.getElementById('searchResults');
+    
+    if (items.length === 0) {
+        searchResults.innerHTML = '<div class="list-group-item text-muted">No items found</div>';
+        searchResults.style.display = 'block';
+        return;
+    }
+    
+    let html = '';
+    items.forEach(item => {
+        const displayName = item.item_number ? `${item.name} (${item.item_number})` : item.name;
+        html += `
+            <div class="list-group-item list-group-item-action" 
+                 onclick="selectItem(${item.id})" 
+                 style="cursor: pointer;">
+                <strong>${item.name}</strong>
+                ${item.item_number ? `<br><small class="text-muted">Item #: ${item.item_number}</small>` : ''}
+                ${item.manufacturer ? `<br><small class="text-muted">Manufacturer: ${item.manufacturer}</small>` : ''}
+            </div>
+        `;
+    });
+    
+    searchResults.innerHTML = html;
+    searchResults.style.display = 'block';
+}
+
+function selectItem(itemId) {
+    selectedItem = allItemsData.find(item => item.id === itemId);
+    const searchInput = document.getElementById('itemSearchInput');
+    const searchResults = document.getElementById('searchResults');
+    
+    if (selectedItem) {
+        searchInput.value = selectedItem.name;
+        searchResults.style.display = 'none';
+        showToast(`Selected: ${selectedItem.name}`, 'success');
+    }
+}
+
+function addSelectedItem() {
+    if (!selectedItem) {
+        showToast('Please search and select an item first', 'warning');
+        return;
+    }
+    
+    // Check if item is already in the table
+    if (document.querySelector(`tr[data-item-id="${selectedItem.id}"]`)) {
+        showToast('This item is already in the inventory', 'info');
+        return;
+    }
+    
+    // Prompt for quantity
+    const quantity = prompt(`Enter quantity for ${selectedItem.name}:`, '1');
+    if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) {
+        showToast('Please enter a valid quantity', 'warning');
+        return;
+    }
+    
+    // Add item to inventory via API
+    addItemToInventory(selectedItem.id, parseInt(quantity));
+    
+    // Reset selection
+    selectedItem = null;
+    document.getElementById('itemSearchInput').value = '';
+}
+
+function addItemToInventory(itemId, quantity) {
+    fetch(`{{ url_for('inventory.add_item_to_inventory', inventory_id=inventory.id) }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            item_id: itemId,
+            quantity: quantity,
+            expiration_date: '',
+            lot_number: ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Refresh the page to show the new item
+            location.reload();
+        } else {
+            showToast(data.error || 'Failed to add item', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Failed to add item to inventory', 'danger');
+    });
+}
+
+function createAndAddNewItem() {
+    const name = document.getElementById('newItemName').value.trim();
+    const itemNumber = document.getElementById('newItemNumber').value.trim();
+    const manufacturer = document.getElementById('newItemManufacturer').value.trim();
+    const isRequired = document.getElementById('newItemRequired').checked;
+    const requiredQty = parseInt(document.getElementById('newItemRequiredQty').value) || 0;
+    const minThreshold = parseInt(document.getElementById('newItemMinThreshold').value) || 0;
+    const quantity = parseInt(document.getElementById('newItemQuantity').value) || 1;
+    const expiration = document.getElementById('newItemExpiration').value;
+    const lotNumber = document.getElementById('newItemLotNumber').value.trim();
+    
+    if (!name) {
+        showToast('Item name is required', 'warning');
+        return;
+    }
+    
+    if (quantity <= 0) {
+        showToast('Quantity must be greater than 0', 'warning');
+        return;
+    }
+    
+    // Create and add item via API
+    fetch(`{{ url_for('inventory.create_and_add_item', inventory_id=inventory.id) }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: name,
+            item_number: itemNumber,
+            manufacturer: manufacturer,
+            is_required: isRequired,
+            required_quantity: requiredQty,
+            minimum_threshold: minThreshold,
+            quantity: quantity,
+            expiration_date: expiration,
+            lot_number: lotNumber
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Item created and added successfully', 'success');
+            // Close modal and refresh page
+            const modal = bootstrap.Modal.getInstance(document.getElementById('newItemModal'));
+            modal.hide();
+            document.getElementById('newItemForm').reset();
+            location.reload();
+        } else {
+            showToast(data.error || 'Failed to create item', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Failed to create and add item', 'danger');
+    });
+}
+
+function removeItemRow(button) {
+    const row = button.closest('tr');
+    const itemId = row.getAttribute('data-item-id');
+    
+    if (confirm('Are you sure you want to remove this item from the inventory?')) {
+        // Remove via API
+        fetch(`{{ url_for('inventory.remove_item_from_inventory', inventory_id=inventory.id) }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                item_id: itemId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                row.remove();
+                updateInventorySummary();
+                showToast('Item removed from inventory', 'success');
+            } else {
+                showToast(data.error || 'Failed to remove item', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to remove item', 'danger');
+        });
+    }
+}
+
+function duplicateItemRow(button) {
+    const row = button.closest('tr');
+    const itemId = row.getAttribute('data-item-id');
+    const inventoryItemId = row.getAttribute('data-inventory-item-id');
+    
+    if (confirm('Are you sure you want to duplicate this item?')) {
+        fetch(`{{ url_for('inventory.duplicate_inventory_item', inventory_id=inventory.id) }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                item_id: itemId,
+                inventory_item_id: inventoryItemId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Item duplicated successfully', 'success');
+                location.reload(); // Refresh to show the new item
+            } else {
+                showToast(data.error || 'Failed to duplicate item', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to duplicate item', 'danger');
+        });
+    }
+}
+
+function setupRealTimeUpdates() {
+    // Add event listeners to all input fields
+    document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('quantity-input') || 
+            e.target.classList.contains('expiration-input') || 
+            e.target.classList.contains('lot-number-input')) {
+            
+            // Debounce updates to avoid too many API calls
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                updateInventoryItem(e.target);
+            }, 500);
+        }
+    });
+}
+
+function updateInventoryItem(input) {
+    const itemId = input.getAttribute('data-item-id');
+    const row = input.closest('tr');
+    
+    const quantity = row.querySelector('.quantity-input').value;
+    const expiration = row.querySelector('.expiration-input').value;
+    const lotNumber = row.querySelector('.lot-number-input').value;
+    
+    // Update via API
+    fetch(`{{ url_for('inventory.update_inventory_item', inventory_id=inventory.id) }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            item_id: itemId,
+            quantity: parseInt(quantity) || 0,
+            expiration_date: expiration,
+            lot_number: lotNumber
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // If quantity is 0, remove the row
+            if (parseInt(quantity) === 0) {
+                row.remove();
+            }
+            updateInventorySummary();
+            showToast('Item updated successfully', 'success');
+        } else {
+            showToast(data.error || 'Failed to update item', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Failed to update item', 'danger');
+    });
+}
+
+function updateInventorySummary() {
+    const tbody = document.getElementById('inventoryTableBody');
+    const rows = tbody.querySelectorAll('tr');
+    
+    let totalItems = 0;
+    let totalQuantity = 0;
+    
+    rows.forEach(row => {
+        const quantityInput = row.querySelector('.quantity-input');
+        if (quantityInput && quantityInput.value) {
+            const quantity = parseInt(quantityInput.value) || 0;
+            if (quantity > 0) {
+                totalItems++;
+                totalQuantity += quantity;
+            }
+        }
+    });
+    
+    document.getElementById('itemCount').textContent = totalItems;
+    document.getElementById('totalQuantity').textContent = totalQuantity;
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    toast.style.top = '20px';
+    toast.style.right = '20px';
+    toast.style.zIndex = '9999';
+    toast.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : type === 'danger' ? 'times' : 'info-circle'} me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(toast);
+    
+    // Auto-remove toast after 3 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 3000);
+}
+</script>
+{% endblock %}

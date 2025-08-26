@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-cog me-2" style="color: #D32F2F;"></i>
+            Administrator Dashboard
+        </h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #1976D2;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Users</h6>
+                        <h3 class="mb-0">{{ users|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #4CAF50;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Locations</h6>
+                        <h3 class="mb-0">{{ locations|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-map-marker-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #FF9800;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Items</h6>
+                        <h3 class="mb-0">{{ items|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-boxes fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #9C27B0;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Admin Users</h6>
+                        <h3 class="mb-0">{{ users|selectattr('is_admin', 'equalto', true)|list|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-shield fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header" style="background-color: #D32F2F; color: white;">
+                <h5 class="mb-0"><i class="fas fa-users me-2"></i>User Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>View All Users
+                    </a>
+                    <a href="{{ url_for('admin.new_user') }}" class="btn btn-primary" style="background-color: #1976D2; border-color: #1976D2;">
+                        <i class="fas fa-plus me-2"></i>Create New User
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header" style="background-color: #1976D2; color: white;">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Location Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.manage_locations') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>View All Locations
+                    </a>
+                    <a href="{{ url_for('admin.new_location') }}" class="btn btn-primary" style="background-color: #D32F2F; border-color: #D32F2F;">
+                        <i class="fas fa-plus me-2"></i>Create New Location
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #FF9800; color: white;">
+                <h5 class="mb-0"><i class="fas fa-boxes me-2"></i>Item Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.manage_items') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-list me-2"></i>View All Items
+                    </a>
+                    <a href="{{ url_for('admin.new_item') }}" class="btn btn-primary" style="background-color: #4CAF50; border-color: #4CAF50;">
+                        <i class="fas fa-plus me-2"></i>Create New Item
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #4CAF50; color: white;">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Current User:</strong> {{ current_user.username }}</p>
+                        <p><strong>User Role:</strong> Administrator</p>
+                        <p><strong>Last Login:</strong> {{ current_user.last_login.strftime('%Y-%m-%d %H:%M') if current_user.last_login else 'Never' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Total Users:</strong> {{ users|length }}</p>
+                        <p><strong>Active Users:</strong> {{ users|selectattr('is_active', 'equalto', true)|list|length }}</p>
+                        <p><strong>Admin Users:</strong> {{ users|selectattr('is_admin', 'equalto', true)|list|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-box me-2" style="color: #FF9800;"></i>
+                {{ title }}
+            </h2>
+            <a href="{{ url_for('admin.manage_items') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Items
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header" style="background-color: #FF9800; color: white;">
+                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Item Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.name.label(class="form-label") }}
+                                {{ form.name(class="form-control", placeholder="Enter item name") }}
+                                {% if form.name.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.name.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.item_number.label(class="form-label") }}
+                                {{ form.item_number(class="form-control", placeholder="Enter item number") }}
+                                {% if form.item_number.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.item_number.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.manufacturer.label(class="form-label") }}
+                                {{ form.manufacturer(class="form-control", placeholder="Enter manufacturer name") }}
+                                {% if form.manufacturer.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.manufacturer.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    {{ form.is_required(class="form-check-input") }}
+                                    {{ form.is_required.label(class="form-check-label") }}
+                                </div>
+                                {% if form.is_required.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.is_required.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text text-muted">Check if this item is required by state standards</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.required_quantity.label(class="form-label") }}
+                                {{ form.required_quantity(class="form-control", type="number", min="0", placeholder="Enter required quantity") }}
+                                {% if form.required_quantity.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.required_quantity.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.minimum_threshold.label(class="form-label") }}
+                                {{ form.minimum_threshold(class="form-control", type="number", min="0", placeholder="Enter minimum threshold") }}
+                                {% if form.minimum_threshold.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.minimum_threshold.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('admin.manage_items') }}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        {{ form.submit(class="btn btn-primary", style="background-color: #FF9800; border-color: #FF9800;") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

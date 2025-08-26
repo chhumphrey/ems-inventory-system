@@ -1,0 +1,115 @@
+from datetime import datetime, date
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+db = SQLAlchemy()
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128))
+    is_admin = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_login = db.Column(db.DateTime)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    location_type = db.Column(db.String(50))  # ambulance, supply_room, go_bag
+    vehicle_id = db.Column(db.String(50))  # for go bags
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    item_number = db.Column(db.String(100))
+    manufacturer = db.Column(db.String(200))
+    is_required = db.Column(db.Boolean, default=False)
+    required_quantity = db.Column(db.Integer, default=0)
+    minimum_threshold = db.Column(db.Integer, default=0)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+
+class InventoryItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=0)
+    expiration_date = db.Column(db.Date)
+    lot_number = db.Column(db.String(100))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    # Relationships
+    item = db.relationship('Item', backref='inventory_items')
+    location = db.relationship('Location', backref='inventory_items')
+
+class Inventory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    inventory_date = db.Column(db.DateTime, default=datetime.utcnow)
+    notes = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    # Relationships
+    location = db.relationship('Location', backref='inventories')
+    user = db.relationship('User', backref='inventories')
+
+class InventoryDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    inventory_id = db.Column(db.Integer, db.ForeignKey('inventory.id'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=0)
+    expiration_date = db.Column(db.Date)
+    lot_number = db.Column(db.String(100))
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    # Relationships
+    inventory = db.relationship('Inventory', backref='details')
+    item = db.relationship('Item', backref='inventory_details')
+
+class AuditLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    action = db.Column(db.String(100), nullable=False)
+    table_name = db.Column(db.String(100), nullable=False)
+    record_id = db.Column(db.Integer)
+    old_values = db.Column(db.Text)
+    new_values = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    ip_address = db.Column(db.String(45))
+    
+    # Relationships
+    user = db.relationship('User', backref='audit_logs')
