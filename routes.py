@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import login_required, current_user, login_user, logout_user
 from datetime import datetime, date, timedelta
 from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog
 from sqlalchemy import and_, or_, func
 from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm
+import csv
+from io import StringIO
+from flask import Response
 
 # Blueprints
 main_bp = Blueprint('main', __name__)
@@ -375,7 +378,8 @@ def inventory_dashboard():
                          inventory_summary=inventory_summary,
                          location_last_inventory=location_last_inventory,
                          today=today,
-                         today_plus_30=today_plus_30)
+                         today_plus_30=today_plus_30,
+                         current_user=current_user)
 
 @inventory_bp.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -945,3 +949,327 @@ def reports():
                          expiring_180_days=expiring_180_days,
                          low_stock=low_stock,
                          today=today)
+
+# Import functionality
+@inventory_bp.route('/import')
+@login_required
+def import_tool():
+    """Import tool landing page - step 1"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('inventory.inventory_dashboard'))
+    
+    return render_template('inventory/import.html')
+
+@inventory_bp.route('/import/template/<file_type>')
+@login_required
+def download_template(file_type):
+    """Download import template files"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('inventory.inventory_dashboard'))
+    
+    if file_type == 'items':
+        # Create CSV template for items
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['Item Name', 'Item Number', 'Manufacturer', 'Required by State Standards', 'Required Quantity', 'Minimum Threshold'])
+        writer.writerow(['Sample Item', 'SAMPLE-001', 'Sample Manufacturer', 'Yes', '5', '2'])
+        
+        output.seek(0)
+        return Response(
+            output.getvalue(),
+            mimetype='text/csv',
+            headers={'Content-Disposition': 'attachment; filename=items_import_template.csv'}
+        )
+    
+    elif file_type == 'inventory':
+        # Create CSV template for inventory counts
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['Location ID', 'Item Number', 'Quantity', 'Expiration Date (YYYY-MM-DD)', 'Lot Number'])
+        writer.writerow(['1', 'SAMPLE-001', '10', '2025-12-31', 'LOT123'])
+        
+        output.seek(0)
+        return Response(
+            output.getvalue(),
+            mimetype='text/csv',
+            headers={'Content-Disposition': 'attachment; filename=inventory_import_template.csv'}
+        )
+    
+    flash('Invalid template type.', 'error')
+    return redirect(url_for('inventory.import_tool'))
+
+@inventory_bp.route('/import/upload', methods=['POST'])
+@login_required
+def upload_import_file():
+    """Handle file upload and parse data - step 2"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Access denied'})
+    
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'error': 'No file uploaded'})
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'error': 'No file selected'})
+    
+    if not file.filename.lower().endswith(('.csv', '.tsv')):
+        return jsonify({'success': False, 'error': 'Invalid file format. Please use CSV or TSV.'})
+    
+    try:
+        # Determine delimiter
+        delimiter = ',' if file.filename.lower().endswith('.csv') else '\t'
+        
+        # Read file content
+        content = file.read().decode('utf-8')
+        lines = content.split('\n')
+        
+        # Parse headers and data
+        if len(lines) < 2:
+            return jsonify({'success': False, 'error': 'File must have at least a header row and one data row'})
+        
+        headers = [h.strip() for h in lines[0].split(delimiter)]
+        data_rows = []
+        
+        for i, line in enumerate(lines[1:], 1):
+            if line.strip():
+                row_data = [cell.strip() for cell in line.split(delimiter)]
+                if len(row_data) == len(headers):
+                    data_rows.append(dict(zip(headers, row_data)))
+                else:
+                    return jsonify({'success': False, 'error': f'Row {i} has incorrect number of columns'})
+        
+        # Determine import type based on headers
+        import_type = None
+        if 'Item Name' in headers and 'Item Number' in headers:
+            import_type = 'items'
+        elif 'Location ID' in headers and 'Item Number' in headers and 'Quantity' in headers:
+            import_type = 'inventory'
+        else:
+            return jsonify({'success': False, 'error': 'File format not recognized. Please use the provided templates.'})
+        
+        # Check for duplicates and prepare data
+        processed_data = []
+        duplicates = []
+        
+        for row in data_rows:
+            if import_type == 'items':
+                item_number = row.get('Item Number', '').strip()
+                if item_number:
+                    existing_item = Item.query.filter_by(item_number=item_number, deleted_at=None).first()
+                    if existing_item:
+                        duplicates.append({
+                            'row': row,
+                            'existing': existing_item,
+                            'type': 'items'
+                        })
+                    else:
+                        processed_data.append(row)
+            
+            elif import_type == 'inventory':
+                item_number = row.get('Item Number', '').strip()
+                location_id = row.get('Location ID', '').strip()
+                if item_number and location_id:
+                    # Check if item exists
+                    item = Item.query.filter_by(item_number=item_number, deleted_at=None).first()
+                    if not item:
+                        return jsonify({'success': False, 'error': f'Item with number "{item_number}" not found in database'})
+                    
+                    # Check if location exists
+                    location = Location.query.filter_by(id=location_id, deleted_at=None).first()
+                    if not location:
+                        return jsonify({'success': False, 'error': f'Location with ID "{location_id}" not found in database'})
+                    
+                    processed_data.append(row)
+        
+        # Store data in session for step 3
+        session['import_data'] = {
+            'type': import_type,
+            'data': processed_data,
+            'duplicates': duplicates,
+            'headers': headers
+        }
+        
+        return jsonify({
+            'success': True,
+            'import_type': import_type,
+            'total_rows': len(processed_data),
+            'duplicate_count': len(duplicates),
+            'has_duplicates': len(duplicates) > 0
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Error processing file: {str(e)}'})
+
+@inventory_bp.route('/import/review')
+@login_required
+def review_import():
+    """Review import data and handle duplicates - step 2 continued"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('inventory.import_tool'))
+    
+    import_data = session.get('import_data')
+    if not import_data:
+        flash('No import data found. Please upload a file first.', 'error')
+        return redirect(url_for('inventory.import_tool'))
+    
+    return render_template('inventory/import_review.html', import_data=import_data)
+
+@inventory_bp.route('/import/process-duplicates', methods=['POST'])
+@login_required
+def process_duplicates():
+    """Process duplicate handling decisions"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Access denied'})
+    
+    import_data = session.get('import_data')
+    if not import_data:
+        return jsonify({'success': False, 'error': 'No import data found'})
+    
+    data = request.get_json()
+    decisions = data.get('decisions', {})
+    
+    # Process duplicate decisions
+    for duplicate_id, decision in decisions.items():
+        duplicate = import_data['duplicates'][int(duplicate_id)]
+        
+        if decision == 'replace':
+            # Mark existing item for replacement
+            duplicate['action'] = 'replace'
+        elif decision == 'add':
+            # Generate new item number
+            base_number = duplicate['row']['Item Number']
+            counter = 1
+            new_number = f"{base_number}-{counter}"
+            
+            # Check if new number already exists
+            while Item.query.filter_by(item_number=new_number, deleted_at=None).first():
+                counter += 1
+                new_number = f"{base_number}-{counter}"
+            
+            duplicate['row']['Item Number'] = new_number
+            duplicate['action'] = 'add'
+            import_data['data'].append(duplicate['row'])
+    
+    # Update session
+    session['import_data'] = import_data
+    
+    return jsonify({'success': True, 'message': 'Duplicate decisions processed'})
+
+@inventory_bp.route('/import/commit', methods=['POST'])
+@login_required
+def commit_import():
+    """Commit imported data to database - step 3"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Access denied'})
+    
+    import_data = session.get('import_data')
+    if not import_data:
+        return jsonify({'success': False, 'error': 'No import data found'})
+    
+    try:
+        if import_data['type'] == 'items':
+            # Import item definitions
+            items_created = 0
+            items_updated = 0
+            
+            for row in import_data['data']:
+                item_number = row.get('Item Number', '').strip()
+                existing_item = Item.query.filter_by(item_number=item_number, deleted_at=None).first()
+                
+                if existing_item:
+                    # Update existing item
+                    existing_item.name = row.get('Item Name', '').strip()
+                    existing_item.manufacturer = row.get('Manufacturer', '').strip()
+                    existing_item.is_required = row.get('Required by State Standards', '').strip().lower() in ['yes', 'true', '1']
+                    existing_item.required_quantity = int(row.get('Required Quantity', 0) or 0)
+                    existing_item.minimum_threshold = int(row.get('Minimum Threshold', 0) or 0)
+                    items_updated += 1
+                else:
+                    # Create new item
+                    new_item = Item(
+                        name=row.get('Item Name', '').strip(),
+                        item_number=item_number,
+                        manufacturer=row.get('Manufacturer', '').strip(),
+                        is_required=row.get('Required by State Standards', '').strip().lower() in ['yes', 'true', '1'],
+                        required_quantity=int(row.get('Required Quantity', 0) or 0),
+                        minimum_threshold=int(row.get('Minimum Threshold', 0) or 0)
+                    )
+                    db.session.add(new_item)
+                    items_created += 1
+            
+            db.session.commit()
+            
+            # Clear session data
+            session.pop('import_data', None)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Import completed successfully. {items_created} items created, {items_updated} items updated.',
+                'items_created': items_created,
+                'items_updated': items_updated
+            })
+        
+        elif import_data['type'] == 'inventory':
+            # Import inventory counts
+            inventory_items_created = 0
+            inventory_items_updated = 0
+            
+            for row in import_data['data']:
+                item_number = row.get('Item Number', '').strip()
+                location_id = int(row.get('Location ID', 0))
+                quantity = int(row.get('Quantity', 0) or 0)
+                expiration_date_str = row.get('Expiration Date (YYYY-MM-DD)', '').strip()
+                lot_number = row.get('Lot Number', '').strip()
+                
+                # Get item and location
+                item = Item.query.filter_by(item_number=item_number, deleted_at=None).first()
+                location = Location.query.filter_by(id=location_id, deleted_at=None).first()
+                
+                if not item or not location:
+                    continue
+                
+                # Check if inventory item already exists
+                existing_inv_item = InventoryItem.query.filter_by(
+                    item_id=item.id,
+                    location_id=location.id,
+                    is_active=True,
+                    deleted_at=None
+                ).first()
+                
+                if existing_inv_item:
+                    # Update existing inventory item
+                    existing_inv_item.quantity = quantity
+                    if expiration_date_str:
+                        existing_inv_item.expiration_date = datetime.strptime(expiration_date_str, '%Y-%m-%d').date()
+                    existing_inv_item.lot_number = lot_number
+                    inventory_items_updated += 1
+                else:
+                    # Create new inventory item
+                    new_inv_item = InventoryItem(
+                        item_id=item.id,
+                        location_id=location.id,
+                        quantity=quantity,
+                        expiration_date=datetime.strptime(expiration_date_str, '%Y-%m-%d').date() if expiration_date_str else None,
+                        lot_number=lot_number
+                    )
+                    db.session.add(new_inv_item)
+                    inventory_items_created += 1
+            
+            db.session.commit()
+            
+            # Clear session data
+            session.pop('import_data', None)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Import completed successfully. {inventory_items_created} inventory items created, {inventory_items_updated} inventory items updated.',
+                'inventory_items_created': inventory_items_created,
+                'inventory_items_updated': inventory_items_updated
+            })
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': f'Error committing import: {str(e)}'})

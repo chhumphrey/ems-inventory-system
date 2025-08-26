@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block title %}Review Import Data - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-eye me-2" style="color: #FF9800;"></i>
+                Review Import Data
+            </h2>
+            <a href="{{ url_for('inventory.import_tool') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Import Tool
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #FF9800; color: white;">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Import Summary - {{ import_data.type|title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-check fa-2x"></i>
+                            </div>
+                            <h4 class="mt-2 text-success">{{ import_data.data|length }}</h4>
+                            <p class="text-muted mb-0">Valid Rows</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-exclamation-triangle fa-2x"></i>
+                            </div>
+                            <h4 class="mt-2 text-warning">{{ import_data.duplicates|length }}</h4>
+                            <p class="text-muted mb-0">Duplicates Found</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-file-csv fa-2x"></i>
+                            </div>
+                            <h4 class="mt-2 text-info">{{ import_data.headers|length }}</h4>
+                            <p class="text-muted mb-0">Columns</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="fas fa-database fa-2x"></i>
+                            </div>
+                            <h4 class="mt-2 text-primary">{{ import_data.type|title }}</h4>
+                            <p class="text-muted mb-0">Import Type</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if import_data.duplicates %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #FFC107; color: #212529;">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Duplicate Items Found
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Action Required:</strong> The following items already exist in the system. Please choose how to handle each duplicate.
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Item Number</th>
+                                <th>New Data</th>
+                                <th>Existing Data</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for duplicate in import_data.duplicates %}
+                            <tr>
+                                <td>
+                                    <strong>{{ duplicate.row['Item Number'] }}</strong>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <strong>Name:</strong> {{ duplicate.row['Item Name'] }}<br>
+                                        <strong>Manufacturer:</strong> {{ duplicate.row['Manufacturer'] }}<br>
+                                        <strong>Required:</strong> {{ duplicate.row['Required by State Standards'] }}<br>
+                                        <strong>Qty:</strong> {{ duplicate.row['Required Quantity'] }}<br>
+                                        <strong>Threshold:</strong> {{ duplicate.row['Minimum Threshold'] }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <strong>Name:</strong> {{ duplicate.existing.name }}<br>
+                                        <strong>Manufacturer:</strong> {{ duplicate.existing.manufacturer }}<br>
+                                        <strong>Required:</strong> {{ 'Yes' if duplicate.existing.is_required else 'No' }}<br>
+                                        <strong>Qty:</strong> {{ duplicate.existing.required_quantity }}<br>
+                                        <strong>Threshold:</strong> {{ duplicate.existing.minimum_threshold }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <input type="radio" class="btn-check" name="duplicate_{{ loop.index0 }}" id="replace_{{ loop.index0 }}" value="replace" autocomplete="off">
+                                        <label class="btn btn-outline-warning btn-sm" for="replace_{{ loop.index0 }}">
+                                            <i class="fas fa-sync-alt me-1"></i>Replace
+                                        </label>
+                                        
+                                        <input type="radio" class="btn-check" name="duplicate_{{ loop.index0 }}" id="add_{{ loop.index0 }}" value="add" autocomplete="off">
+                                        <label class="btn btn-outline-success btn-sm" for="add_{{ loop.index0 }}">
+                                            <i class="fas fa-plus me-1"></i>Add New
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="btn btn-warning" onclick="processDuplicates()">
+                        <i class="fas fa-check me-2"></i>Process Duplicate Decisions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #4CAF50; color: white;">
+                <h5 class="mb-0">
+                    <i class="fas fa-table me-2"></i>
+                    Data Preview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                {% for header in import_data.headers %}
+                                <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in import_data.data[:10] %}
+                            <tr>
+                                {% for header in import_data.headers %}
+                                <td>{{ row[header] }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                            {% if import_data.data|length > 10 %}
+                            <tr>
+                                <td colspan="{{ import_data.headers|length }}" class="text-center text-muted">
+                                    <em>... and {{ import_data.data|length - 10 }} more rows</em>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Preview:</strong> Showing first 10 rows of {{ import_data.data|length }} total rows. All data will be imported when you commit.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #607D8B; color: white;">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Ready to Import
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>Import Summary</h6>
+                        <ul class="text-muted">
+                            {% if import_data.type == 'items' %}
+                            <li><strong>Items to Create:</strong> New item definitions will be added to the system</li>
+                            <li><strong>Items to Update:</strong> Existing items will be updated with new information</li>
+                            <li><strong>Data Fields:</strong> Name, Item Number, Manufacturer, Requirements, Quantities, Thresholds</li>
+                            {% else %}
+                            <li><strong>Inventory Updates:</strong> Current counts will be updated or created</li>
+                            <li><strong>Location Validation:</strong> All location IDs have been verified</li>
+                            <li><strong>Data Fields:</strong> Location, Item, Quantity, Expiration Date, Lot Number</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-grid gap-2">
+                            {% if import_data.duplicates %}
+                            <button type="button" class="btn btn-warning" disabled id="commitBtn">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Resolve Duplicates First
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn btn-success" onclick="commitImport()" id="commitBtn">
+                                <i class="fas fa-check me-2"></i>Commit Import
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Commit Progress Modal -->
+<div class="modal fade" id="commitModal" tabindex="-1" aria-labelledby="commitModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commitModalLabel">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Committing Import
+                </h5>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-spinner fa-spin fa-3x text-success"></i>
+                </div>
+                <p class="mb-0">Please wait while we commit your data to the database...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function processDuplicates() {
+    // Collect all duplicate decisions
+    const decisions = {};
+    let allDecisionsMade = true;
+    
+    {% for duplicate in import_data.duplicates %}
+    const radioName = 'duplicate_{{ loop.index0 }}';
+    const selectedRadio = document.querySelector(`input[name="${radioName}"]:checked`);
+    
+    if (selectedRadio) {
+        decisions['{{ loop.index0 }}'] = selectedRadio.value;
+    } else {
+        allDecisionsMade = false;
+    }
+    {% endfor %}
+    
+    if (!allDecisionsMade) {
+        showToast('Please make a decision for all duplicate items.', 'warning');
+        return;
+    }
+    
+    // Send decisions to server
+    fetch('{{ url_for("inventory.process_duplicates") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ decisions: decisions })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Duplicate decisions processed successfully!', 'success');
+            
+            // Enable commit button
+            document.getElementById('commitBtn').disabled = false;
+            document.getElementById('commitBtn').innerHTML = '<i class="fas fa-check me-2"></i>Commit Import';
+            document.getElementById('commitBtn').className = 'btn btn-success';
+            
+            // Hide duplicate section
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showToast(`Error: ${data.error}`, 'error');
+        }
+    })
+    .catch(error => {
+        showToast('Error processing duplicates. Please try again.', 'error');
+        console.error('Error:', error);
+    });
+}
+
+function commitImport() {
+    if (!confirm('Are you sure you want to commit this import? This action cannot be undone.')) {
+        return;
+    }
+    
+    // Show progress modal
+    const commitModal = new bootstrap.Modal(document.getElementById('commitModal'));
+    commitModal.show();
+    
+    // Send commit request
+    fetch('{{ url_for("inventory.commit_import") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        commitModal.hide();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            
+            // Redirect to dashboard after successful import
+            setTimeout(() => {
+                window.location.href = '{{ url_for("inventory.inventory_dashboard") }}';
+            }, 2000);
+        } else {
+            showToast(`Error: ${data.error}`, 'error');
+        }
+    })
+    .catch(error => {
+        commitModal.hide();
+        showToast('Error committing import. Please try again.', 'error');
+        console.error('Error:', error);
+    });
+}
+
+// Show toast notification
+function showToast(message, type = 'info') {
+    const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+    
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info'} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
+    toast.setAttribute('aria-atomic', 'true');
+    
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remove toast after it's hidden
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container position-fixed top-0 end-0 p-3';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+    return container;
+}
+</script>
+{% endblock %}
