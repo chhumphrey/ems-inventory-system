@@ -41,15 +41,27 @@ def index():
     # Count of locations
     location_count = Location.query.filter_by(deleted_at=None, is_active=True).count()
     
-    # Count of low stock items (items below minimum threshold)
-    low_stock_count = db.session.query(func.count(InventoryItem.id)).join(Item).filter(
-        InventoryItem.is_active == True,
-        InventoryItem.deleted_at == None,
+    # Count of low stock items (items below minimum threshold) - ONLY for Supply Room locations
+    low_stock_count = db.session.query(func.count(Item.id)).join(
+        Location, Location.location_type == 'supply_room'
+    ).outerjoin(
+        InventoryItem, db.and_(
+            InventoryItem.item_id == Item.id,
+            InventoryItem.location_id == Location.id,
+            InventoryItem.is_active == True,
+            InventoryItem.deleted_at == None
+        )
+    ).filter(
         Item.is_active == True,
         Item.deleted_at == None,
-        InventoryItem.quantity <= Item.minimum_threshold,
-        Item.minimum_threshold > 0
-    ).scalar() or 0
+        Item.minimum_threshold > 0,
+        Location.is_active == True,
+        Location.deleted_at == None
+    ).group_by(
+        Location.id, Item.id, Item.minimum_threshold
+    ).having(
+        func.coalesce(func.sum(InventoryItem.quantity), 0) <= Item.minimum_threshold
+    ).count()
     
     # Count of expired items
     today = date.today()
@@ -892,28 +904,33 @@ def reports():
         InventoryItem.expiration_date.isnot(None)
     ).all()
     
-    # Get low stock items (combined regardless of expiration date)
+    # Get low stock items (combined regardless of expiration date) - ONLY for Supply Room locations
     low_stock = db.session.query(
         Location.name.label('location_name'),
         Location.id.label('location_id'),
         Item.name.label('item_name'),
-        func.sum(InventoryItem.quantity).label('total_quantity'),
+        func.coalesce(func.sum(InventoryItem.quantity), 0).label('total_quantity'),
         Item.minimum_threshold,
         Item.required_quantity
-    ).select_from(InventoryItem).join(
-        Location, InventoryItem.location_id == Location.id
-    ).join(
-        Item, InventoryItem.item_id == Item.id
+    ).select_from(Item).join(
+        Location, Location.location_type == 'supply_room'
+    ).outerjoin(
+        InventoryItem, db.and_(
+            InventoryItem.item_id == Item.id,
+            InventoryItem.location_id == Location.id,
+            InventoryItem.is_active == True,
+            InventoryItem.deleted_at == None
+        )
     ).filter(
-        InventoryItem.is_active == True,
-        InventoryItem.deleted_at == None,
         Item.is_active == True,
         Item.deleted_at == None,
-        Item.minimum_threshold > 0
+        Item.minimum_threshold > 0,
+        Location.is_active == True,
+        Location.deleted_at == None
     ).group_by(
         Location.name, Location.id, Item.name, Item.minimum_threshold, Item.required_quantity
     ).having(
-        func.sum(InventoryItem.quantity) <= Item.minimum_threshold
+        func.coalesce(func.sum(InventoryItem.quantity), 0) <= Item.minimum_threshold
     ).all()
     
     return render_template('inventory/reports.html', 
