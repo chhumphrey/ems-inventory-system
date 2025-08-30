@@ -26,6 +26,7 @@ class LocationForm(FlaskForm):
         ('go_bag', 'Go Bag')
     ], validators=[DataRequired()])
     vehicle_id = StringField('Vehicle ID (for Go Bags)')
+    has_sections = BooleanField('Has Sections')
     submit = SubmitField('Save Location')
 
 class ItemForm(FlaskForm):

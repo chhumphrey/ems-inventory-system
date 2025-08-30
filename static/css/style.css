@@ -183,6 +183,21 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Dashboard alerts - ensure they stay visible */
+.dashboard-alert {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.dashboard-alert.fade {
+    opacity: 1 !important;
+}
+
+.dashboard-alert.show {
+    opacity: 1 !important;
+}
+
 /* Emergency alert styling */
 .emergency-alert {
     background: linear-gradient(45deg, var(--alert-red), var(--caution-orange));

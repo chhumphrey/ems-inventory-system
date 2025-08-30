@@ -235,7 +235,8 @@ def new_location():
             name=form.name.data,
             description=form.description.data,
             location_type=form.location_type.data,
-            vehicle_id=form.vehicle_id.data
+            vehicle_id=form.vehicle_id.data,
+            has_sections=form.has_sections.data
         )
         db.session.add(location)
         db.session.commit()
@@ -260,9 +261,10 @@ def edit_location(location_id):
         location.description = form.description.data
         location.location_type = form.location_type.data
         location.vehicle_id = form.vehicle_id.data
+        location.has_sections = form.has_sections.data
         
         db.session.commit()
-        log_audit('UPDATE', 'location', location.id, old_values={'name': location.name, 'description': location.description, 'location_type': location.location_type, 'vehicle_id': location.vehicle_id})
+        log_audit('UPDATE', 'location', location.id, old_values={'name': location.name, 'description': location.description, 'location_type': location.location_type, 'vehicle_id': location.vehicle_id, 'has_sections': location.has_sections})
         flash('Location updated successfully.')
         return redirect(url_for('admin.manage_locations'))
     
@@ -335,8 +337,22 @@ def inventory_dashboard():
     locations = Location.query.filter_by(deleted_at=None, is_active=True).all()
     items = Item.query.filter_by(deleted_at=None, is_active=True).all()
     
-    # Get current inventory summary with all instances
-    inventory_summary = db.session.query(
+    # Get search and filter parameters
+    search = request.args.get('search', '').strip()
+    location_filter = request.args.get('location', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    
+    # Build the base query - show only items from the most recent completed inventory for each location
+    # First, get the most recent inventory date for each location
+    subquery = db.session.query(
+        Inventory.location_id,
+        func.max(Inventory.inventory_date).label('max_inventory_date')
+    ).filter(
+        Inventory.is_active == True,
+        Inventory.deleted_at == None
+    ).group_by(Inventory.location_id).subquery()
+    
+    query = db.session.query(
         Location.name.label('location_name'),
         Item.name.label('item_name'),
         Item.id.label('item_id'),
@@ -344,15 +360,68 @@ def inventory_dashboard():
         InventoryItem.quantity.label('quantity'),
         InventoryItem.expiration_date.label('expiration_date'),
         InventoryItem.lot_number.label('lot_number'),
-        InventoryItem.id.label('inventory_item_id')
+        InventoryItem.section.label('section'),
+        InventoryItem.id.label('inventory_item_id'),
+        Inventory.inventory_date.label('inventory_date')
     ).select_from(InventoryItem).join(
         Location, InventoryItem.location_id == Location.id
     ).join(
         Item, InventoryItem.item_id == Item.id
+    ).join(
+        Inventory, and_(
+            Inventory.location_id == InventoryItem.location_id,
+            Inventory.is_active == True,
+            Inventory.deleted_at == None
+        )
+    ).join(
+        subquery, and_(
+            subquery.c.location_id == Inventory.location_id,
+            subquery.c.max_inventory_date == Inventory.inventory_date
+        )
     ).filter(
         InventoryItem.is_active == True, 
         InventoryItem.deleted_at == None
-    ).order_by(Location.name, Item.name, InventoryItem.expiration_date).all()
+    )
+    
+    # Apply search filter
+    if search:
+        query = query.filter(
+            or_(
+                Item.name.ilike(f'%{search}%'),
+                Location.name.ilike(f'%{search}%'),
+                InventoryItem.lot_number.ilike(f'%{search}%'),
+                InventoryItem.section.ilike(f'%{search}%')
+            )
+        )
+    
+    # Apply location filter
+    if location_filter:
+        query = query.filter(Location.id == int(location_filter))
+    
+    # Apply status filter
+    today = date.today()
+    today_plus_30 = today + timedelta(days=30)
+    
+    if status_filter == 'low_stock':
+        query = query.filter(InventoryItem.quantity <= 2)
+    elif status_filter == 'expired':
+        query = query.filter(
+            and_(
+                InventoryItem.expiration_date.isnot(None),
+                InventoryItem.expiration_date < today
+            )
+        )
+    elif status_filter == 'expiring_soon':
+        query = query.filter(
+            and_(
+                InventoryItem.expiration_date.isnot(None),
+                InventoryItem.expiration_date >= today,
+                InventoryItem.expiration_date <= today_plus_30
+            )
+        )
+    
+    # Apply default sorting: Location, then Section, then Item name
+    inventory_summary = query.order_by(Location.name, InventoryItem.section, Item.name).all()
     
     # Get last inventory date for each location
     location_last_inventory = {}
@@ -372,6 +441,66 @@ def inventory_dashboard():
     today = date.today()
     today_plus_30 = today + timedelta(days=30)
     
+    # Generate alerts for inventory dashboard
+    alerts = []
+    
+    # Count expired items
+    expired_count = db.session.query(func.count(InventoryItem.id)).filter(
+        InventoryItem.is_active == True,
+        InventoryItem.deleted_at == None,
+        InventoryItem.expiration_date < today,
+        InventoryItem.expiration_date.isnot(None)
+    ).scalar() or 0
+    
+    # Count items expiring soon (within 30 days)
+    expiring_soon_count = db.session.query(func.count(InventoryItem.id)).filter(
+        InventoryItem.is_active == True,
+        InventoryItem.deleted_at == None,
+        InventoryItem.expiration_date >= today,
+        InventoryItem.expiration_date <= today_plus_30,
+        InventoryItem.expiration_date.isnot(None)
+    ).scalar() or 0
+    
+    # Count low stock items (items below minimum threshold) - ONLY for Supply Room locations
+    low_stock_count = db.session.query(func.count(Item.id)).join(
+        Location, Location.location_type == 'supply_room'
+    ).outerjoin(
+        InventoryItem, db.and_(
+            InventoryItem.item_id == Item.id,
+            InventoryItem.location_id == Location.id,
+            InventoryItem.is_active == True,
+            InventoryItem.deleted_at == None
+        )
+    ).filter(
+        Item.is_active == True,
+        Item.deleted_at == None,
+        Item.minimum_threshold > 0,
+        Location.is_active == True,
+        Location.deleted_at == None
+    ).group_by(
+        Location.id, Item.id, Item.minimum_threshold
+    ).having(
+        func.coalesce(func.sum(InventoryItem.quantity), 0) <= Item.minimum_threshold
+    ).count()
+    
+    if expired_count > 0:
+        alerts.append({
+            'type': 'danger',
+            'message': f'{expired_count} item(s) have expired and need immediate attention.'
+        })
+    
+    if expiring_soon_count > 0:
+        alerts.append({
+            'type': 'warning',
+            'message': f'{expiring_soon_count} item(s) are expiring within 30 days.'
+        })
+    
+    if low_stock_count > 0:
+        alerts.append({
+            'type': 'warning',
+            'message': f'{low_stock_count} item(s) are below minimum stock levels.'
+        })
+    
     return render_template('inventory/dashboard.html', 
                          locations=locations, 
                          items=items, 
@@ -379,7 +508,144 @@ def inventory_dashboard():
                          location_last_inventory=location_last_inventory,
                          today=today,
                          today_plus_30=today_plus_30,
-                         current_user=current_user)
+                         current_user=current_user,
+                         alerts=alerts,
+                         search=search,
+                         location_filter=location_filter,
+                         status_filter=status_filter)
+
+@inventory_bp.route('/export')
+@login_required
+def export_inventory():
+    # Get search and filter parameters (same as dashboard)
+    search = request.args.get('search', '').strip()
+    location_filter = request.args.get('location', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    
+    # Build the base query (same as dashboard) - show only items from the most recent completed inventory for each location
+    # First, get the most recent inventory date for each location
+    subquery = db.session.query(
+        Inventory.location_id,
+        func.max(Inventory.inventory_date).label('max_inventory_date')
+    ).filter(
+        Inventory.is_active == True,
+        Inventory.deleted_at == None
+    ).group_by(Inventory.location_id).subquery()
+    
+    query = db.session.query(
+        Location.name.label('location_name'),
+        Item.name.label('item_name'),
+        Item.id.label('item_id'),
+        Location.id.label('location_id'),
+        InventoryItem.quantity.label('quantity'),
+        InventoryItem.expiration_date.label('expiration_date'),
+        InventoryItem.lot_number.label('lot_number'),
+        InventoryItem.section.label('section'),
+        InventoryItem.id.label('inventory_item_id'),
+        Inventory.inventory_date.label('inventory_date')
+    ).select_from(InventoryItem).join(
+        Location, InventoryItem.location_id == Location.id
+    ).join(
+        Item, InventoryItem.item_id == Item.id
+    ).join(
+        Inventory, and_(
+            Inventory.location_id == InventoryItem.location_id,
+            Inventory.is_active == True,
+            Inventory.deleted_at == None
+        )
+    ).join(
+        subquery, and_(
+            subquery.c.location_id == Inventory.location_id,
+            subquery.c.max_inventory_date == Inventory.inventory_date
+        )
+    ).filter(
+        InventoryItem.is_active == True, 
+        InventoryItem.deleted_at == None
+    )
+    
+    # Apply search filter
+    if search:
+        query = query.filter(
+            or_(
+                Item.name.ilike(f'%{search}%'),
+                Location.name.ilike(f'%{search}%'),
+                InventoryItem.lot_number.ilike(f'%{search}%'),
+                InventoryItem.section.ilike(f'%{search}%')
+            )
+        )
+    
+    # Apply location filter
+    if location_filter:
+        query = query.filter(Location.id == int(location_filter))
+    
+    # Apply status filter
+    today = date.today()
+    today_plus_30 = today + timedelta(days=30)
+    
+    if status_filter == 'low_stock':
+        query = query.filter(InventoryItem.quantity <= 2)
+    elif status_filter == 'expired':
+        query = query.filter(
+            and_(
+                InventoryItem.expiration_date.isnot(None),
+                InventoryItem.expiration_date < today
+            )
+        )
+    elif status_filter == 'expiring_soon':
+        query = query.filter(
+            and_(
+                InventoryItem.expiration_date.isnot(None),
+                InventoryItem.expiration_date >= today,
+                InventoryItem.expiration_date <= today_plus_30
+            )
+        )
+    
+    # Apply default sorting: Location, then Section, then Item name
+    inventory_data = query.order_by(Location.name, InventoryItem.section, Item.name).all()
+    
+    # Create CSV output
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    writer.writerow([
+        'Location', 'Section', 'Item Name', 'Quantity', 'Expiration Date', 
+        'Lot Number', 'Last Inventory Date', 'Status'
+    ])
+    
+    # Write data rows
+    for item in inventory_data:
+        # Determine status
+        if item.quantity <= 2:
+            status = 'Low Stock'
+        elif item.expiration_date and item.expiration_date < today:
+            status = 'Expired'
+        elif item.expiration_date and item.expiration_date < today_plus_30:
+            status = 'Expiring Soon'
+        else:
+            status = 'Good'
+        
+        # Format expiration date
+        exp_date = item.expiration_date.strftime('%Y-%m-%d') if item.expiration_date else 'No Expiry'
+        
+        writer.writerow([
+            item.location_name,
+            item.section or 'N/A',
+            item.item_name,
+            item.quantity,
+            exp_date,
+            item.lot_number or 'N/A',
+            item.inventory_date.strftime('%Y-%m-%d') if item.inventory_date else 'N/A',
+            status
+        ])
+    
+    # Prepare response
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=inventory_export.csv'}
+    )
 
 @inventory_bp.route('/new', methods=['GET', 'POST'])
 @login_required
@@ -395,6 +661,43 @@ def new_inventory():
         )
         db.session.add(inventory)
         db.session.commit()
+        
+        # Copy items from the most recent inventory for this location
+        most_recent_inventory = Inventory.query.filter(
+            Inventory.location_id == inventory.location_id,
+            Inventory.id != inventory.id,  # Exclude the new inventory we just created
+            Inventory.is_active == True,
+            Inventory.deleted_at == None
+        ).order_by(Inventory.inventory_date.desc()).first()
+        
+        if most_recent_inventory:
+            # Get all items from the most recent inventory
+            recent_items = InventoryItem.query.filter(
+                InventoryItem.location_id == inventory.location_id,
+                InventoryItem.is_active == True,
+                InventoryItem.deleted_at == None
+            ).all()
+            
+            # Create new inventory items with the same data but new IDs
+            for recent_item in recent_items:
+                new_inventory_item = InventoryItem(
+                    item_id=recent_item.item_id,
+                    location_id=inventory.location_id,
+                    quantity=recent_item.quantity,
+                    expiration_date=recent_item.expiration_date,
+                    lot_number=recent_item.lot_number,
+                    section=recent_item.section,
+                    is_active=True
+                )
+                db.session.add(new_inventory_item)
+            
+            db.session.commit()
+            
+            # Log the copying action
+            log_audit('COPY', 'inventory', inventory.id, 
+                     old_values={'source_inventory_id': most_recent_inventory.id, 'items_copied': len(recent_items)},
+                     new_values={'location_id': inventory.location_id, 'user_id': current_user.id})
+        
         log_audit('CREATE', 'inventory', inventory.id, new_values=form.data)
         return redirect(url_for('inventory.edit_inventory', inventory_id=inventory.id))
     
@@ -422,6 +725,7 @@ def edit_inventory(inventory_id):
                 'current_quantity': inv_item.quantity,
                 'current_expiration': inv_item.expiration_date,
                 'current_lot_number': inv_item.lot_number,
+                'current_section': inv_item.section,
                 'inventory_item_id': inv_item.id
             })
     
@@ -439,56 +743,48 @@ def update_inventory_item(inventory_id):
     """Update a single inventory item in real-time"""
     try:
         data = request.get_json()
-        item_id = data.get('item_id')
+        inventory_item_id = data.get('inventory_item_id')  # Use specific inventory item ID
         quantity = int(data.get('quantity', 0))
         expiration_date = data.get('expiration_date')
         lot_number = data.get('lot_number', '')
+        section = data.get('section', '')
         
         inventory = Inventory.query.get_or_404(inventory_id)
         
-        # Check if inventory item already exists
+        # Find the specific inventory item by its ID
         inventory_item = InventoryItem.query.filter_by(
-            item_id=item_id,
-            location_id=inventory.location_id,
+            id=inventory_item_id,
             is_active=True,
             deleted_at=None
         ).first()
         
-        if inventory_item:
-            # Update existing item
-            old_values = {
-                'quantity': inventory_item.quantity,
-                'expiration_date': inventory_item.expiration_date,
-                'lot_number': inventory_item.lot_number
-            }
-            
-            inventory_item.quantity = quantity
-            inventory_item.expiration_date = datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None
-            inventory_item.lot_number = lot_number
-            
-            if quantity == 0:
-                # Soft delete if quantity is 0
-                inventory_item.is_active = False
-                inventory_item.deleted_at = datetime.now()
-                action = 'DELETE'
-            else:
-                action = 'UPDATE'
+        if not inventory_item:
+            return jsonify({'success': False, 'error': 'Inventory item not found'}), 404
+        
+        # Verify the inventory item belongs to the current inventory location
+        if inventory_item.location_id != inventory.location_id:
+            return jsonify({'success': False, 'error': 'Inventory item does not belong to this inventory'}), 403
+        
+        # Update existing item
+        old_values = {
+            'quantity': inventory_item.quantity,
+            'expiration_date': inventory_item.expiration_date,
+            'lot_number': inventory_item.lot_number,
+            'section': inventory_item.section
+        }
+        
+        inventory_item.quantity = quantity
+        inventory_item.expiration_date = datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None
+        inventory_item.lot_number = lot_number
+        inventory_item.section = section
+        
+        if quantity == 0:
+            # Soft delete if quantity is 0
+            inventory_item.is_active = False
+            inventory_item.deleted_at = datetime.now()
+            action = 'DELETE'
         else:
-            # Create new inventory item
-            if quantity > 0:
-                inventory_item = InventoryItem(
-                    item_id=item_id,
-                    location_id=inventory.location_id,
-                    quantity=quantity,
-                    expiration_date=datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None,
-                    lot_number=lot_number
-                )
-                db.session.add(inventory_item)
-                action = 'CREATE'
-                old_values = None
-            else:
-                # Don't create item with 0 quantity
-                return jsonify({'success': True, 'message': 'Item not created (quantity is 0)'})
+            action = 'UPDATE'
         
         db.session.commit()
         
@@ -497,18 +793,21 @@ def update_inventory_item(inventory_id):
             log_audit(action, 'inventory_item', inventory_item.id, old_values, {
                 'quantity': quantity,
                 'expiration_date': expiration_date,
-                'lot_number': lot_number
+                'lot_number': lot_number,
+                'section': section
             })
         
         return jsonify({
             'success': True, 
             'message': f'Item updated successfully',
-            'inventory_item_id': inventory_item.id if inventory_item else None
+            'inventory_item_id': inventory_item.id
         })
         
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 400
+
+
 
 @inventory_bp.route('/<int:inventory_id>/add-item', methods=['POST'])
 @login_required
@@ -520,27 +819,46 @@ def add_item_to_inventory(inventory_id):
         quantity = int(data.get('quantity', 0))
         expiration_date = data.get('expiration_date')
         lot_number = data.get('lot_number', '')
+        section = data.get('section', '')
         
         if quantity <= 0:
             return jsonify({'success': False, 'error': 'Quantity must be greater than 0'}), 400
         
         inventory = Inventory.query.get_or_404(inventory_id)
         
-        # Check if item already exists in inventory
+        # Check if item already exists in inventory with same expiration date and lot number
+        # Allow multiple instances of the same item with different expiration dates or lot numbers
         existing_item = InventoryItem.query.filter_by(
             item_id=item_id,
             location_id=inventory.location_id,
+            expiration_date=datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None,
+            lot_number=lot_number,
+            section=section,
             is_active=True,
             deleted_at=None
         ).first()
         
         if existing_item:
-            return jsonify({'success': False, 'error': 'Item already exists in inventory'}), 400
+            # If exact same item exists, update quantity instead of creating duplicate
+            existing_item.quantity += quantity
+            db.session.commit()
+            
+            # Log the action
+            log_audit('UPDATE', 'inventory_item', existing_item.id, 
+                     {'quantity': existing_item.quantity - quantity}, 
+                     {'quantity': existing_item.quantity})
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Item quantity updated successfully',
+                'inventory_item_id': existing_item.id
+            })
         
         # Create new inventory item
         inventory_item = InventoryItem(
             item_id=item_id,
             location_id=inventory.location_id,
+            section=section,
             quantity=quantity,
             expiration_date=datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None,
             lot_number=lot_number
@@ -552,6 +870,7 @@ def add_item_to_inventory(inventory_id):
         log_audit('CREATE', 'inventory_item', inventory_item.id, None, {
             'item_id': item_id,
             'location_id': inventory.location_id,
+            'section': section,
             'quantity': quantity,
             'expiration_date': expiration_date,
             'lot_number': lot_number
@@ -711,6 +1030,7 @@ def duplicate_inventory_item(inventory_id):
         duplicate_item = InventoryItem(
             item_id=item_id,
             location_id=inventory.location_id,
+            section=original_item.section,  # Include section information
             quantity=original_item.quantity,
             expiration_date=original_item.expiration_date,
             lot_number=original_item.lot_number
@@ -722,6 +1042,7 @@ def duplicate_inventory_item(inventory_id):
         log_audit('CREATE', 'inventory_item', duplicate_item.id, None, {
             'item_id': item_id,
             'location_id': inventory.location_id,
+            'section': original_item.section,
             'quantity': original_item.quantity,
             'expiration_date': original_item.expiration_date,
             'lot_number': original_item.lot_number,
@@ -810,6 +1131,172 @@ def test_inventory():
             'message': str(e),
             'type': type(e).__name__
         }), 500
+
+@inventory_bp.route('/manage-counts')
+@login_required
+def manage_inventory_counts():
+    """Admin page to manage all inventory counts"""
+    if not current_user.is_admin:
+        flash('Access denied. Administrator privileges required.')
+        return redirect(url_for('main.index'))
+    
+    # Get search and filter parameters
+    location_filter = request.args.get('location', '').strip()
+    start_date = request.args.get('start_date', '').strip()
+    end_date = request.args.get('end_date', '').strip()
+    
+    # Build the base query
+    query = db.session.query(
+        Inventory.id.label('inventory_id'),
+        Inventory.inventory_date.label('inventory_date'),
+        Location.name.label('location_name'),
+        User.username.label('user_name'),
+        func.count(InventoryItem.id).label('item_count')
+    ).select_from(Inventory).join(
+        Location, Inventory.location_id == Location.id
+    ).join(
+        User, Inventory.user_id == User.id
+    ).outerjoin(
+        InventoryItem, and_(
+            InventoryItem.location_id == Inventory.location_id,
+            InventoryItem.is_active == True,
+            InventoryItem.deleted_at == None
+        )
+    ).filter(
+        Inventory.is_active == True,
+        Inventory.deleted_at == None
+    ).group_by(
+        Inventory.id, Inventory.inventory_date, Location.name, User.username
+    )
+    
+    # Apply location filter
+    if location_filter:
+        query = query.filter(Location.id == int(location_filter))
+    
+    # Apply date range filter
+    if start_date:
+        try:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+            query = query.filter(Inventory.inventory_date >= start_date_obj)
+        except ValueError:
+            pass
+    
+    if end_date:
+        try:
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+            # Add one day to include the end date
+            end_date_obj = end_date_obj + timedelta(days=1)
+            query = query.filter(Inventory.inventory_date < end_date_obj)
+        except ValueError:
+            pass
+    
+    # Get all locations for the filter dropdown
+    locations = Location.query.filter_by(deleted_at=None, is_active=True).all()
+    
+    # Apply default sorting by date (newest first)
+    inventory_counts = query.order_by(Inventory.inventory_date.desc()).all()
+    
+    return render_template('inventory/manage_counts.html',
+                         inventory_counts=inventory_counts,
+                         locations=locations,
+                         location_filter=location_filter,
+                         start_date=start_date,
+                         end_date=end_date)
+
+@inventory_bp.route('/<int:inventory_id>/delete-count', methods=['POST'])
+@login_required
+def delete_inventory_count(inventory_id):
+    """Delete an inventory count (requires admin privileges)"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Access denied. Administrator privileges required.'}), 403
+    
+    try:
+        inventory = Inventory.query.get_or_404(inventory_id)
+        
+        # Soft delete the inventory
+        old_values = {
+            'location_id': inventory.location_id,
+            'location_name': inventory.location.name,
+            'user_id': inventory.user_id,
+            'user_name': inventory.user.username,
+            'inventory_date': inventory.inventory_date.strftime('%Y-%m-%d %H:%M:%S'),
+            'notes': inventory.notes
+        }
+        
+        inventory.is_active = False
+        inventory.deleted_at = datetime.now()
+        
+        # Also soft delete all associated inventory items
+        inventory_items = InventoryItem.query.filter_by(
+            location_id=inventory.location_id,
+            is_active=True,
+            deleted_at=None
+        ).all()
+        
+        for item in inventory_items:
+            item.is_active = False
+            item.deleted_at = datetime.now()
+        
+        db.session.commit()
+        
+        # Log the action
+        log_audit('DELETE', 'inventory', inventory.id, old_values, None)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Inventory count deleted successfully'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@inventory_bp.route('/clear-all-inventories', methods=['POST'])
+@login_required
+def clear_all_inventories():
+    """Clear all existing inventories (admin only) - for testing purposes"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Access denied. Administrator privileges required.'}), 403
+    
+    try:
+        # Get all active inventories
+        all_inventories = Inventory.query.filter_by(is_active=True, deleted_at=None).all()
+        
+        cleared_count = 0
+        for inventory in all_inventories:
+            # Soft delete the inventory
+            inventory.is_active = False
+            inventory.deleted_at = datetime.now()
+            
+            # Soft delete all associated inventory items
+            inventory_items = InventoryItem.query.filter_by(
+                location_id=inventory.location_id,
+                is_active=True,
+                deleted_at=None
+            ).all()
+            
+            for item in inventory_items:
+                item.is_active = False
+                item.deleted_at = datetime.now()
+            
+            cleared_count += 1
+        
+        db.session.commit()
+        
+        # Log the action
+        log_audit('CLEAR_ALL', 'inventory', 0, 
+                 old_values={'inventories_cleared': cleared_count},
+                 new_values={'user_id': current_user.id, 'timestamp': datetime.now().isoformat()})
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully cleared {cleared_count} inventories and all associated items',
+            'cleared_count': cleared_count
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 400
 
 @inventory_bp.route('/reports')
 @login_required

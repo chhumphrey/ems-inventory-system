@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Inventory Counts - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-clipboard-list me-2" style="color: #D32F2F;"></i>
+                    Manage Inventory Counts
+                </h2>
+                <div>
+                    <button type="button" class="btn btn-danger me-2" onclick="confirmClearAllInventories()">
+                        <i class="fas fa-trash-alt me-2"></i>Clear All Inventories
+                    </button>
+                    <a href="{{ url_for('inventory.inventory_dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #1976D2; color: white;">
+                <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search & Filter</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Location</label>
+                        <select class="form-select" name="location">
+                            <option value="">All Locations</option>
+                            {% for location in locations %}
+                                <option value="{{ location.id }}" {% if location_filter|int == location.id %}selected{% endif %}>
+                                    {{ location.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" value="{{ start_date or '' }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" value="{{ end_date or '' }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" style="background-color: #D32F2F; border-color: #D32F2F;">
+                                <i class="fas fa-search me-2"></i>Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #4CAF50; color: white;">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>Inventory Counts</h5>
+            </div>
+            <div class="card-body">
+                {% if inventory_counts %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Location</th>
+                                    <th>Performed By</th>
+                                    <th>Number of Items</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for count in inventory_counts %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary">{{ count.inventory_date.strftime('%Y-%m-%d') }}</span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ count.inventory_date.strftime('%H:%M') }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">{{ count.location_name }}</span>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ count.user_name }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ count.item_count }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ url_for('inventory.edit_inventory', inventory_id=count.inventory_id) }}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="confirmDeleteCount({{ count.inventory_id }}, '{{ count.location_name }}', '{{ count.inventory_date.strftime('%Y-%m-%d %H:%M') }}')">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No inventory counts found matching your criteria.</p>
+                        <a href="{{ url_for('inventory.new_inventory') }}" class="btn btn-primary" style="background-color: #1976D2; border-color: #1976D2;">
+                            <i class="fas fa-plus me-2"></i>Start New Count
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteCountModal" tabindex="-1" aria-labelledby="deleteCountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCountModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone.
+                </div>
+                <p>Are you sure you want to delete the inventory count for:</p>
+                <ul class="list-unstyled">
+                    <li><strong>Location:</strong> <span id="deleteLocationName"></span></li>
+                    <li><strong>Date:</strong> <span id="deleteDate"></span></li>
+                </ul>
+                <p class="text-danger"><strong>This will also delete all inventory items for this location!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash me-2"></i>Delete Count
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clear All Inventories Confirmation Modal -->
+<div class="modal fade" id="clearAllInventoriesModal" tabindex="-1" aria-labelledby="clearAllInventoriesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="clearAllInventoriesModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Clear All Inventories
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">⚠️ CRITICAL ACTION</h6>
+                    <p class="mb-0">You are about to clear ALL existing inventory counts and start fresh.</p>
+                </div>
+                <p><strong>This action will:</strong></p>
+                <ul>
+                    <li>Delete ALL inventory count records</li>
+                    <li>Delete ALL inventory items for ALL locations</li>
+                    <li>Remove all quantity, expiration, and section data</li>
+                    <li>This action CANNOT be undone</li>
+                </ul>
+                <p class="text-danger"><strong>Type "CLEAR ALL" to confirm:</strong></p>
+                <input type="text" class="form-control" id="clearAllConfirmationInput" placeholder="Type CLEAR ALL to confirm">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmClearAllBtn" disabled>
+                    <i class="fas fa-trash-alt me-2"></i>Clear All Inventories
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Confirmation Modal -->
+<div class="modal fade" id="finalDeleteModal" tabindex="-1" aria-labelledby="finalDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="finalDeleteModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Final Confirmation Required
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">⚠️ CRITICAL ACTION</h6>
+                    <p class="mb-0">You are about to permanently delete an entire inventory count and all associated items.</p>
+                </div>
+                <p><strong>This action will:</strong></p>
+                <ul>
+                    <li>Delete the inventory count record</li>
+                    <li>Delete ALL inventory items for this location</li>
+                    <li>Remove all quantity, expiration, and section data</li>
+                    <li>This action CANNOT be undone</li>
+                </ul>
+                <p class="text-danger"><strong>Type "DELETE" to confirm:</strong></p>
+                <input type="text" class="form-control" id="deleteConfirmationInput" placeholder="Type DELETE to confirm">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="finalDeleteBtn" disabled>
+                    <i class="fas fa-trash me-2"></i>Permanently Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let countToDelete = null;
+
+function confirmDeleteCount(inventoryId, locationName, date) {
+    countToDelete = inventoryId;
+    document.getElementById('deleteLocationName').textContent = locationName;
+    document.getElementById('deleteDate').textContent = date;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteCountModal'));
+    modal.show();
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    // Hide first modal and show final confirmation
+    bootstrap.Modal.getInstance(document.getElementById('deleteCountModal')).hide();
+    
+    const finalModal = new bootstrap.Modal(document.getElementById('finalDeleteModal'));
+    finalModal.show();
+});
+
+document.getElementById('deleteConfirmationInput').addEventListener('input', function() {
+    const deleteBtn = document.getElementById('finalDeleteBtn');
+    deleteBtn.disabled = this.value !== 'DELETE';
+});
+
+document.getElementById('finalDeleteBtn').addEventListener('click', function() {
+    if (countToDelete) {
+        deleteInventoryCount(countToDelete);
+    }
+});
+
+function deleteInventoryCount(inventoryId) {
+    fetch(`{{ url_for('inventory.delete_inventory_count', inventory_id=0) }}`.replace('0', inventoryId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Inventory count deleted successfully', 'success');
+            // Close modal and refresh page
+            bootstrap.Modal.getInstance(document.getElementById('finalDeleteModal')).hide();
+            location.reload();
+        } else {
+            showToast(data.error || 'Failed to delete inventory count', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Failed to delete inventory count', 'danger');
+    });
+}
+
+function showToast(message, type = 'info') {
+    // Create toast notification
+    const toastDiv = document.createElement('div');
+    toastDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    toastDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toastDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toastDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (toastDiv.parentNode) {
+            toastDiv.parentNode.removeChild(toastDiv);
+        }
+    }, 5000);
+}
+
+function confirmClearAllInventories() {
+    const modal = new bootstrap.Modal(document.getElementById('clearAllInventoriesModal'));
+    modal.show();
+}
+
+document.getElementById('clearAllConfirmationInput').addEventListener('input', function() {
+    const clearBtn = document.getElementById('confirmClearAllBtn');
+    clearBtn.disabled = this.value !== 'CLEAR ALL';
+});
+
+document.getElementById('confirmClearAllBtn').addEventListener('click', function() {
+    clearAllInventories();
+});
+
+function clearAllInventories() {
+    fetch('{{ url_for("inventory.clear_all_inventories") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast(data.message, 'success');
+            // Close modal and refresh page
+            bootstrap.Modal.getInstance(document.getElementById('clearAllInventoriesModal')).hide();
+            location.reload();
+        } else {
+            showToast(data.error || 'Failed to clear inventories', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Failed to clear inventories', 'danger');
+    });
+}
+</script>
+{% endblock %}

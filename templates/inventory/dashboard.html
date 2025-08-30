@@ -25,25 +25,25 @@
             </div>
             <div class="card-body">
                 <form method="GET" class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" name="search" placeholder="Search items..." value="{{ request.args.get('search', '') }}">
-                    </div>
                     <div class="col-md-3">
+                        <input type="text" class="form-control" name="search" placeholder="Search items..." value="{{ search or '' }}">
+                    </div>
+                    <div class="col-md-2">
                         <select class="form-select" name="location">
                             <option value="">All Locations</option>
                             {% for location in locations %}
-                                <option value="{{ location.id }}" {% if request.args.get('location')|int == location.id %}selected{% endif %}>
+                                <option value="{{ location.id }}" {% if location_filter|int == location.id %}selected{% endif %}>
                                     {{ location.name }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select class="form-select" name="status">
                             <option value="">All Status</option>
-                            <option value="low_stock" {% if request.args.get('status') == 'low_stock' %}selected{% endif %}>Low Stock</option>
-                            <option value="expired" {% if request.args.get('status') == 'expired' %}selected{% endif %}>Expired</option>
-                            <option value="expiring_soon" {% if request.args.get('status') == 'expiring_soon' %}selected{% endif %}>Expiring Soon</option>
+                            <option value="low_stock" {% if status_filter == 'low_stock' %}selected{% endif %}>Low Stock</option>
+                            <option value="expired" {% if status_filter == 'expired' %}selected{% endif %}>Expired</option>
+                            <option value="expiring_soon" {% if status_filter == 'expiring_soon' %}selected{% endif %}>Expiring Soon</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -51,7 +51,34 @@
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('inventory.export_inventory', search=search, location=location_filter, status=status_filter) }}" class="btn btn-success w-100">
+                            <i class="fas fa-download me-2"></i>Export CSV
+                        </a>
+                    </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background-color: #1976D2; color: white;">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Alerts</h5>
+            </div>
+            <div class="card-body">
+                {% if alerts %}
+                    {% for alert in alerts %}
+                        <div class="alert alert-{{ alert.type }} dashboard-alert" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ alert.message }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">No active alerts at this time.</p>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -70,13 +97,13 @@
                             <thead>
                                 <tr>
                                     <th>Location</th>
+                                    <th>Section</th>
                                     <th>Item</th>
                                     <th>Quantity</th>
                                     <th>Expiration Date</th>
                                     <th>Lot Number</th>
                                     <th>Last Inventory</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,6 +111,13 @@
                                     <tr>
                                         <td>
                                             <span class="badge bg-primary">{{ item.location_name }}</span>
+                                        </td>
+                                        <td>
+                                            {% if item.section %}
+                                                <span class="badge bg-secondary">{{ item.section }}</span>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
                                         </td>
                                         <td>{{ item.item_name }}</td>
                                         <td>
@@ -106,8 +140,8 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if location_last_inventory[item.location_id] %}
-                                                <small class="text-muted">{{ location_last_inventory[item.location_id].strftime('%Y-%m-%d') }}</small>
+                                            {% if item.inventory_date %}
+                                                <small class="text-muted">{{ item.inventory_date.strftime('%Y-%m-%d') }}</small>
                                             {% else %}
                                                 <span class="text-muted">Never</span>
                                             {% endif %}
@@ -122,11 +156,6 @@
                                             {% else %}
                                                 <span class="badge bg-success">Good</span>
                                             {% endif %}
-                                        </td>
-                                        <td>
-                                            <a href="{{ url_for('inventory.new_inventory') }}?location={{ item.location_id }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit"></i> Update
-                                            </a>
                                         </td>
                                     </tr>
                                 {% endfor %}

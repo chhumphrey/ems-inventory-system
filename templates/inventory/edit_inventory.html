@@ -44,11 +44,12 @@
                     <table class="table table-striped" id="inventoryTable">
                         <thead>
                             <tr>
+                                {% if inventory.location.has_sections %}
+                                <th>Section</th>
+                                {% endif %}
                                 <th>Item</th>
                                 <th>Item #</th>
                                 <th>Manufacturer</th>
-                                <th>Required Qty</th>
-                                <th>Min Threshold</th>
                                 <th>Current Count</th>
                                 <th>Expiration Date</th>
                                 <th>Lot Number</th>
@@ -59,6 +60,17 @@
                             {% for item_data in items %}
                                 {% set item = item_data.item %}
                                 <tr data-item-id="{{ item.id }}" data-inventory-item-id="{{ item_data.inventory_item_id }}">
+                                    {% if inventory.location.has_sections %}
+                                    <td>
+                                        <input type="text" 
+                                               class="form-control form-control-sm section-input" 
+                                               value="{{ item_data.current_section or '' }}"
+                                               placeholder="Section"
+                                               maxlength="5"
+                                               style="width: 80px;"
+                                               data-item-id="{{ item.id }}">
+                                    </td>
+                                    {% endif %}
                                     <td>
                                         <strong>{{ item.name }}</strong>
                                         {% if item.is_required %}
@@ -67,20 +79,6 @@
                                     </td>
                                     <td>{{ item.item_number or 'N/A' }}</td>
                                     <td>{{ item.manufacturer or 'N/A' }}</td>
-                                    <td>
-                                        {% if item.is_required %}
-                                            <span class="badge bg-info">{{ item.required_quantity }}</span>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if item.minimum_threshold > 0 %}
-                                            <span class="badge bg-warning">{{ item.minimum_threshold }}</span>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
                                     <td>
                                         <input type="number" 
                                                class="form-control form-control-sm quantity-input" 
@@ -364,12 +362,6 @@ function addSelectedItem() {
         return;
     }
     
-    // Check if item is already in the table
-    if (document.querySelector(`tr[data-item-id="${selectedItem.id}"]`)) {
-        showToast('This item is already in the inventory', 'info');
-        return;
-    }
-    
     // Prompt for quantity
     const quantity = prompt(`Enter quantity for ${selectedItem.name}:`, '1');
     if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) {
@@ -377,15 +369,30 @@ function addSelectedItem() {
         return;
     }
     
+    // Prompt for expiration date
+    const expirationDate = prompt(`Enter expiration date for ${selectedItem.name} (YYYY-MM-DD, optional):`, '');
+    if (expirationDate === null) return; // User cancelled
+    
+    // Prompt for lot number
+    const lotNumber = prompt(`Enter lot number for ${selectedItem.name} (optional):`, '');
+    if (lotNumber === null) return; // User cancelled
+    
+    // Prompt for section if location has sections
+    let section = '';
+    {% if inventory.location.has_sections %}
+    section = prompt(`Enter section for ${selectedItem.name} (optional):`, '');
+    if (section === null) return; // User cancelled
+    {% endif %}
+    
     // Add item to inventory via API
-    addItemToInventory(selectedItem.id, parseInt(quantity));
+    addItemToInventory(selectedItem.id, parseInt(quantity), section, expirationDate, lotNumber);
     
     // Reset selection
     selectedItem = null;
     document.getElementById('itemSearchInput').value = '';
 }
 
-function addItemToInventory(itemId, quantity) {
+function addItemToInventory(itemId, quantity, section = '', expirationDate = '', lotNumber = '') {
     fetch(`{{ url_for('inventory.add_item_to_inventory', inventory_id=inventory.id) }}`, {
         method: 'POST',
         headers: {
@@ -394,8 +401,9 @@ function addItemToInventory(itemId, quantity) {
         body: JSON.stringify({
             item_id: itemId,
             quantity: quantity,
-            expiration_date: '',
-            lot_number: ''
+            expiration_date: expirationDate,
+            lot_number: lotNumber,
+            section: section
         })
     })
     .then(response => response.json())
@@ -515,7 +523,6 @@ function duplicateItemRow(button) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                item_id: itemId,
                 inventory_item_id: inventoryItemId
             })
         })
@@ -540,7 +547,8 @@ function setupRealTimeUpdates() {
     document.addEventListener('input', function(e) {
         if (e.target.classList.contains('quantity-input') || 
             e.target.classList.contains('expiration-input') || 
-            e.target.classList.contains('lot-number-input')) {
+            e.target.classList.contains('lot-number-input') ||
+            e.target.classList.contains('section-input')) { // Added section-input
             
             // Debounce updates to avoid too many API calls
             clearTimeout(updateTimeout);
@@ -552,24 +560,32 @@ function setupRealTimeUpdates() {
 }
 
 function updateInventoryItem(input) {
-    const itemId = input.getAttribute('data-item-id');
     const row = input.closest('tr');
+    const inventoryItemId = row.getAttribute('data-inventory-item-id');
     
     const quantity = row.querySelector('.quantity-input').value;
     const expiration = row.querySelector('.expiration-input').value;
     const lotNumber = row.querySelector('.lot-number-input').value;
     
-    // Update via API
+    // Get section value if it exists (only for locations with sections)
+    let section = '';
+    const sectionInput = row.querySelector('.section-input');
+    if (sectionInput) {
+        section = sectionInput.value;
+    }
+    
+    // Update via API using the specific inventory item ID
     fetch(`{{ url_for('inventory.update_inventory_item', inventory_id=inventory.id) }}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            item_id: itemId,
+            inventory_item_id: inventoryItemId,
             quantity: parseInt(quantity) || 0,
             expiration_date: expiration,
-            lot_number: lotNumber
+            lot_number: lotNumber,
+            section: section
         })
     })
     .then(response => response.json())

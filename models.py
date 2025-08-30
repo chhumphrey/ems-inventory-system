@@ -30,6 +30,7 @@ class Location(db.Model):
     description = db.Column(db.Text)
     location_type = db.Column(db.String(50))  # ambulance, supply_room, go_bag
     vehicle_id = db.Column(db.String(50))  # for go bags
+    has_sections = db.Column(db.Boolean, default=False)  # Whether this location has sections
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -54,6 +55,7 @@ class InventoryItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    section = db.Column(db.String(5))  # Section identifier (5 characters max)
     quantity = db.Column(db.Integer, nullable=False, default=0)
     expiration_date = db.Column(db.Date)
     lot_number = db.Column(db.String(100))

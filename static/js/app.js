@@ -7,14 +7,31 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // Auto-hide alerts after 5 seconds
+    // Auto-hide only flash messages (not dashboard alerts) after 5 seconds
     setTimeout(function() {
-        var alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
+        var flashAlerts = document.querySelectorAll('.alert:not(.dashboard-alert)');
+        flashAlerts.forEach(function(alert) {
             var bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
         });
     }, 5000);
+    
+    // Ensure dashboard alerts are never hidden
+    var dashboardAlerts = document.querySelectorAll('.dashboard-alert');
+    dashboardAlerts.forEach(function(alert) {
+        // Remove any Bootstrap auto-hide classes
+        alert.classList.remove('fade', 'show');
+        
+        // Prevent Bootstrap from hiding this alert
+        if (alert.dataset.bsAlert) {
+            delete alert.dataset.bsAlert;
+        }
+        
+        // Override any Bootstrap alert methods for dashboard alerts
+        if (alert._bsAlert) {
+            alert._bsAlert._config.autohide = false;
+        }
+    });
 
     // Form validation enhancements
     var forms = document.querySelectorAll('.needs-validation');
