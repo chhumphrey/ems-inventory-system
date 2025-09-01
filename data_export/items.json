@@ -1,0 +1,947 @@
+[
+  {
+    "name": "Normal Saline 0.9% 1000ml",
+    "item_number": "NS-1000",
+    "manufacturer": "Baxter",
+    "is_required": true,
+    "required_quantity": 4,
+    "minimum_threshold": 10,
+    "created_at": "2025-08-23T02:45:38.317097"
+  },
+  {
+    "name": "4x4 Gauze Pads",
+    "item_number": "GAUZE-4X4",
+    "manufacturer": "Johnson & Johnson",
+    "is_required": true,
+    "required_quantity": 20,
+    "minimum_threshold": 10,
+    "created_at": "2025-08-23T02:45:38.317100"
+  },
+  {
+    "name": "Adhesive Tape 1 inch",
+    "item_number": "TAPE-1IN",
+    "manufacturer": "3M",
+    "is_required": true,
+    "required_quantity": 6,
+    "minimum_threshold": 3,
+    "created_at": "2025-08-23T02:45:38.317102"
+  },
+  {
+    "name": "Gloves Large",
+    "item_number": "GLOVES-L",
+    "manufacturer": "Medline",
+    "is_required": true,
+    "required_quantity": 10,
+    "minimum_threshold": 5,
+    "created_at": "2025-08-23T02:45:38.317103"
+  },
+  {
+    "name": "Medium Gloves",
+    "item_number": "MG",
+    "manufacturer": "Nomex",
+    "is_required": true,
+    "required_quantity": 2,
+    "minimum_threshold": 6,
+    "created_at": "2025-08-23T14:02:06.563951"
+  },
+  {
+    "name": "Notepads",
+    "item_number": "",
+    "manufacturer": "",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 4,
+    "created_at": "2025-08-23T14:02:41.967436"
+  },
+  {
+    "name": "Sheets",
+    "item_number": "Sheet",
+    "manufacturer": null,
+    "is_required": true,
+    "required_quantity": 4,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-26T01:12:11.599780"
+  },
+  {
+    "name": "Blankets",
+    "item_number": "",
+    "manufacturer": "",
+    "is_required": true,
+    "required_quantity": 4,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-26T01:14:08.207149"
+  },
+  {
+    "name": "Oral Glucose",
+    "item_number": "OG15",
+    "manufacturer": null,
+    "is_required": false,
+    "required_quantity": 3,
+    "minimum_threshold": 10,
+    "created_at": "2025-08-26T01:46:27.441531"
+  },
+  {
+    "name": "Narcan",
+    "item_number": "NC",
+    "manufacturer": null,
+    "is_required": false,
+    "required_quantity": 2,
+    "minimum_threshold": 4,
+    "created_at": "2025-08-26T02:03:59.370109"
+  },
+  {
+    "name": "10 Drips",
+    "item_number": "1712-10830",
+    "manufacturer": "10 Drip",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.057472"
+  },
+  {
+    "name": "4 Lead Sticker Pack Box 12 Adult",
+    "item_number": "8900-0004",
+    "manufacturer": "Zoll",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.060792"
+  },
+  {
+    "name": "6 Lead Sticker Pack Box 10 Adult",
+    "item_number": "8900-0006",
+    "manufacturer": "Zoll",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.062134"
+  },
+  {
+    "name": "60 Drips",
+    "item_number": "ems3160",
+    "manufacturer": "60 Drip",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.063545"
+  },
+  {
+    "name": "Abdominal Pad 5x9",
+    "item_number": "1212-12110",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.064955"
+  },
+  {
+    "name": "Alcohol Swabs - Box 200 Small",
+    "item_number": "PL3115C",
+    "manufacturer": "Ultilet",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.066233"
+  },
+  {
+    "name": "Bag Valve Mask Adult",
+    "item_number": "2442-BVM1500",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 1,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.067489"
+  },
+  {
+    "name": "Bag Valve Mask Child",
+    "item_number": "2442-BVM550",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 1,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.069034"
+  },
+  {
+    "name": "Bag Valve Mask Infant",
+    "item_number": "2442-BVM300",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 1,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.070229"
+  },
+  {
+    "name": "Bandage Roll 4.5\"",
+    "item_number": "GZBN3003",
+    "manufacturer": "MedChoice",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.071464"
+  },
+  {
+    "name": "Burn Sheet 12x30",
+    "item_number": "650-3001-0100",
+    "manufacturer": "Gam",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.072708"
+  },
+  {
+    "name": "C Collar Adult",
+    "item_number": "980010",
+    "manufacturer": "Laerdall",
+    "is_required": true,
+    "required_quantity": 1,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.073794"
+  },
+  {
+    "name": "C Collar Infant/Ped",
+    "item_number": "000281106",
+    "manufacturer": "Ambu",
+    "is_required": true,
+    "required_quantity": 1,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.075014"
+  },
+  {
+    "name": "Capography Sampling line Adult",
+    "item_number": "301-5707F-SE",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.076232"
+  },
+  {
+    "name": "Capography Sampling line Pediatric",
+    "item_number": "007269",
+    "manufacturer": "Microstream",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.077293"
+  },
+  {
+    "name": "CO2 Detector Adult",
+    "item_number": "EASYCAPII",
+    "manufacturer": "Covidien",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.078245"
+  },
+  {
+    "name": "Conforming stretch bandages 2\"",
+    "item_number": "3112",
+    "manufacturer": "Dynarex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.079111"
+  },
+  {
+    "name": "Conforming stretch bandages 3\"",
+    "item_number": "0200060",
+    "manufacturer": "Everready",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.079973"
+  },
+  {
+    "name": "\"Conforming stretch bandages 4\"\"\"",
+    "item_number": "3114",
+    "manufacturer": "Dynarex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.080821"
+  },
+  {
+    "name": "CPAP/Capnography Kit Adult",
+    "item_number": "677556-2",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.081641"
+  },
+  {
+    "name": "\"Curity 1\"\" 10 yd\"",
+    "item_number": "8534C",
+    "manufacturer": "Coviden",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.082471"
+  },
+  {
+    "name": "\"Curity 1/2\"\" 10 yd\"",
+    "item_number": "8533C",
+    "manufacturer": "Coviden",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.083258"
+  },
+  {
+    "name": "Defibrulator Pads Pediatric",
+    "item_number": "8900-0810-01",
+    "manufacturer": "Zoll",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.084120"
+  },
+  {
+    "name": "Disposable Face Mask Adult",
+    "item_number": "000252055",
+    "manufacturer": "Ambu",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.086574"
+  },
+  {
+    "name": "Ear/Ulcer Syringe 3oz",
+    "item_number": "AS00503S",
+    "manufacturer": "Amsino",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.087684"
+  },
+  {
+    "name": "ECG Electrode Set SP Pediatric",
+    "item_number": "SP-00-S/10",
+    "manufacturer": "Ambu",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.088742"
+  },
+  {
+    "name": "Emergency Mylar Blanket 52x82",
+    "item_number": "12945",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.091377"
+  },
+  {
+    "name": "Emesis Bag",
+    "item_number": "1071-10204",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.092265"
+  },
+  {
+    "name": "Extension set 8\"",
+    "item_number": "1714-31081",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.093075"
+  },
+  {
+    "name": "Extension set 8.5\"",
+    "item_number": "MP5312c",
+    "manufacturer": "BD max plus",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.093849"
+  },
+  {
+    "name": "Face Mask Infant",
+    "item_number": "158100",
+    "manufacturer": "Ruch",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.094623"
+  },
+  {
+    "name": "Face Mask Neo-Nate",
+    "item_number": "158000",
+    "manufacturer": "Ruch",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.095361"
+  },
+  {
+    "name": "Flexible Fabric Bandages Box 100 .75x3",
+    "item_number": "1122-14958",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.096083"
+  },
+  {
+    "name": "Flexible Fabric Bandages Box 100 1x3",
+    "item_number": "1122-14960",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.096821"
+  },
+  {
+    "name": "Foam Blanket 58x90",
+    "item_number": "68725",
+    "manufacturer": "Moore Medical",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.097556"
+  },
+  {
+    "name": "Gloves L",
+    "item_number": "N193",
+    "manufacturer": "Cobalt",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.098277"
+  },
+  {
+    "name": "Gloves M",
+    "item_number": "N192",
+    "manufacturer": "Cobalt",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.099004"
+  },
+  {
+    "name": "Gloves XL",
+    "item_number": "N194",
+    "manufacturer": "Cobalt",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.099736"
+  },
+  {
+    "name": "IV Dressing",
+    "item_number": "36002MS",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.100492"
+  },
+  {
+    "name": "Large Bore Stopcock W/ extension 22\"",
+    "item_number": "2c6251",
+    "manufacturer": "Baxter",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.101662"
+  },
+  {
+    "name": "Laryngoscope Infant",
+    "item_number": "301-B3010EA",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.102763"
+  },
+  {
+    "name": "Lubricating Jelly 2.7gm",
+    "item_number": "1340-27000",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.103795"
+  },
+  {
+    "name": "Mega Mover",
+    "item_number": "51926",
+    "manufacturer": "Graham",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.104802"
+  },
+  {
+    "name": "Multi-Trauma Dressing 12x30",
+    "item_number": "16353",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.105796"
+  },
+  {
+    "name": "Nasal Oxygen Cannula Adult",
+    "item_number": "30050",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.106667"
+  },
+  {
+    "name": "Nasal Oxygen Cannula Pediatric",
+    "item_number": "30056",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.107584"
+  },
+  {
+    "name": "Nebulizer Adult",
+    "item_number": "301-200EA",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.108335"
+  },
+  {
+    "name": "Non-Rebreathing Mask Adult",
+    "item_number": "533-MS-25060EA",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.109065"
+  },
+  {
+    "name": "Non-Rebreathing Mask Pediatric",
+    "item_number": "210325",
+    "manufacturer": "Basic",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.109805"
+  },
+  {
+    "name": "Non-sterile Gauze Sponges 4x4",
+    "item_number": "12279",
+    "manufacturer": "Moore Medical",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.110546"
+  },
+  {
+    "name": "Oxygen Mask Infant",
+    "item_number": "396218",
+    "manufacturer": "Ruch",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.111274"
+  },
+  {
+    "name": "\"Oxygen tubing 7\"\"\"",
+    "item_number": "TUB-ROS7",
+    "manufacturer": "Roscoe",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.112002"
+  },
+  {
+    "name": "Saline Flush 10ml",
+    "item_number": "ivf1010tm",
+    "manufacturer": "Amsino",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.112741"
+  },
+  {
+    "name": "Sharps Containers Large",
+    "item_number": "8507SA",
+    "manufacturer": "Covidin",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.113483"
+  },
+  {
+    "name": "Sharps Containers Medium",
+    "item_number": "305487",
+    "manufacturer": "BD Sharps",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.114214"
+  },
+  {
+    "name": "Sharps Containers Small",
+    "item_number": "1860-08702",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.114958"
+  },
+  {
+    "name": "Sharps Containers X-Large",
+    "item_number": "8534SA",
+    "manufacturer": "Covidin",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.115699"
+  },
+  {
+    "name": "Sodium Chloride Injection usp 1000ml",
+    "item_number": "17271-701-07",
+    "manufacturer": "BD max plus",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.116436"
+  },
+  {
+    "name": "Sterile Gauze Sponge 2x2",
+    "item_number": "8500",
+    "manufacturer": "Dukal",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.117191"
+  },
+  {
+    "name": "Sterile Gauze Sponge 4x4",
+    "item_number": "6412",
+    "manufacturer": "Dukal",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.118332"
+  },
+  {
+    "name": "Tourniquet 1\"X18\"",
+    "item_number": "1841-14000",
+    "manufacturer": "Curaplex",
+    "is_required": true,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.119307"
+  },
+  {
+    "name": "Transparent Dressing with label 6cmx7cm",
+    "item_number": "1624W1",
+    "manufacturer": "Tegaderm",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.120231"
+  },
+  {
+    "name": "Triangular Bandicages 40x40x56",
+    "item_number": "1124-32400",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-08-30T13:15:19.121081"
+  },
+  {
+    "name": "Suction Canister Lids",
+    "item_number": null,
+    "manufacturer": null,
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:33:47.803881"
+  },
+  {
+    "name": "Suction Canister",
+    "item_number": "32224",
+    "manufacturer": "",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:34:17.680524"
+  },
+  {
+    "name": "Big Stick Suction Tip",
+    "item_number": "44241",
+    "manufacturer": "SSCOR",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:36:51.757263"
+  },
+  {
+    "name": "Cold Pack",
+    "item_number": "16-9703",
+    "manufacturer": "Mckesson",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:38:28.578497"
+  },
+  {
+    "name": "Hot Pack",
+    "item_number": "4516",
+    "manufacturer": "Dynarex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:39:54.514054"
+  },
+  {
+    "name": "Red Bag",
+    "item_number": "",
+    "manufacturer": "Misc.",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:40:47.379973"
+  },
+  {
+    "name": "Soft Restraints",
+    "item_number": null,
+    "manufacturer": null,
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:42:08.713299"
+  },
+  {
+    "name": "Suction Tubing",
+    "item_number": "43200",
+    "manufacturer": "SSCOR",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:43:07.524375"
+  },
+  {
+    "name": "Bubble Humidifier",
+    "item_number": "7600",
+    "manufacturer": "Salter Labs",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:43:59.282995"
+  },
+  {
+    "name": "IV Starter Kit",
+    "item_number": "8600-01047",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:50:12.664986"
+  },
+  {
+    "name": "Normal Saline .9%",
+    "item_number": "L8000",
+    "manufacturer": "Braun",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:55:23.485527"
+  },
+  {
+    "name": "Normal Saline .9%",
+    "item_number": "2B1324",
+    "manufacturer": "Baxter",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T00:56:10.495361"
+  },
+  {
+    "name": "Pressure Infuser",
+    "item_number": "301-MTM310EA",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:01:13.242863"
+  },
+  {
+    "name": "Durapore Tape 2\"",
+    "item_number": "1538-2",
+    "manufacturer": "3M",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:07:41.729276"
+  },
+  {
+    "name": "Burn Sheet 60\" x 90\"",
+    "item_number": "3006156",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:08:47.293630"
+  },
+  {
+    "name": "SAM Splint",
+    "item_number": "SP506-OB-EN",
+    "manufacturer": "SAM Medical",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:10:06.705175"
+  },
+  {
+    "name": "2\" Conforming Stretch Gauze",
+    "item_number": "3112",
+    "manufacturer": "Dynarex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:11:22.789063"
+  },
+  {
+    "name": "Emergency Bandage 4\"",
+    "item_number": "105521059",
+    "manufacturer": "Safe Guard Medical",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:13:42.696103"
+  },
+  {
+    "name": "Adhesive Tape .5\"",
+    "item_number": null,
+    "manufacturer": null,
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:14:20.776479"
+  },
+  {
+    "name": "Tourniquet",
+    "item_number": "6515-01-612-7129",
+    "manufacturer": "CAT",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:16:53.332096"
+  },
+  {
+    "name": "Cardboard Splint Small",
+    "item_number": null,
+    "manufacturer": "Morrison Medical",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:19:49.323327"
+  },
+  {
+    "name": "N95 Mask",
+    "item_number": "8210",
+    "manufacturer": "3M",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:21:16.486676"
+  },
+  {
+    "name": "Non-rebreathing oxygen mask",
+    "item_number": "hud1059",
+    "manufacturer": "hudson",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:37:41.012949"
+  },
+  {
+    "name": "Berman oral airway 90mm",
+    "item_number": "2010-34090",
+    "manufacturer": "curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:39:59.493217"
+  },
+  {
+    "name": "NPA kit",
+    "item_number": "36619",
+    "manufacturer": "curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:49:26.030309"
+  },
+  {
+    "name": "Capnoline Nasal cannula",
+    "item_number": "301-5707F-SE",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:53:27.410320"
+  },
+  {
+    "name": "Gas Sampling line",
+    "item_number": "301-5107ET",
+    "manufacturer": "Curaplex",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:55:41.347566"
+  },
+  {
+    "name": "Igel resus #3",
+    "item_number": "8803030",
+    "manufacturer": "I-Gel",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T01:59:25.341779"
+  },
+  {
+    "name": "IGel resus #4",
+    "item_number": "8804030",
+    "manufacturer": "I Gel",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T02:00:24.728992"
+  },
+  {
+    "name": "I Gel Resus #5",
+    "item_number": "8805030",
+    "manufacturer": "I gel",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T02:01:21.201188"
+  },
+  {
+    "name": "PPE Kit",
+    "item_number": "295814",
+    "manufacturer": "Boundtree",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T02:07:18.911412"
+  },
+  {
+    "name": "Gloves S",
+    "item_number": "S-21573",
+    "manufacturer": "ULINE",
+    "is_required": false,
+    "required_quantity": 0,
+    "minimum_threshold": 0,
+    "created_at": "2025-09-01T02:08:13.882198"
+  }
+]

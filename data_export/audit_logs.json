@@ -1,0 +1,2504 @@
+[
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T13:44:06.846514"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": "{'location_id': 2, 'notes': 'Test inventory', 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnF7g.qKeaLTA0bDxBkHvhmkOFU_h9q1s'}",
+    "timestamp": "2025-08-23T13:45:28.893804"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnG6A.MIFusHaE0yS8dH5m1j-CZZ4tF1I'}",
+    "timestamp": "2025-08-23T13:49:30.632667"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T13:59:04.006579"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T13:59:09.470153"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "user",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": "{'username': 'nonadmin', 'email': 'nonadmin@test.domain', 'password': 'nonadmin123', 'confirm_password': 'nonadmin123', 'is_admin': False, 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnJOA.LgyoF6Stp4TSwu6dVaNBCUghsUs'}",
+    "timestamp": "2025-08-23T13:59:42.796312"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 1,
+    "old_values": "{'name': '28R9', 'description': 'Primary ambulance', 'location_type': 'ambulance', 'vehicle_id': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-23T14:00:08.246369"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 2,
+    "old_values": "{'name': 'Main Supply', 'description': 'Main supply room', 'location_type': 'supply_room', 'vehicle_id': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-23T14:00:19.402227"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 3,
+    "old_values": "{'name': 'BLS Bag', 'description': 'First responder go bag', 'location_type': 'go_bag', 'vehicle_id': '28R9'}",
+    "new_values": null,
+    "timestamp": "2025-08-23T14:00:39.944962"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 3,
+    "old_values": "{'name': 'BLS Bag R9', 'description': 'First responder go bag', 'location_type': 'go_bag', 'vehicle_id': '28R9'}",
+    "new_values": null,
+    "timestamp": "2025-08-23T14:00:51.150280"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 4,
+    "old_values": "{'name': 'ALS Bag R9', 'description': 'ALS Bag in R9 cabinet', 'location_type': 'go_bag', 'vehicle_id': '28R9'}",
+    "new_values": null,
+    "timestamp": "2025-08-23T14:01:13.204022"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "location",
+    "record_id": 5,
+    "old_values": null,
+    "new_values": "{'name': 'BLS Bag M4', 'description': 'BLS bag on M4', 'location_type': 'go_bag', 'vehicle_id': '28M4', 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnJqw.HI1DxbkwRkfbZI9l5wd3lAFife0'}",
+    "timestamp": "2025-08-23T14:01:34.149904"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 5,
+    "old_values": null,
+    "new_values": "{'name': 'Medium Gloves', 'item_number': 'MG', 'manufacturer': 'Nomex', 'is_required': True, 'required_quantity': 2, 'minimum_threshold': 6, 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnJyQ.8-zaXpGF3dImJ5Iu4XvHbIkTkrk'}",
+    "timestamp": "2025-08-23T14:02:06.589130"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 6,
+    "old_values": null,
+    "new_values": "{'name': 'Notepads', 'item_number': '', 'manufacturer': '', 'is_required': False, 'required_quantity': None, 'minimum_threshold': 4, 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnJ5w.4YePG24Qc1FK-qOHn1H69HOsGRY'}",
+    "timestamp": "2025-08-23T14:02:41.989254"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T14:03:09.943577"
+  },
+  {
+    "user_id": 2,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T14:03:15.832108"
+  },
+  {
+    "user_id": 2,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 3,
+    "old_values": null,
+    "new_values": "{'location_id': 2, 'notes': '', 'submit': True, 'csrf_token': 'IjBjMTk4MGU3NGQyMWJmZjM5MTQyYzBkNjJmNDgzNzk1MzhlMzMzMjki.aKnKKA.m3o_q7kR82-Gl97qDDTzEpyUaiU'}",
+    "timestamp": "2025-08-23T14:03:28.462517"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T23:32:01.137855"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 4,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjI2ODU4MDRjZGQxNWQ4OGQwYTRjNjlhNjdjZjEzY2Q1ZTFkNmE2MzYi.aKpPqQ.Y3B1XT8X7SPxbl3YwqZuhARJ16I'}",
+    "timestamp": "2025-08-23T23:33:00.705004"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory",
+    "record_id": 4,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T23:36:55.166647"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 5,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjI2ODU4MDRjZGQxNWQ4OGQwYTRjNjlhNjdjZjEzY2Q1ZTFkNmE2MzYi.aKpQnw.nnqb3gNY5VidWqvg0PE6KB0bu3o'}",
+    "timestamp": "2025-08-23T23:37:05.887457"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 6,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjI2ODU4MDRjZGQxNWQ4OGQwYTRjNjlhNjdjZjEzY2Q1ZTFkNmE2MzYi.aKpR_A.Q4TVD0OHt72Nuhq0DpHF_-WXNis'}",
+    "timestamp": "2025-08-23T23:42:54.269670"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory",
+    "record_id": 6,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-23T23:44:17.786709"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T00:58:13.328357"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 7,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0Gyg.2CjDfhB_ywEt0bKAbwJ267qLFK4'}",
+    "timestamp": "2025-08-26T00:58:54.184032"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory",
+    "record_id": 7,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T00:59:38.085299"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 8,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0HBA.rs5AqoCifj9-9Pw5u6-E_2K5m_k'}",
+    "timestamp": "2025-08-26T00:59:51.543574"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory",
+    "record_id": 8,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T01:00:56.667728"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 9,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0HZQ.vgmZI8DxqFWiuGQ8BOwnKdJG26U'}",
+    "timestamp": "2025-08-26T01:01:27.933466"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory",
+    "record_id": 9,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T01:06:46.568334"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 10,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0Itw.dvpg816E5boZrVhDJ2yEidcj2ss'}",
+    "timestamp": "2025-08-26T01:07:05.697376"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 11,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0Jug.UHwkahuPmkUTVhz58NhqhcyyTxQ'}",
+    "timestamp": "2025-08-26T01:11:24.873779"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory_item",
+    "record_id": 6,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2025, 11, 1), 'lot_number': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-26T01:11:40.057339"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 10,
+    "old_values": "{'quantity': 2, 'expiration_date': None, 'lot_number': ''}",
+    "new_values": "{'quantity': 3, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-08-26T01:11:43.254672"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 7,
+    "old_values": null,
+    "new_values": "{'name': 'Sheets', 'item_number': 'Sheet', 'manufacturer': '', 'is_required': True, 'required_quantity': 4, 'minimum_threshold': 0}",
+    "timestamp": "2025-08-26T01:12:11.625265"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 11,
+    "old_values": null,
+    "new_values": "{'item_id': 7, 'location_id': 1, 'quantity': 6, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-08-26T01:12:11.633236"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 12,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0KNw.kqqcazHdziEuQWdAtPbKmKoGPak'}",
+    "timestamp": "2025-08-26T01:13:29.947755"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2026, 6, 25), 'lot_number': ''}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2026-06-25', 'lot_number': ''}",
+    "timestamp": "2025-08-26T01:13:46.154218"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 8,
+    "old_values": null,
+    "new_values": "{'name': 'Blankes', 'item_number': '', 'manufacturer': '', 'is_required': True, 'required_quantity': 4, 'minimum_threshold': 0}",
+    "timestamp": "2025-08-26T01:14:08.236497"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 12,
+    "old_values": null,
+    "new_values": "{'item_id': 8, 'location_id': 1, 'quantity': 3, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-08-26T01:14:08.259263"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 13,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0Kdg.2f4qjU0nSVsgcxNsz3Hi5tG60ow'}",
+    "timestamp": "2025-08-26T01:14:33.189069"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 8,
+    "old_values": "{'name': 'Blankets', 'item_number': '', 'manufacturer': '', 'is_required': True, 'required_quantity': 4, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-08-26T01:20:40.858156"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 14,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0RNQ.21Um3bzhbQoC4wuImtghDyoZpaU'}",
+    "timestamp": "2025-08-26T01:43:19.676480"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 9,
+    "old_values": null,
+    "new_values": "{'name': 'Oral Glucose', 'item_number': 'OG15', 'manufacturer': '', 'is_required': False, 'required_quantity': 3, 'minimum_threshold': 10}",
+    "timestamp": "2025-08-26T01:46:27.469556"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 13,
+    "old_values": null,
+    "new_values": "{'item_id': 9, 'location_id': 1, 'quantity': 6, 'expiration_date': '2025-11-14', 'lot_number': ''}",
+    "timestamp": "2025-08-26T01:46:27.493336"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:01:29.565187"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:01:53.910328"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 15,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0V2g.ay1J1yJD3E8DlrfD2bRDtWRCsoI'}",
+    "timestamp": "2025-08-26T02:03:13.374651"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 10,
+    "old_values": null,
+    "new_values": "{'name': 'Narcan', 'item_number': 'NC', 'manufacturer': '', 'is_required': False, 'required_quantity': 2, 'minimum_threshold': 4}",
+    "timestamp": "2025-08-26T02:03:59.407985"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 14,
+    "old_values": null,
+    "new_values": "{'item_id': 10, 'location_id': 1, 'quantity': 2, 'expiration_date': '2025-07-01', 'lot_number': ''}",
+    "timestamp": "2025-08-26T02:03:59.430193"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 1,
+    "old_values": "{'name': 'Normal Saline 0.9% 1000ml', 'item_number': 'NS-1000', 'manufacturer': 'Baxter', 'is_required': True, 'required_quantity': 4, 'minimum_threshold': 10}",
+    "new_values": null,
+    "timestamp": "2025-08-26T02:05:54.584821"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:20:35.868141"
+  },
+  {
+    "user_id": 2,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:20:44.675826"
+  },
+  {
+    "user_id": 2,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 16,
+    "old_values": null,
+    "new_values": "{'location_id': 3, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0aAg.Vt8SAomTv99OvxPL2c6Vdlu-nnw'}",
+    "timestamp": "2025-08-26T02:20:56.446211"
+  },
+  {
+    "user_id": 2,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:21:14.299255"
+  },
+  {
+    "user_id": 2,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:21:51.520720"
+  },
+  {
+    "user_id": 2,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 17,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0aQQ.EoE4hlOGYoAe0noEq389PE3OEWY'}",
+    "timestamp": "2025-08-26T02:21:54.994794"
+  },
+  {
+    "user_id": 2,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 2,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:25:01.289523"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:25:06.115948"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 18,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0bBA.GqZnrpFT9NSgj9oclT1BTPw5P8c'}",
+    "timestamp": "2025-08-26T02:25:10.511674"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGOUT",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:42:04.979849"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-26T02:42:09.680488"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 19,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0vhA.XJ6ndtODTSx6E3n_ItyHCX_-zsM'}",
+    "timestamp": "2025-08-26T03:52:37.662020"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 20,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0wYA.fWdomALOf91pDj5k4P9Xht8ra98'}",
+    "timestamp": "2025-08-26T03:56:18.613858"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 21,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0x_g.tewVgMQ3BW6B5iz8whE_-d7_knM'}",
+    "timestamp": "2025-08-26T04:03:11.564770"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 1,
+    "old_values": "{'name': '28R9', 'description': 'Primary ambulance', 'location_type': 'ambulance', 'vehicle_id': '', 'has_sections': True}",
+    "new_values": null,
+    "timestamp": "2025-08-26T04:03:28.849865"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 22,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0yGQ.VBMkjvdFf9tsBELmgwsoi1hcW-g'}",
+    "timestamp": "2025-08-26T04:03:38.789080"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2026, 6, 25), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2026-06-25', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-26T04:04:08.227404"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2026, 6, 25), 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-26T04:04:12.556374"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 9,
+    "old_values": "{'quantity': 2, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-26T04:04:14.381542"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 9,
+    "old_values": "{'quantity': 2, 'expiration_date': None, 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '', 'lot_number': '', 'section': 'D2'}",
+    "timestamp": "2025-08-26T04:04:21.249624"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 10,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '', 'lot_number': '', 'section': 'D2'}",
+    "timestamp": "2025-08-26T04:04:24.992709"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 11,
+    "old_values": "{'quantity': 6, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 6, 'expiration_date': '', 'lot_number': '', 'section': 'D3'}",
+    "timestamp": "2025-08-26T04:04:28.969628"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 12,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '', 'lot_number': '', 'section': 'D3'}",
+    "timestamp": "2025-08-26T04:04:31.918552"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 23,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0yXg.i2pn_wAeTWNVPL2yQOULwCCDS6k'}",
+    "timestamp": "2025-08-26T04:04:48.266726"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-26T04:04:54.162344"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 24,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjRkZTM3OWQ3YTIxNjZmYzMwNjk3ZGE5ODViYWUzMWZjOGQ1ZWQ0NDQi.aK0ybg.h1BrjmSBYmtMqknEhtzcykNjF5k'}",
+    "timestamp": "2025-08-26T04:05:04.100643"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-29T03:04:18.636989"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-08-30T12:57:34.910439"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 25,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLMiMQ.ZHeu5jo_LtnBq64fPlnWixfHMco'}",
+    "timestamp": "2025-08-30T16:09:24.635339"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 26,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLM3kA.w1_-GmewZzSG_g1Gm7VaK-40GQs'}",
+    "timestamp": "2025-08-30T17:40:34.683481"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:40:37.954138"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 15,
+    "old_values": null,
+    "new_values": "{'item_id': 47, 'location_id': 1, 'section': 'D5', 'quantity': 2, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-08-30T17:41:09.338540"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 27,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLM3zQ.nMyjY2OCMm2U4RAIweIEEhPLoBA'}",
+    "timestamp": "2025-08-30T17:41:35.031720"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': '', 'section': ''}",
+    "timestamp": "2025-08-30T17:42:12.448999"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 1), 'lot_number': '', 'section': ''}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-17', 'lot_number': '', 'section': ''}",
+    "timestamp": "2025-08-30T17:42:13.469500"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 17), 'lot_number': '', 'section': ''}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-17', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:42:16.883140"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 28,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLM4DQ.K_brAWT_0ldHOjTvkH6QTKkEDJg'}",
+    "timestamp": "2025-08-30T17:42:39.312034"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 17), 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:43:09.552013"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 29,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLM4zw.TKXBiJkPqUEGXFlV2MvGc5b_Hpw'}",
+    "timestamp": "2025-08-30T17:45:52.637176"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': '', 'section': 'D1'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:45:57.130219"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 16,
+    "old_values": null,
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:46:00.647519"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 30,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLM6KA.kqeH_hsYc4C_1xnI73mj5KfMaJM'}",
+    "timestamp": "2025-08-30T17:51:40.578851"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 17,
+    "old_values": null,
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D'}",
+    "timestamp": "2025-08-30T17:51:45.750765"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 18,
+    "old_values": null,
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D3'}",
+    "timestamp": "2025-08-30T17:51:46.456826"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 31,
+    "old_values": null,
+    "new_values": "{'location_id': 1, 'notes': '', 'submit': True, 'csrf_token': 'IjVkMGRjYWNhNmNmYzAyNjRjMzQwZGM0NmQyZGI0YzgzMzQ2M2I5YzYi.aLM71Q.EJPqg2i-eHASlNMzT3EI1eDhukU'}",
+    "timestamp": "2025-08-30T17:58:47.467809"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory_item",
+    "record_id": 7,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T17:59:06.603255"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory_item",
+    "record_id": 8,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T17:59:11.357201"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory_item",
+    "record_id": 16,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 1), 'lot_number': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T17:59:24.256579"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 17,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': '', 'section': 'D'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-05-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:59:31.673577"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 18,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 5, 1), 'lot_number': '', 'section': 'D3'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': '', 'section': 'D3'}",
+    "timestamp": "2025-08-30T17:59:35.792703"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 18,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 1), 'lot_number': '', 'section': 'D3'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': '', 'section': 'D1'}",
+    "timestamp": "2025-08-30T17:59:40.844060"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory",
+    "record_id": 1,
+    "old_values": "{'location_id': 2, 'location_name': 'Main Supply', 'user_id': 1, 'user_name': 'admin', 'inventory_date': '2025-08-23 13:45:28', 'notes': 'Test inventory'}",
+    "new_values": null,
+    "timestamp": "2025-08-30T18:22:04.683293"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory",
+    "record_id": 16,
+    "old_values": "{'location_id': 3, 'location_name': 'BLS Bag R9', 'user_id': 2, 'user_name': 'nonadmin', 'inventory_date': '2025-08-26 02:20:56', 'notes': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T18:22:22.178796"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory",
+    "record_id": 3,
+    "old_values": "{'location_id': 2, 'location_name': 'Main Supply', 'user_id': 2, 'user_name': 'nonadmin', 'inventory_date': '2025-08-23 14:03:28', 'notes': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T18:22:38.644032"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 10,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': 'D2'}",
+    "new_values": "{'quantity': 6, 'expiration_date': '', 'lot_number': '', 'section': 'D2'}",
+    "timestamp": "2025-08-30T18:22:46.710182"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 15,
+    "old_values": "{'quantity': 2, 'expiration_date': None, 'lot_number': '', 'section': 'D5'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '', 'lot_number': '', 'section': 'D5'}",
+    "timestamp": "2025-08-30T18:24:34.638713"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 11,
+    "old_values": "{'quantity': 6, 'expiration_date': None, 'lot_number': '', 'section': 'D3'}",
+    "new_values": "{'quantity': 4, 'expiration_date': '', 'lot_number': '', 'section': 'D3'}",
+    "timestamp": "2025-08-30T18:31:26.429283"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 12,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': 'D3'}",
+    "new_values": "{'quantity': 4, 'expiration_date': '', 'lot_number': '', 'section': 'D3'}",
+    "timestamp": "2025-08-30T18:31:27.596065"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory_item",
+    "record_id": 11,
+    "old_values": "{'quantity': 4, 'expiration_date': None, 'lot_number': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T18:39:37.722466"
+  },
+  {
+    "user_id": 1,
+    "action": "DELETE",
+    "table_name": "inventory_item",
+    "record_id": 12,
+    "old_values": "{'quantity': 4, 'expiration_date': None, 'lot_number': ''}",
+    "new_values": null,
+    "timestamp": "2025-08-30T18:39:40.362070"
+  },
+  {
+    "user_id": 1,
+    "action": "CLEAR_ALL",
+    "table_name": "inventory",
+    "record_id": 0,
+    "old_values": "{'inventories_cleared': 28}",
+    "new_values": "{'user_id': 1, 'timestamp': '2025-08-30T14:45:52.870196'}",
+    "timestamp": "2025-08-30T18:45:52.877124"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-09-01T00:22:45.057683"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "location",
+    "record_id": 2,
+    "old_values": "{'name': 'Main Supply', 'description': 'Main supply room', 'location_type': 'supply_room', 'vehicle_id': '', 'has_sections': True}",
+    "new_values": null,
+    "timestamp": "2025-09-01T00:26:33.756995"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory",
+    "record_id": 32,
+    "old_values": null,
+    "new_values": "{'location_id': 2, 'notes': 'Initial count', 'submit': True, 'csrf_token': 'ImNjNmUxYjg5YjVkNzMwOTI2MWFjNGNlMWVjNzFjYTQ4NDFhNjY3ODEi.aLTpKg.7urHoZCklKzZE-os1MJFLXdMIa4'}",
+    "timestamp": "2025-09-01T00:30:53.428665"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 19,
+    "old_values": null,
+    "new_values": "{'item_id': 45, 'location_id': 2, 'section': 'A1', 'quantity': 3, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:31:22.969444"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 20,
+    "old_values": null,
+    "new_values": "{'item_id': 53, 'location_id': 2, 'section': 'A1', 'quantity': 1, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:31:42.497913"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 74,
+    "old_values": null,
+    "new_values": "{'name': 'Suction Canister Lids', 'item_number': '', 'manufacturer': '', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:33:47.827322"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 21,
+    "old_values": null,
+    "new_values": "{'item_id': 74, 'location_id': 2, 'quantity': 8, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:33:47.849310"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 21,
+    "old_values": "{'quantity': 8, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 8, 'expiration_date': '', 'lot_number': '', 'section': 'A1'}",
+    "timestamp": "2025-09-01T00:33:51.685967"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 75,
+    "old_values": null,
+    "new_values": "{'name': 'Suction Canister', 'item_number': '', 'manufacturer': '', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:34:17.715414"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 22,
+    "old_values": null,
+    "new_values": "{'item_id': 75, 'location_id': 2, 'quantity': 6, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:34:17.740044"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 22,
+    "old_values": "{'quantity': 6, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 6, 'expiration_date': '', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T00:34:23.629987"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 22,
+    "old_values": "{'quantity': 6, 'expiration_date': None, 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 6, 'expiration_date': '', 'lot_number': '', 'section': 'A1'}",
+    "timestamp": "2025-09-01T00:34:26.076566"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 75,
+    "old_values": "{'name': 'Suction Canister', 'item_number': '32224', 'manufacturer': '', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-09-01T00:35:12.970504"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 76,
+    "old_values": null,
+    "new_values": "{'name': 'Big Stick Suction Tip', 'item_number': '44241', 'manufacturer': 'SSCOR', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:36:51.789366"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 23,
+    "old_values": null,
+    "new_values": "{'item_id': 76, 'location_id': 2, 'quantity': 4, 'expiration_date': '2028-08-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:36:51.803506"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 23,
+    "old_values": "{'quantity': 4, 'expiration_date': datetime.date(2028, 8, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 4, 'expiration_date': '2028-08-01', 'lot_number': '', 'section': 'A1'}",
+    "timestamp": "2025-09-01T00:36:56.975946"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 77,
+    "old_values": null,
+    "new_values": "{'name': 'Cold Pack', 'item_number': '16-9703', 'manufacturer': 'Mckesson', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:38:28.593057"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 24,
+    "old_values": null,
+    "new_values": "{'item_id': 77, 'location_id': 2, 'quantity': 12, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:38:28.602355"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 24,
+    "old_values": "{'quantity': 12, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 12, 'expiration_date': '', 'lot_number': '', 'section': 'A1'}",
+    "timestamp": "2025-09-01T00:38:32.196862"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 78,
+    "old_values": null,
+    "new_values": "{'name': 'Hot Pack', 'item_number': '4516', 'manufacturer': 'Dynarex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:39:54.526583"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 25,
+    "old_values": null,
+    "new_values": "{'item_id': 78, 'location_id': 2, 'quantity': 18, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:39:54.534799"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 25,
+    "old_values": "{'quantity': 18, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 18, 'expiration_date': '', 'lot_number': '', 'section': 'A1'}",
+    "timestamp": "2025-09-01T00:39:57.402417"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 79,
+    "old_values": null,
+    "new_values": "{'name': 'Red Bag', 'item_number': '', 'manufacturer': '', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:40:47.394777"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 26,
+    "old_values": null,
+    "new_values": "{'item_id': 79, 'location_id': 2, 'quantity': 3, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:40:47.403120"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 26,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T00:40:56.817813"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 26,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 3, 'expiration_date': '', 'lot_number': '', 'section': 'A1'}",
+    "timestamp": "2025-09-01T00:40:57.433026"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 27,
+    "old_values": null,
+    "new_values": "{'item_id': 22, 'location_id': 2, 'section': 'A2', 'quantity': 6, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:41:32.026397"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 80,
+    "old_values": null,
+    "new_values": "{'name': 'Soft Restraints', 'item_number': '', 'manufacturer': '', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:42:08.745855"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 28,
+    "old_values": null,
+    "new_values": "{'item_id': 80, 'location_id': 2, 'quantity': 6, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:42:08.767153"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 28,
+    "old_values": "{'quantity': 6, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 6, 'expiration_date': '', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T00:42:11.602797"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 28,
+    "old_values": "{'quantity': 6, 'expiration_date': None, 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 6, 'expiration_date': '', 'lot_number': '', 'section': 'A2'}",
+    "timestamp": "2025-09-01T00:42:12.127282"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 81,
+    "old_values": null,
+    "new_values": "{'name': 'Suction Tubing', 'item_number': '43200', 'manufacturer': 'SSCOR', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:43:07.559109"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 29,
+    "old_values": null,
+    "new_values": "{'item_id': 81, 'location_id': 2, 'quantity': 9, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:43:07.584722"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 29,
+    "old_values": "{'quantity': 9, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 9, 'expiration_date': '', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T00:43:10.695424"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 29,
+    "old_values": "{'quantity': 9, 'expiration_date': None, 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 9, 'expiration_date': '', 'lot_number': '', 'section': 'A2'}",
+    "timestamp": "2025-09-01T00:43:11.296835"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 82,
+    "old_values": null,
+    "new_values": "{'name': 'Bubble Humidifier', 'item_number': '7600', 'manufacturer': 'Salter Labs', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:43:59.305806"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 30,
+    "old_values": null,
+    "new_values": "{'item_id': 82, 'location_id': 2, 'quantity': 2, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:43:59.327305"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 30,
+    "old_values": "{'quantity': 2, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '', 'lot_number': '', 'section': 'A2'}",
+    "timestamp": "2025-09-01T00:44:02.868323"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 31,
+    "old_values": null,
+    "new_values": "{'item_id': 52, 'location_id': 2, 'section': 'A2', 'quantity': 1, 'expiration_date': '2027-10-31', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:45:04.048880"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 32,
+    "old_values": null,
+    "new_values": "{'item_id': 16, 'location_id': 2, 'section': 'A2', 'quantity': 6, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:45:55.237738"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 33,
+    "old_values": null,
+    "new_values": "{'item_id': 38, 'location_id': 2, 'section': 'A2', 'quantity': 15, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:47:00.854496"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 34,
+    "old_values": null,
+    "new_values": "{'item_id': 14, 'location_id': 2, 'section': 'A3', 'quantity': 8, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:48:06.414377"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 35,
+    "old_values": null,
+    "new_values": "{'item_id': 11, 'location_id': 2, 'section': 'A3', 'quantity': 12, 'expiration_date': '2028-11-20', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:48:58.006726"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 83,
+    "old_values": null,
+    "new_values": "{'name': 'IV Starter Kit', 'item_number': '8600-01047', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:50:12.691129"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 36,
+    "old_values": null,
+    "new_values": "{'item_id': 83, 'location_id': 2, 'quantity': 6, 'expiration_date': '2027-05-19', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:50:12.716010"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 36,
+    "old_values": "{'quantity': 6, 'expiration_date': datetime.date(2027, 5, 19), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 6, 'expiration_date': '2027-05-19', 'lot_number': '', 'section': 'A3'}",
+    "timestamp": "2025-09-01T00:50:27.804456"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 37,
+    "old_values": null,
+    "new_values": "{'item_id': 49, 'location_id': 2, 'section': 'A3', 'quantity': 1, 'expiration_date': '2027-02-15', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:51:14.783732"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 84,
+    "old_values": null,
+    "new_values": "{'name': 'Normal Saline .9%', 'item_number': 'L8000', 'manufacturer': 'Braun', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:55:23.509365"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 38,
+    "old_values": null,
+    "new_values": "{'item_id': 84, 'location_id': 2, 'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:55:23.530251"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 38,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T00:55:26.253723"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 38,
+    "old_values": "{'quantity': 1, 'expiration_date': datetime.date(2025, 12, 1), 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2025-12-01', 'lot_number': '', 'section': 'A3'}",
+    "timestamp": "2025-09-01T00:55:26.963129"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 85,
+    "old_values": null,
+    "new_values": "{'name': 'Normal Saline .9%', 'item_number': '2B1324', 'manufacturer': 'Baxter', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T00:56:10.538404"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 39,
+    "old_values": null,
+    "new_values": "{'item_id': 85, 'location_id': 2, 'quantity': 3, 'expiration_date': '2026-08-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:56:10.568012"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 39,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2026, 8, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '2026-08-01', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T00:56:13.352277"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 39,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2026, 8, 1), 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 3, 'expiration_date': '2026-08-01', 'lot_number': '', 'section': 'A3'}",
+    "timestamp": "2025-09-01T00:56:14.818734"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 40,
+    "old_values": null,
+    "new_values": "{'item_id': 40, 'location_id': 2, 'section': 'A3', 'quantity': 8, 'expiration_date': '2026-09-20', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:57:22.489920"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 40,
+    "old_values": "{'name': 'Extension set 8.5\"', 'item_number': 'MP5312c', 'manufacturer': 'BD max plus', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-09-01T00:57:45.845003"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 41,
+    "old_values": null,
+    "new_values": "{'item_id': 39, 'location_id': 2, 'section': 'A3', 'quantity': 11, 'expiration_date': '2029-05-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:58:32.657766"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 42,
+    "old_values": null,
+    "new_values": "{'item_id': 50, 'location_id': 2, 'section': 'A3', 'quantity': 1, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T00:58:55.937321"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 43,
+    "old_values": null,
+    "new_values": "{'item_id': 63, 'location_id': 2, 'section': 'A3', 'quantity': 2, 'expiration_date': '2026-08-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:00:05.465314"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 44,
+    "old_values": null,
+    "new_values": "{'item_id': 63, 'location_id': 2, 'section': 'A3', 'quantity': 1, 'expiration_date': '2027-09-10', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:00:27.059384"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 43,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2026, 8, 1), 'lot_number': '', 'section': 'A3'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '2026-08-01', 'lot_number': '', 'section': 'A3'}",
+    "timestamp": "2025-09-01T01:00:29.950442"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 86,
+    "old_values": null,
+    "new_values": "{'name': 'Pressure Infuser', 'item_number': '301-MTM310EA', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:01:13.276737"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 45,
+    "old_values": null,
+    "new_values": "{'item_id': 86, 'location_id': 2, 'quantity': 1, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:01:13.298006"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 45,
+    "old_values": "{'quantity': 1, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 1, 'expiration_date': '', 'lot_number': '', 'section': 'A3'}",
+    "timestamp": "2025-09-01T01:01:16.772507"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 46,
+    "old_values": null,
+    "new_values": "{'item_id': 71, 'location_id': 2, 'section': 'A3', 'quantity': 14, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:02:02.160844"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 71,
+    "old_values": "{'name': 'Tourniquet 1\"X18\"', 'item_number': '1841-14000', 'manufacturer': 'Curaplex', 'is_required': True, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-09-01T01:02:29.047758"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 47,
+    "old_values": null,
+    "new_values": "{'item_id': 37, 'location_id': 2, 'section': 'A4', 'quantity': 20, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:06:12.997848"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 87,
+    "old_values": null,
+    "new_values": "{'name': 'Durapore Tape 2\"', 'item_number': '1538-2', 'manufacturer': '3M', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:07:41.752136"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 48,
+    "old_values": null,
+    "new_values": "{'item_id': 87, 'location_id': 2, 'quantity': 11, 'expiration_date': '2027-06-19', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:07:41.761647"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 88,
+    "old_values": null,
+    "new_values": "{'name': 'Burn Sheet 60\" x 90\"', 'item_number': '3006156', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:08:47.304823"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 49,
+    "old_values": null,
+    "new_values": "{'item_id': 88, 'location_id': 2, 'quantity': 2, 'expiration_date': '2029-09-16', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:08:47.314223"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 48,
+    "old_values": "{'quantity': 11, 'expiration_date': datetime.date(2027, 6, 19), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 11, 'expiration_date': '2027-06-19', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:08:52.368691"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 49,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2029, 9, 16), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2029-09-16', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T01:08:54.769673"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 49,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2029, 9, 16), 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2029-09-16', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:08:55.383804"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 50,
+    "old_values": null,
+    "new_values": "{'item_id': 54, 'location_id': 2, 'section': 'A4', 'quantity': 6, 'expiration_date': '2027-07-24', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:09:25.431963"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 89,
+    "old_values": null,
+    "new_values": "{'name': 'SAM Splint', 'item_number': 'SP506-OB-EN', 'manufacturer': 'SAM Medical', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:10:06.725296"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 51,
+    "old_values": null,
+    "new_values": "{'item_id': 89, 'location_id': 2, 'quantity': 1, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:10:06.734158"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 51,
+    "old_values": "{'quantity': 1, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 1, 'expiration_date': '', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:10:10.612721"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 90,
+    "old_values": null,
+    "new_values": "{'name': '2\" Conforming Stretch Gauze', 'item_number': '3112', 'manufacturer': 'Dynarex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:11:22.804150"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 52,
+    "old_values": null,
+    "new_values": "{'item_id': 90, 'location_id': 2, 'quantity': 15, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:11:22.820650"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 52,
+    "old_values": "{'quantity': 15, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 15, 'expiration_date': '', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:11:25.648961"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 91,
+    "old_values": null,
+    "new_values": "{'name': 'Emergency Bandage 4\"', 'item_number': '105521059', 'manufacturer': 'Safe Guard Medical', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:13:42.722208"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 53,
+    "old_values": null,
+    "new_values": "{'item_id': 91, 'location_id': 2, 'quantity': 3, 'expiration_date': '2031-12-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:13:42.744875"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 53,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2031, 12, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '2031-12-01', 'lot_number': '', 'section': 'A'}",
+    "timestamp": "2025-09-01T01:13:45.700379"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 53,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2031, 12, 1), 'lot_number': '', 'section': 'A'}",
+    "new_values": "{'quantity': 3, 'expiration_date': '2031-12-01', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:13:46.315897"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 92,
+    "old_values": null,
+    "new_values": "{'name': 'Adhesive Tape .5\"', 'item_number': '', 'manufacturer': '', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:14:20.804011"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 54,
+    "old_values": null,
+    "new_values": "{'item_id': 92, 'location_id': 2, 'quantity': 28, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:14:20.825825"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 54,
+    "old_values": "{'quantity': 28, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 28, 'expiration_date': '', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:14:23.886149"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 55,
+    "old_values": null,
+    "new_values": "{'item_id': 73, 'location_id': 2, 'section': 'A4', 'quantity': 9, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:15:00.022708"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 93,
+    "old_values": null,
+    "new_values": "{'name': 'Tourniquet', 'item_number': '6515-01-612-7129', 'manufacturer': 'CAT', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:16:53.364925"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 56,
+    "old_values": null,
+    "new_values": "{'item_id': 93, 'location_id': 2, 'quantity': 1, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:16:53.394301"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 56,
+    "old_values": "{'quantity': 1, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 1, 'expiration_date': '', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:16:57.103093"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 57,
+    "old_values": null,
+    "new_values": "{'item_id': 69, 'location_id': 2, 'section': 'A4', 'quantity': 4, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:17:26.552084"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 58,
+    "old_values": null,
+    "new_values": "{'item_id': 70, 'location_id': 2, 'section': 'A4', 'quantity': 8, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:17:59.044362"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 59,
+    "old_values": null,
+    "new_values": "{'item_id': 15, 'location_id': 2, 'section': 'A4', 'quantity': 14, 'expiration_date': '2028-06-24', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:18:41.634575"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 60,
+    "old_values": null,
+    "new_values": "{'item_id': 60, 'location_id': 2, 'section': 'A4', 'quantity': 4, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:19:09.279740"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 94,
+    "old_values": null,
+    "new_values": "{'name': 'Cardboard Splint Small', 'item_number': '', 'manufacturer': 'Morrison Medical', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:19:49.347173"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 61,
+    "old_values": null,
+    "new_values": "{'item_id': 94, 'location_id': 2, 'quantity': 2, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:19:49.369662"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 61,
+    "old_values": "{'quantity': 2, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '', 'lot_number': '', 'section': 'A4'}",
+    "timestamp": "2025-09-01T01:19:52.843156"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 62,
+    "old_values": null,
+    "new_values": "{'item_id': 28, 'location_id': 2, 'section': 'A4', 'quantity': 3, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:20:21.149442"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 95,
+    "old_values": null,
+    "new_values": "{'name': 'N95 Mask', 'item_number': '8210', 'manufacturer': '3M', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:21:16.530760"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 63,
+    "old_values": null,
+    "new_values": "{'item_id': 95, 'location_id': 2, 'quantity': 16, 'expiration_date': '2026-03-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:21:16.557901"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 63,
+    "old_values": "{'quantity': 16, 'expiration_date': datetime.date(2026, 3, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 16, 'expiration_date': '2026-03-01', 'lot_number': '', 'section': 'A5'}",
+    "timestamp": "2025-09-01T01:21:21.130139"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 64,
+    "old_values": null,
+    "new_values": "{'item_id': 57, 'location_id': 2, 'section': 'B1', 'quantity': 4, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:34:10.697865"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 96,
+    "old_values": null,
+    "new_values": "{'name': 'Non-rebreathing oxygen mask', 'item_number': 'hud1059', 'manufacturer': 'hudson', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:37:41.027998"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 65,
+    "old_values": null,
+    "new_values": "{'item_id': 96, 'location_id': 2, 'quantity': 17, 'expiration_date': '2029-07-18', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:37:41.037998"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 65,
+    "old_values": "{'quantity': 17, 'expiration_date': datetime.date(2029, 7, 18), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 17, 'expiration_date': '2029-07-18', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:37:49.771235"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 65,
+    "old_values": "{'quantity': 17, 'expiration_date': datetime.date(2029, 7, 18), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 17, 'expiration_date': '2029-07-18', 'lot_number': '', 'section': 'B!'}",
+    "timestamp": "2025-09-01T01:37:50.832284"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 65,
+    "old_values": "{'quantity': 17, 'expiration_date': datetime.date(2029, 7, 18), 'lot_number': '', 'section': 'B!'}",
+    "new_values": "{'quantity': 17, 'expiration_date': '2029-07-18', 'lot_number': '', 'section': 'B1'}",
+    "timestamp": "2025-09-01T01:37:52.578500"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 66,
+    "old_values": null,
+    "new_values": "{'item_id': 30, 'location_id': 2, 'section': 'B1', 'quantity': 1, 'expiration_date': '2029-02-22', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:38:46.122400"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 97,
+    "old_values": null,
+    "new_values": "{'name': 'Berman oral airway 90mm', 'item_number': '2010-34090', 'manufacturer': 'curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:39:59.528173"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 67,
+    "old_values": null,
+    "new_values": "{'item_id': 97, 'location_id': 2, 'quantity': 1, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:39:59.550624"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 67,
+    "old_values": "{'quantity': 1, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 1, 'expiration_date': '', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:40:03.693377"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 67,
+    "old_values": "{'quantity': 1, 'expiration_date': None, 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 1, 'expiration_date': '', 'lot_number': '', 'section': 'B1'}",
+    "timestamp": "2025-09-01T01:40:05.014247"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 68,
+    "old_values": null,
+    "new_values": "{'item_id': 17, 'location_id': 2, 'section': 'B2', 'quantity': 3, 'expiration_date': '2027-10-21', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:44:35.814596"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 69,
+    "old_values": null,
+    "new_values": "{'item_id': 34, 'location_id': 2, 'section': 'B2', 'quantity': 2, 'expiration_date': '2025-12-31', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:45:26.272140"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 68,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2027, 10, 21), 'lot_number': '', 'section': 'B2'}",
+    "new_values": "{'quantity': 4, 'expiration_date': '2027-10-21', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T01:45:54.317599"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 98,
+    "old_values": null,
+    "new_values": "{'name': 'NPA kit', 'item_number': '36619', 'manufacturer': 'curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:49:26.040015"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 70,
+    "old_values": null,
+    "new_values": "{'item_id': 98, 'location_id': 2, 'quantity': 2, 'expiration_date': '2028-08-19', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:49:26.049854"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 70,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2028, 8, 19), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2028-08-19', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:49:29.607650"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 70,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2028, 8, 19), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2028-08-19', 'lot_number': '', 'section': 'B@'}",
+    "timestamp": "2025-09-01T01:49:30.266708"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 70,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2028, 8, 19), 'lot_number': '', 'section': 'B@'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2028-08-19', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T01:49:31.787101"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 99,
+    "old_values": null,
+    "new_values": "{'name': 'Capnoline Nasal cannula', 'item_number': '301-5707F-SE', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:53:27.427586"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 71,
+    "old_values": null,
+    "new_values": "{'item_id': 99, 'location_id': 2, 'quantity': 16, 'expiration_date': '2029-03-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:53:27.436944"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 71,
+    "old_values": "{'quantity': 16, 'expiration_date': datetime.date(2029, 3, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 16, 'expiration_date': '2029-03-01', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:53:32.085600"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 71,
+    "old_values": "{'quantity': 16, 'expiration_date': datetime.date(2029, 3, 1), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 16, 'expiration_date': '2029-03-01', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T01:53:32.855738"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 100,
+    "old_values": null,
+    "new_values": "{'name': 'Gas Sampling line', 'item_number': '301-5107ET', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:55:41.386127"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 72,
+    "old_values": null,
+    "new_values": "{'item_id': 100, 'location_id': 2, 'quantity': 4, 'expiration_date': '2028-08-08', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:55:41.418787"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 72,
+    "old_values": "{'quantity': 4, 'expiration_date': datetime.date(2028, 8, 8), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 4, 'expiration_date': '2028-08-08', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:55:46.504303"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 72,
+    "old_values": "{'quantity': 4, 'expiration_date': datetime.date(2028, 8, 8), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 4, 'expiration_date': '2028-08-08', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T01:55:47.860242"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 73,
+    "old_values": null,
+    "new_values": "{'item_id': 26, 'location_id': 2, 'section': 'B2', 'quantity': 2, 'expiration_date': '2026-07-21', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:57:14.026479"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 101,
+    "old_values": null,
+    "new_values": "{'name': 'Igel resus #3', 'item_number': '8803030', 'manufacturer': 'I-Gel', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T01:59:25.368430"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 74,
+    "old_values": null,
+    "new_values": "{'item_id': 101, 'location_id': 2, 'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T01:59:25.394140"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 74,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:59:29.218022"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 74,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B@'}",
+    "timestamp": "2025-09-01T01:59:30.497845"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 74,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': 'B@'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T01:59:31.474145"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 74,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T01:59:31.967771"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 102,
+    "old_values": null,
+    "new_values": "{'name': 'IGel resus #4', 'item_number': '8804030', 'manufacturer': 'I Gel', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T02:00:24.765342"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 75,
+    "old_values": null,
+    "new_values": "{'item_id': 102, 'location_id': 2, 'quantity': 3, 'expiration_date': '2027-03-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:00:24.797936"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 75,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B'}",
+    "timestamp": "2025-09-01T02:00:28.418486"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 75,
+    "old_values": "{'quantity': 3, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': 'B'}",
+    "new_values": "{'quantity': 3, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T02:00:29.209582"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 103,
+    "old_values": null,
+    "new_values": "{'name': 'I Gel Resus #5', 'item_number': '8805030', 'manufacturer': 'I gel', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T02:01:21.238235"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 76,
+    "old_values": null,
+    "new_values": "{'item_id': 103, 'location_id': 2, 'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:01:21.257037"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 76,
+    "old_values": "{'quantity': 2, 'expiration_date': datetime.date(2027, 3, 1), 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 2, 'expiration_date': '2027-03-01', 'lot_number': '', 'section': 'B2'}",
+    "timestamp": "2025-09-01T02:01:25.100873"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 77,
+    "old_values": null,
+    "new_values": "{'item_id': 48, 'location_id': 2, 'section': 'B3', 'quantity': 7, 'expiration_date': '2028-03-24', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:03:24.445586"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 78,
+    "old_values": null,
+    "new_values": "{'item_id': 46, 'location_id': 2, 'section': 'B3', 'quantity': 7, 'expiration_date': '2027-04-27', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:03:57.255082"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 78,
+    "old_values": "{'quantity': 7, 'expiration_date': datetime.date(2027, 4, 27), 'lot_number': '', 'section': 'B3'}",
+    "new_values": "{'quantity': 6, 'expiration_date': '2027-04-27', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:04:01.381132"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 79,
+    "old_values": null,
+    "new_values": "{'item_id': 47, 'location_id': 2, 'section': 'B4', 'quantity': 9, 'expiration_date': '2027-04-27', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:05:00.599552"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 77,
+    "old_values": "{'quantity': 7, 'expiration_date': datetime.date(2028, 3, 24), 'lot_number': '', 'section': 'B3'}",
+    "new_values": "{'quantity': 8, 'expiration_date': '2028-03-24', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:05:04.945379"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 77,
+    "old_values": "{'quantity': 8, 'expiration_date': datetime.date(2028, 3, 24), 'lot_number': '', 'section': 'B3'}",
+    "new_values": "{'quantity': 7, 'expiration_date': '2028-03-24', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:05:05.747268"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 78,
+    "old_values": "{'quantity': 6, 'expiration_date': datetime.date(2027, 4, 27), 'lot_number': '', 'section': 'B3'}",
+    "new_values": "{'quantity': 78, 'expiration_date': '2027-04-27', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:05:08.605917"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 78,
+    "old_values": "{'quantity': 78, 'expiration_date': datetime.date(2027, 4, 27), 'lot_number': '', 'section': 'B3'}",
+    "new_values": "{'quantity': 7, 'expiration_date': '2027-04-27', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:05:09.475888"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 104,
+    "old_values": null,
+    "new_values": "{'name': 'PPE Kit', 'item_number': '295814', 'manufacturer': 'Boundtree', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T02:07:18.946886"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 80,
+    "old_values": null,
+    "new_values": "{'item_id': 104, 'location_id': 2, 'quantity': 3, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:07:18.970253"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 80,
+    "old_values": "{'quantity': 3, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 3, 'expiration_date': '', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:07:22.165874"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "item",
+    "record_id": 105,
+    "old_values": null,
+    "new_values": "{'name': 'Gloves S', 'item_number': 'S-21573', 'manufacturer': 'ULINE', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T02:08:13.919481"
+  },
+  {
+    "user_id": 1,
+    "action": "CREATE",
+    "table_name": "inventory_item",
+    "record_id": 81,
+    "old_values": null,
+    "new_values": "{'item_id': 105, 'location_id': 2, 'quantity': 7, 'expiration_date': '', 'lot_number': ''}",
+    "timestamp": "2025-09-01T02:08:13.950888"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "inventory_item",
+    "record_id": 81,
+    "old_values": "{'quantity': 7, 'expiration_date': None, 'lot_number': '', 'section': None}",
+    "new_values": "{'quantity': 7, 'expiration_date': '', 'lot_number': '', 'section': 'B3'}",
+    "timestamp": "2025-09-01T02:08:18.102754"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 20,
+    "old_values": "{'name': 'Bandage Roll 4.5\"', 'item_number': 'GZBN3003', 'manufacturer': 'MedChoice', 'is_required': True, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-09-01T02:30:22.331863"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 27,
+    "old_values": "{'name': 'Conforming stretch bandages 2\"', 'item_number': '3112', 'manufacturer': 'Dynarex', 'is_required': True, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-09-01T02:30:37.825752"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 28,
+    "old_values": "{'name': 'Conforming stretch bandages 3\"', 'item_number': '0200060', 'manufacturer': 'Everready', 'is_required': True, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": null,
+    "timestamp": "2025-09-01T02:30:46.331347"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 50,
+    "old_values": "{'name': '\"Large Bore Stopcock W/ extension 22\"\"\"', 'item_number': '2c6251', 'manufacturer': 'Baxter', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": "{'name': 'Large Bore Stopcock W/ extension 22\"', 'item_number': '2c6251', 'manufacturer': 'Baxter', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T03:16:58.449719"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 39,
+    "old_values": "{'name': '\"Extension set 8\"\"\"', 'item_number': '1714-31081', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": "{'name': 'Extension set 8\"', 'item_number': '1714-31081', 'manufacturer': 'Curaplex', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T03:17:11.467547"
+  },
+  {
+    "user_id": 1,
+    "action": "UPDATE",
+    "table_name": "item",
+    "record_id": 79,
+    "old_values": "{'name': 'Red Bag', 'item_number': None, 'manufacturer': None, 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "new_values": "{'name': 'Red Bag', 'item_number': '', 'manufacturer': 'Misc.', 'is_required': False, 'required_quantity': 0, 'minimum_threshold': 0}",
+    "timestamp": "2025-09-01T03:18:04.231427"
+  },
+  {
+    "user_id": 1,
+    "action": "LOGIN",
+    "table_name": "user",
+    "record_id": 1,
+    "old_values": null,
+    "new_values": null,
+    "timestamp": "2025-09-01T13:42:04.618167"
+  }
+]

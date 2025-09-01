@@ -1,0 +1,37 @@
+[
+  {
+    "name": "28R9",
+    "description": "Primary ambulance",
+    "location_type": "ambulance",
+    "vehicle_id": "",
+    "created_at": "2025-08-23T02:45:38.318581"
+  },
+  {
+    "name": "Main Supply",
+    "description": "Main supply room",
+    "location_type": "supply_room",
+    "vehicle_id": "",
+    "created_at": "2025-08-23T02:45:38.318582"
+  },
+  {
+    "name": "BLS Bag R9",
+    "description": "First responder go bag",
+    "location_type": "go_bag",
+    "vehicle_id": "28R9",
+    "created_at": "2025-08-23T02:45:38.318583"
+  },
+  {
+    "name": "ALS Bag R9",
+    "description": "ALS Bag in R9 cabinet",
+    "location_type": "go_bag",
+    "vehicle_id": "28R9",
+    "created_at": "2025-08-23T02:45:38.318584"
+  },
+  {
+    "name": "BLS Bag M4",
+    "description": "BLS bag on M4",
+    "location_type": "go_bag",
+    "vehicle_id": "28M4",
+    "created_at": "2025-08-23T14:01:34.128581"
+  }
+]
