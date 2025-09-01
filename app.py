@@ -78,7 +78,7 @@ def create_default_data():
         
         db.session.commit()
 
-# Application instance for gunicorn
+# Create the application instance
 app = create_app()
 
 if __name__ == '__main__':
