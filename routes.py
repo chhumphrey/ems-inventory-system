@@ -277,8 +277,46 @@ def manage_items():
         flash('Access denied.')
         return redirect(url_for('main.index'))
     
-    items = Item.query.filter_by(deleted_at=None).all()
-    return render_template('admin/items.html', items=items)
+    # Get search parameters
+    search = request.args.get('search', '').strip()
+    status_filter = request.args.get('status', '').strip()
+    required_filter = request.args.get('required', '').strip()
+    
+    # Build the base query
+    query = Item.query.filter_by(deleted_at=None)
+    
+    # Apply search filter
+    if search:
+        query = query.filter(
+            or_(
+                Item.name.ilike(f'%{search}%'),
+                Item.item_number.ilike(f'%{search}%'),
+                Item.manufacturer.ilike(f'%{search}%')
+            )
+        )
+    
+    # Apply status filter
+    if status_filter:
+        if status_filter == 'active':
+            query = query.filter_by(is_active=True)
+        elif status_filter == 'inactive':
+            query = query.filter_by(is_active=False)
+    
+    # Apply required filter
+    if required_filter:
+        if required_filter == 'required':
+            query = query.filter_by(is_required=True)
+        elif required_filter == 'optional':
+            query = query.filter_by(is_required=False)
+    
+    # Order by name
+    items = query.order_by(Item.name).all()
+    
+    return render_template('admin/items.html', 
+                         items=items, 
+                         search=search, 
+                         status_filter=status_filter, 
+                         required_filter=required_filter)
 
 @admin_bp.route('/items/new', methods=['GET', 'POST'])
 @login_required
@@ -925,6 +963,77 @@ def remove_item_from_inventory(inventory_id):
         return jsonify({
             'success': True, 
             'message': 'Item removed from inventory successfully'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@inventory_bp.route('/<int:inventory_id>/update-item-definition', methods=['POST'])
+@login_required
+def update_item_definition(inventory_id):
+    """Update an item definition from the inventory page (admin only)"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'error': 'Access denied. Administrator privileges required.'}), 403
+    
+    try:
+        data = request.get_json()
+        item_id = data.get('item_id')
+        name = data.get('name', '').strip()
+        item_number = data.get('item_number', '').strip()
+        manufacturer = data.get('manufacturer', '').strip()
+        is_required = data.get('is_required', False)
+        required_quantity = int(data.get('required_quantity', 0)) if data.get('required_quantity') else 0
+        minimum_threshold = int(data.get('minimum_threshold', 0)) if data.get('minimum_threshold') else 0
+        
+        if not name:
+            return jsonify({'success': False, 'error': 'Item name is required'}), 400
+        
+        # Get the item
+        item = Item.query.get_or_404(item_id)
+        
+        # Store old values for audit log
+        old_values = {
+            'name': item.name,
+            'item_number': item.item_number,
+            'manufacturer': item.manufacturer,
+            'is_required': item.is_required,
+            'required_quantity': item.required_quantity,
+            'minimum_threshold': item.minimum_threshold
+        }
+        
+        # Update the item
+        item.name = name
+        item.item_number = item_number
+        item.manufacturer = manufacturer
+        item.is_required = is_required
+        item.required_quantity = required_quantity
+        item.minimum_threshold = minimum_threshold
+        
+        db.session.commit()
+        
+        # Log the action
+        log_audit('UPDATE', 'item', item.id, old_values, {
+            'name': name,
+            'item_number': item_number,
+            'manufacturer': manufacturer,
+            'is_required': is_required,
+            'required_quantity': required_quantity,
+            'minimum_threshold': minimum_threshold
+        })
+        
+        return jsonify({
+            'success': True,
+            'message': 'Item updated successfully',
+            'item': {
+                'id': item.id,
+                'name': item.name,
+                'item_number': item.item_number,
+                'manufacturer': item.manufacturer,
+                'is_required': item.is_required,
+                'required_quantity': item.required_quantity,
+                'minimum_threshold': item.minimum_threshold
+            }
         })
         
     except Exception as e:

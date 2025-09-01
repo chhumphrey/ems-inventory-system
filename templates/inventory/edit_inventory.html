@@ -104,10 +104,15 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="duplicateItemRow(this)">
+                                            {% if current_user.is_admin %}
+                                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="editItemRow(this)" title="Edit Item">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            {% endif %}
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="duplicateItemRow(this)" title="Duplicate Item">
                                                 <i class="fas fa-copy"></i>
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItemRow(this)">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItemRow(this)" title="Remove Item">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -173,6 +178,159 @@
         </div>
     </div>
 </div>
+
+<!-- Add Existing Item Modal -->
+<div class="modal fade" id="addExistingItemModal" tabindex="-1" aria-labelledby="addExistingItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addExistingItemModalLabel">
+                    <i class="fas fa-plus me-2"></i>Add Existing Item to Inventory
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addExistingItemForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="existingItemName" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Number</label>
+                                <input type="text" class="form-control" id="existingItemNumber" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Manufacturer</label>
+                                <input type="text" class="form-control" id="existingItemManufacturer" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Required by State</label>
+                                <input type="text" class="form-control" id="existingItemRequired" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Quantity *</label>
+                                <input type="number" class="form-control" id="existingItemQuantity" min="1" value="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Expiration Date</label>
+                                <input type="date" class="form-control" id="existingItemExpiration">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Lot Number</label>
+                                <input type="text" class="form-control" id="existingItemLotNumber" placeholder="Lot #">
+                            </div>
+                        </div>
+                    </div>
+                    {% if inventory.location.has_sections %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Section</label>
+                                <input type="text" class="form-control" id="existingItemSection" placeholder="Section" maxlength="5">
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addExistingItemToInventory()">
+                    <i class="fas fa-plus me-2"></i>Add to Inventory
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Item Definition Modal -->
+{% if current_user.is_admin %}
+<div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editItemModalLabel">
+                    <i class="fas fa-edit me-2"></i>Edit Item Definition
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editItemForm">
+                    <input type="hidden" id="editItemId">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Name *</label>
+                                <input type="text" class="form-control" id="editItemName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Item Number</label>
+                                <input type="text" class="form-control" id="editItemNumber">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Manufacturer</label>
+                                <input type="text" class="form-control" id="editItemManufacturer">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editItemRequired">
+                                    <label class="form-check-label">Required by State Standards</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Required Quantity</label>
+                                <input type="number" class="form-control" id="editItemRequiredQty" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Minimum Threshold</label>
+                                <input type="number" class="form-control" id="editItemMinThreshold" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="saveEditedItemDefinition()">
+                    <i class="fas fa-save me-2"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- New Item Modal -->
 {% if current_user.is_admin %}
@@ -288,7 +446,48 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSearch();
     setupRealTimeUpdates();
     updateInventorySummary();
+    setupModalEnterKeySupport();
 });
+
+function setupModalEnterKeySupport() {
+    // Add Enter key support for all modals
+    const modals = ['addExistingItemModal', 'editItemModal', 'newItemModal'];
+    
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            // Handle Enter key on form inputs
+            const form = modal.querySelector('form');
+            if (form) {
+                form.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Find the submit button and click it
+                        const submitBtn = modal.querySelector('.btn-primary, .btn-success');
+                        if (submitBtn) {
+                            submitBtn.click();
+                        }
+                    }
+                });
+            }
+            
+            // Handle Enter key on individual inputs for better UX
+            const inputs = modal.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Find the submit button and click it
+                        const submitBtn = modal.querySelector('.btn-primary, .btn-success');
+                        if (submitBtn) {
+                            submitBtn.click();
+                        }
+                    }
+                });
+            });
+        }
+    });
+}
 
 function setupSearch() {
     const searchInput = document.getElementById('itemSearchInput');
@@ -362,34 +561,21 @@ function addSelectedItem() {
         return;
     }
     
-    // Prompt for quantity
-    const quantity = prompt(`Enter quantity for ${selectedItem.name}:`, '1');
-    if (!quantity || isNaN(quantity) || parseInt(quantity) <= 0) {
-        showToast('Please enter a valid quantity', 'warning');
-        return;
-    }
-    
-    // Prompt for expiration date
-    const expirationDate = prompt(`Enter expiration date for ${selectedItem.name} (YYYY-MM-DD, optional):`, '');
-    if (expirationDate === null) return; // User cancelled
-    
-    // Prompt for lot number
-    const lotNumber = prompt(`Enter lot number for ${selectedItem.name} (optional):`, '');
-    if (lotNumber === null) return; // User cancelled
-    
-    // Prompt for section if location has sections
-    let section = '';
+    // Populate the existing item modal with selected item data
+    document.getElementById('existingItemName').value = selectedItem.name;
+    document.getElementById('existingItemNumber').value = selectedItem.item_number || '';
+    document.getElementById('existingItemManufacturer').value = selectedItem.manufacturer || '';
+    document.getElementById('existingItemRequired').value = selectedItem.is_required ? 'Yes' : 'No';
+    document.getElementById('existingItemQuantity').value = '1';
+    document.getElementById('existingItemExpiration').value = '';
+    document.getElementById('existingItemLotNumber').value = '';
     {% if inventory.location.has_sections %}
-    section = prompt(`Enter section for ${selectedItem.name} (optional):`, '');
-    if (section === null) return; // User cancelled
+    document.getElementById('existingItemSection').value = '';
     {% endif %}
     
-    // Add item to inventory via API
-    addItemToInventory(selectedItem.id, parseInt(quantity), section, expirationDate, lotNumber);
-    
-    // Reset selection
-    selectedItem = null;
-    document.getElementById('itemSearchInput').value = '';
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('addExistingItemModal'));
+    modal.show();
 }
 
 function addItemToInventory(itemId, quantity, section = '', expirationDate = '', lotNumber = '') {
@@ -418,6 +604,111 @@ function addItemToInventory(itemId, quantity, section = '', expirationDate = '',
     .catch(error => {
         console.error('Error:', error);
         showToast('Failed to add item to inventory', 'danger');
+    });
+}
+
+function addExistingItemToInventory() {
+    const quantity = parseInt(document.getElementById('existingItemQuantity').value) || 0;
+    const expirationDate = document.getElementById('existingItemExpiration').value;
+    const lotNumber = document.getElementById('existingItemLotNumber').value.trim();
+    {% if inventory.location.has_sections %}
+    const section = document.getElementById('existingItemSection').value.trim();
+    {% else %}
+    const section = '';
+    {% endif %}
+    
+    if (quantity <= 0) {
+        showToast('Please enter a valid quantity', 'warning');
+        return;
+    }
+    
+    // Add item to inventory via API
+    addItemToInventory(selectedItem.id, quantity, section, expirationDate, lotNumber);
+    
+    // Close modal and reset selection
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addExistingItemModal'));
+    modal.hide();
+    selectedItem = null;
+    document.getElementById('itemSearchInput').value = '';
+}
+
+function editItemRow(button) {
+    const row = button.closest('tr');
+    const itemId = row.getAttribute('data-item-id');
+    
+    // Find the item data from allItemsData
+    const itemData = allItemsData.find(item => item.id == itemId);
+    if (!itemData) {
+        showToast('Item data not found', 'error');
+        return;
+    }
+    
+    // Populate the edit modal with item definition data
+    document.getElementById('editItemId').value = itemId;
+    document.getElementById('editItemName').value = itemData.name;
+    document.getElementById('editItemNumber').value = itemData.item_number || '';
+    document.getElementById('editItemManufacturer').value = itemData.manufacturer || '';
+    document.getElementById('editItemRequired').checked = itemData.is_required;
+    document.getElementById('editItemRequiredQty').value = itemData.required_quantity || 0;
+    document.getElementById('editItemMinThreshold').value = itemData.minimum_threshold || 0;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('editItemModal'));
+    modal.show();
+}
+
+function saveEditedItemDefinition() {
+    const itemId = document.getElementById('editItemId').value;
+    const name = document.getElementById('editItemName').value.trim();
+    const itemNumber = document.getElementById('editItemNumber').value.trim();
+    const manufacturer = document.getElementById('editItemManufacturer').value.trim();
+    const isRequired = document.getElementById('editItemRequired').checked;
+    const requiredQty = parseInt(document.getElementById('editItemRequiredQty').value) || 0;
+    const minThreshold = parseInt(document.getElementById('editItemMinThreshold').value) || 0;
+    
+    if (!name) {
+        showToast('Item name is required', 'warning');
+        return;
+    }
+    
+    // Update item definition via API
+    fetch(`{{ url_for('inventory.update_item_definition', inventory_id=inventory.id) }}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            item_id: itemId,
+            name: name,
+            item_number: itemNumber,
+            manufacturer: manufacturer,
+            is_required: isRequired,
+            required_quantity: requiredQty,
+            minimum_threshold: minThreshold
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Item definition updated successfully', 'success');
+            
+            // Update the local allItemsData array
+            const itemIndex = allItemsData.findIndex(item => item.id == itemId);
+            if (itemIndex !== -1) {
+                allItemsData[itemIndex] = data.item;
+            }
+            
+            // Close modal and refresh page to show updated data
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editItemModal'));
+            modal.hide();
+            location.reload();
+        } else {
+            showToast(data.error || 'Failed to update item definition', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Failed to update item definition', 'danger');
     });
 }
 
