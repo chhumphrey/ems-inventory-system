@@ -31,7 +31,10 @@ if __name__ == '__main__':
     print("=" * 60)
     
     try:
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        # For production, use environment port and disable debug
+        port = int(os.environ.get('PORT', 5000))
+        debug = os.environ.get('FLASK_ENV') != 'production'
+        app.run(debug=debug, host='0.0.0.0', port=port)
     except KeyboardInterrupt:
         print("\nServer stopped by user")
         sys.exit(0)
