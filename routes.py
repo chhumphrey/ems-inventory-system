@@ -7,6 +7,8 @@ from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm
 import csv
 from io import StringIO
 from flask import Response
+import json
+import os
 
 # Blueprints
 main_bp = Blueprint('main', __name__)
@@ -1869,3 +1871,151 @@ def commit_import():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': f'Error committing import: {str(e)}'})
+
+@admin_bp.route('/import-data', methods=['GET', 'POST'])
+@login_required
+def import_data_web():
+    """Web-based data import interface for admins"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    if request.method == 'POST':
+        try:
+            # Get the import type from form
+            import_type = request.form.get('import_type')
+            
+            if import_type == 'users':
+                success, message = import_users_from_json()
+            elif import_type == 'locations':
+                success, message = import_locations_from_json()
+            elif import_type == 'items':
+                success, message = import_items_from_json()
+            elif import_type == 'all':
+                success, message = import_all_data_from_json()
+            else:
+                flash('Invalid import type selected.', 'danger')
+                return redirect(url_for('admin.import_data_web'))
+            
+            if success:
+                flash(message, 'success')
+            else:
+                flash(message, 'danger')
+                
+        except Exception as e:
+            flash(f'Import failed: {str(e)}', 'danger')
+    
+    return render_template('admin/import_data.html')
+
+def import_users_from_json():
+    """Import users from exported JSON data"""
+    try:
+        json_file = 'data_export/users.json'
+        if not os.path.exists(json_file):
+            return False, 'Users JSON file not found. Please ensure data_export/users.json exists.'
+        
+        with open(json_file, 'r') as f:
+            users_data = json.load(f)
+        
+        imported_count = 0
+        for user_data in users_data:
+            existing_user = User.query.filter_by(username=user_data['username']).first()
+            if not existing_user:
+                user = User(
+                    username=user_data['username'],
+                    email=user_data['email'],
+                    is_admin=user_data['is_admin']
+                )
+                user.set_password('changeme123')
+                db.session.add(user)
+                imported_count += 1
+        
+        db.session.commit()
+        return True, f'Successfully imported {imported_count} users. Default password: changeme123'
+        
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Failed to import users: {str(e)}'
+
+def import_locations_from_json():
+    """Import locations from exported JSON data"""
+    try:
+        json_file = 'data_export/locations.json'
+        if not os.path.exists(json_file):
+            return False, 'Locations JSON file not found. Please ensure data_export/locations.json exists.'
+        
+        with open(json_file, 'r') as f:
+            locations_data = json.load(f)
+        
+        imported_count = 0
+        for location_data in locations_data:
+            existing_location = Location.query.filter_by(name=location_data['name']).first()
+            if not existing_location:
+                location = Location(
+                    name=location_data['name'],
+                    description=location_data['description'],
+                    location_type=location_data['location_type'],
+                    vehicle_id=location_data['vehicle_id']
+                )
+                db.session.add(location)
+                imported_count += 1
+        
+        db.session.commit()
+        return True, f'Successfully imported {imported_count} locations'
+        
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Failed to import locations: {str(e)}'
+
+def import_items_from_json():
+    """Import items from exported JSON data"""
+    try:
+        json_file = 'data_export/items.json'
+        if not os.path.exists(json_file):
+            return False, 'Items JSON file not found. Please ensure data_export/items.json exists.'
+        
+        with open(json_file, 'r') as f:
+            items_data = json.load(f)
+        
+        imported_count = 0
+        for item_data in items_data:
+            existing_item = Item.query.filter_by(item_number=item_data['item_number']).first()
+            if not existing_item:
+                item = Item(
+                    name=item_data['name'],
+                    item_number=item_data['item_number'],
+                    manufacturer=item_data['manufacturer'],
+                    is_required=item_data['is_required'],
+                    required_quantity=item_data['required_quantity'],
+                    minimum_threshold=item_data['minimum_threshold']
+                )
+                db.session.add(item)
+                imported_count += 1
+        
+        db.session.commit()
+        return True, f'Successfully imported {imported_count} items'
+        
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Failed to import items: {str(e)}'
+
+def import_all_data_from_json():
+    """Import all data from exported JSON files"""
+    try:
+        # Import in order: users, locations, items
+        user_success, user_message = import_users_from_json()
+        if not user_success:
+            return False, f'User import failed: {user_message}'
+        
+        location_success, location_message = import_locations_from_json()
+        if not location_success:
+            return False, f'Location import failed: {location_message}'
+        
+        item_success, item_message = import_items_from_json()
+        if not item_success:
+            return False, f'Item import failed: {item_message}'
+        
+        return True, f'All data imported successfully! {user_message} {location_message} {item_message}'
+        
+    except Exception as e:
+        return False, f'Failed to import all data: {str(e)}'
