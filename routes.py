@@ -1893,6 +1893,75 @@ def test_import_access():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@admin_bp.route('/create-sample-data', methods=['POST'])
+@login_required
+def create_sample_data():
+    """Create sample data directly without relying on external files"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    try:
+        # Create sample locations
+        locations_data = [
+            {'name': 'Ambulance 1', 'description': 'Primary ambulance', 'location_type': 'ambulance', 'vehicle_id': None},
+            {'name': 'Supply Room A', 'description': 'Main supply room', 'location_type': 'supply_room', 'vehicle_id': None},
+            {'name': 'Go Bag 1', 'description': 'First responder go bag', 'location_type': 'go_bag', 'vehicle_id': 'Truck 1'},
+            {'name': 'Go Bag 2', 'description': 'Second responder go bag', 'location_type': 'go_bag', 'vehicle_id': 'Truck 2'},
+            {'name': 'Ambulance 2', 'description': 'Secondary ambulance', 'location_type': 'ambulance', 'vehicle_id': None}
+        ]
+        
+        locations_created = 0
+        for loc_data in locations_data:
+            existing = Location.query.filter_by(name=loc_data['name']).first()
+            if not existing:
+                location = Location(
+                    name=loc_data['name'],
+                    description=loc_data['description'],
+                    location_type=loc_data['location_type'],
+                    vehicle_id=loc_data['vehicle_id']
+                )
+                db.session.add(location)
+                locations_created += 1
+        
+        # Create sample items
+        items_data = [
+            {'name': 'Normal Saline 0.9% 1000ml', 'item_number': 'NS-1000', 'manufacturer': 'Baxter', 'is_required': True, 'required_quantity': 4, 'minimum_threshold': 2},
+            {'name': '4x4 Gauze Pads', 'item_number': 'GAUZE-4X4', 'manufacturer': 'Johnson & Johnson', 'is_required': True, 'required_quantity': 20, 'minimum_threshold': 10},
+            {'name': 'Adhesive Tape 1 inch', 'item_number': 'TAPE-1IN', 'manufacturer': '3M', 'is_required': True, 'required_quantity': 6, 'minimum_threshold': 3},
+            {'name': 'Gloves Large', 'item_number': 'GLOVES-L', 'manufacturer': 'Medline', 'is_required': True, 'required_quantity': 10, 'minimum_threshold': 5},
+            {'name': 'Oxygen Mask Adult', 'item_number': 'O2-MASK-ADULT', 'manufacturer': 'Hudson RCI', 'is_required': True, 'required_quantity': 2, 'minimum_threshold': 1},
+            {'name': 'Blood Pressure Cuff', 'item_number': 'BP-CUFF', 'manufacturer': 'Welch Allyn', 'is_required': True, 'required_quantity': 1, 'minimum_threshold': 1},
+            {'name': 'Stethoscope', 'item_number': 'STETH', 'manufacturer': 'Littmann', 'is_required': True, 'required_quantity': 1, 'minimum_threshold': 1},
+            {'name': 'Thermometer Digital', 'item_number': 'TEMP-DIGITAL', 'manufacturer': 'Omron', 'is_required': True, 'required_quantity': 1, 'minimum_threshold': 1}
+        ]
+        
+        items_created = 0
+        for item_data in items_data:
+            existing = Item.query.filter_by(item_number=item_data['item_number']).first()
+            if not existing:
+                item = Item(
+                    name=item_data['name'],
+                    item_number=item_data['item_number'],
+                    manufacturer=item_data['manufacturer'],
+                    is_required=item_data['is_required'],
+                    required_quantity=item_data['required_quantity'],
+                    minimum_threshold=item_data['minimum_threshold']
+                )
+                db.session.add(item)
+                items_created += 1
+        
+        db.session.commit()
+        
+        flash(f'Successfully created {locations_created} locations and {items_created} items!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating sample data: {str(e)}")
+        flash(f'Failed to create sample data: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin.import_data_web'))
+
 @admin_bp.route('/import-data', methods=['GET', 'POST'])
 @login_required
 def import_data_web():
@@ -1905,25 +1974,49 @@ def import_data_web():
         try:
             # Get the import type from form
             import_type = request.form.get('import_type')
+            print(f"Import type requested: {import_type}")
             
-            if import_type == 'users':
-                success, message = import_users_from_json()
-            elif import_type == 'locations':
-                success, message = import_locations_from_json()
-            elif import_type == 'items':
-                success, message = import_items_from_json()
-            elif import_type == 'all':
-                success, message = import_all_data_from_json()
-            else:
-                flash('Invalid import type selected.', 'danger')
-                return redirect(url_for('admin.import_data_web'))
+            # Add timeout protection
+            import signal
             
-            if success:
-                flash(message, 'success')
-            else:
-                flash(message, 'danger')
+            def timeout_handler(signum, frame):
+                raise TimeoutError("Import operation timed out")
+            
+            # Set 30 second timeout
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(30)
+            
+            try:
+                if import_type == 'users':
+                    success, message = import_users_from_json()
+                elif import_type == 'locations':
+                    success, message = import_locations_from_json()
+                elif import_type == 'items':
+                    success, message = import_items_from_json()
+                elif import_type == 'all':
+                    success, message = import_all_data_from_json()
+                else:
+                    flash('Invalid import type selected.', 'danger')
+                    return redirect(url_for('admin.import_data_web'))
+                
+                # Cancel timeout
+                signal.alarm(0)
+                
+                if success:
+                    flash(message, 'success')
+                else:
+                    flash(message, 'danger')
+                    
+            except TimeoutError:
+                signal.alarm(0)
+                flash('Import operation timed out. Please check the server logs.', 'danger')
+            except Exception as e:
+                signal.alarm(0)
+                print(f"Import error: {str(e)}")
+                flash(f'Import failed: {str(e)}', 'danger')
                 
         except Exception as e:
+            print(f"General error: {str(e)}")
             flash(f'Import failed: {str(e)}', 'danger')
     
     # Check if data files exist and get summary
@@ -1955,11 +2048,17 @@ def import_users_from_json():
     """Import users from exported JSON data"""
     try:
         json_file = 'data_export/users.json'
+        print(f"Looking for file: {json_file}")
+        print(f"Current directory: {os.getcwd()}")
+        print(f"Files in current directory: {os.listdir('.')}")
+        
         if not os.path.exists(json_file):
-            return False, 'Users JSON file not found. Please ensure data_export/users.json exists.'
+            return False, f'Users JSON file not found at {json_file}. Current directory: {os.getcwd()}'
         
         with open(json_file, 'r') as f:
             users_data = json.load(f)
+        
+        print(f"Found {len(users_data)} users to import")
         
         imported_count = 0
         for user_data in users_data:
@@ -1973,12 +2072,17 @@ def import_users_from_json():
                 user.set_password('changeme123')
                 db.session.add(user)
                 imported_count += 1
+                print(f"Added user: {user_data['username']}")
+            else:
+                print(f"User already exists: {user_data['username']}")
         
         db.session.commit()
+        print(f"Successfully committed {imported_count} users")
         return True, f'Successfully imported {imported_count} users. Default password: changeme123'
         
     except Exception as e:
         db.session.rollback()
+        print(f"Error importing users: {str(e)}")
         return False, f'Failed to import users: {str(e)}'
 
 def import_locations_from_json():
