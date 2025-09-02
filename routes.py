@@ -1872,6 +1872,27 @@ def commit_import():
         db.session.rollback()
         return jsonify({'success': False, 'error': f'Error committing import: {str(e)}'})
 
+@admin_bp.route('/test-import', methods=['GET'])
+@login_required
+def test_import_access():
+    """Test route to check admin access and basic functionality"""
+    if not current_user.is_admin:
+        return jsonify({'error': 'Access denied. Admin privileges required.'}), 403
+    
+    try:
+        # Test basic functionality
+        result = {
+            'status': 'success',
+            'user': current_user.username,
+            'is_admin': current_user.is_admin,
+            'data_export_exists': os.path.exists('data_export'),
+            'current_directory': os.getcwd(),
+            'files_in_root': os.listdir('.') if os.path.exists('.') else []
+        }
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @admin_bp.route('/import-data', methods=['GET', 'POST'])
 @login_required
 def import_data_web():
@@ -1905,7 +1926,30 @@ def import_data_web():
         except Exception as e:
             flash(f'Import failed: {str(e)}', 'danger')
     
-    return render_template('admin/import_data.html')
+    # Check if data files exist and get summary
+    data_files_exist = False
+    summary = {}
+    
+    try:
+        # Check if data_export directory exists
+        if os.path.exists('data_export'):
+            # Check if summary file exists
+            summary_file = 'data_export/export_summary.json'
+            if os.path.exists(summary_file):
+                with open(summary_file, 'r') as f:
+                    summary = json.load(f)
+                data_files_exist = True
+            else:
+                # Check individual files
+                required_files = ['users.json', 'locations.json', 'items.json']
+                data_files_exist = all(os.path.exists(f'data_export/{file}') for file in required_files)
+    except Exception as e:
+        print(f"Error checking data files: {e}")
+        data_files_exist = False
+    
+    return render_template('admin/import_data.html', 
+                         data_files_exist=data_files_exist, 
+                         summary=summary)
 
 def import_users_from_json():
     """Import users from exported JSON data"""
