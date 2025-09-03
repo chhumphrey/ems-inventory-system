@@ -1893,6 +1893,10 @@ def import_data_web():
                 success, message = import_locations_from_json()
             elif import_type == 'items':
                 success, message = import_items_from_json()
+            elif import_type == 'inventories':
+                success, message = import_inventories_from_json()
+            elif import_type == 'inventory_items':
+                success, message = import_inventory_items_from_json()
             elif import_type == 'all':
                 success, message = import_all_data_from_json()
             else:
@@ -2024,10 +2028,111 @@ def import_items_from_json():
         db.session.rollback()
         return False, f'Failed to import items: {str(e)}'
 
+def import_inventories_from_json():
+    """Import inventories from exported JSON data"""
+    try:
+        json_file = 'data_export/inventories.json'
+        if not os.path.exists(json_file):
+            return False, 'Inventories JSON file not found. Please ensure data_export/inventories.json exists.'
+        
+        with open(json_file, 'r') as f:
+            inventories_data = json.load(f)
+        
+        imported_count = 0
+        for inventory_data in inventories_data:
+            # Find the location by name
+            location = Location.query.filter_by(name=inventory_data['location_name']).first()
+            if not location:
+                continue  # Skip if location doesn't exist
+            
+            # Find the user by username
+            user = User.query.filter_by(username=inventory_data['performed_by']).first()
+            if not user:
+                continue  # Skip if user doesn't exist
+            
+            # Check if inventory already exists for this location and date
+            existing_inventory = Inventory.query.filter_by(
+                location_id=location.id,
+                inventory_date=datetime.strptime(inventory_data['inventory_date'], '%Y-%m-%d').date()
+            ).first()
+            
+            if not existing_inventory:
+                inventory = Inventory(
+                    location_id=location.id,
+                    user_id=user.id,
+                    inventory_date=datetime.strptime(inventory_data['inventory_date'], '%Y-%m-%d').date(),
+                    notes=inventory_data.get('notes', '')
+                )
+                db.session.add(inventory)
+                imported_count += 1
+        
+        db.session.commit()
+        return True, f'Successfully imported {imported_count} inventories.'
+        
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Failed to import inventories: {str(e)}'
+
+def import_inventory_items_from_json():
+    """Import inventory items from exported JSON data"""
+    try:
+        json_file = 'data_export/inventory_items.json'
+        if not os.path.exists(json_file):
+            return False, 'Inventory items JSON file not found. Please ensure data_export/inventory_items.json exists.'
+        
+        with open(json_file, 'r') as f:
+            inventory_items_data = json.load(f)
+        
+        imported_count = 0
+        for item_data in inventory_items_data:
+            # Find the inventory by location and date
+            location = Location.query.filter_by(name=item_data['location_name']).first()
+            if not location:
+                continue
+            
+            inventory = Inventory.query.filter_by(
+                location_id=location.id,
+                inventory_date=datetime.strptime(item_data['inventory_date'], '%Y-%m-%d').date()
+            ).first()
+            if not inventory:
+                continue
+            
+            # Find the item by item number
+            item = Item.query.filter_by(item_number=item_data['item_number']).first()
+            if not item:
+                continue
+            
+            # Check if inventory item already exists
+            existing_inventory_item = InventoryItem.query.filter_by(
+                inventory_id=inventory.id,
+                item_id=item.id,
+                expiration_date=datetime.strptime(item_data['expiration_date'], '%Y-%m-%d').date() if item_data['expiration_date'] else None,
+                lot_number=item_data.get('lot_number')
+            ).first()
+            
+            if not existing_inventory_item:
+                inventory_item = InventoryItem(
+                    inventory_id=inventory.id,
+                    item_id=item.id,
+                    quantity=item_data['quantity'],
+                    expiration_date=datetime.strptime(item_data['expiration_date'], '%Y-%m-%d').date() if item_data['expiration_date'] else None,
+                    lot_number=item_data.get('lot_number'),
+                    section=item_data.get('section')
+                )
+                db.session.add(inventory_item)
+                imported_count += 1
+        
+        db.session.commit()
+        return True, f'Successfully imported {imported_count} inventory items.'
+        
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Failed to import inventory items: {str(e)}'
+
 def import_all_data_from_json():
     """Import all data from exported JSON files"""
     try:
-        # Import in order: users, locations, items
+        # Import in order: users, locations, items, inventories, inventory items
         user_success, user_message = import_users_from_json()
         if not user_success:
             return False, f'User import failed: {user_message}'
@@ -2040,7 +2145,15 @@ def import_all_data_from_json():
         if not item_success:
             return False, f'Item import failed: {item_message}'
         
-        return True, f'All data imported successfully! {user_message} {location_message} {item_message}'
+        inventory_success, inventory_message = import_inventories_from_json()
+        if not inventory_success:
+            return False, f'Inventory import failed: {inventory_message}'
+        
+        inventory_item_success, inventory_item_message = import_inventory_items_from_json()
+        if not inventory_item_success:
+            return False, f'Inventory items import failed: {inventory_item_message}'
+        
+        return True, f'All data imported successfully! {user_message} {location_message} {item_message} {inventory_message} {inventory_item_message}'
         
     except Exception as e:
         return False, f'Failed to import all data: {str(e)}'
