@@ -1717,19 +1717,50 @@ def upload_import_file():
     if not file.filename.lower().endswith(('.csv', '.tsv')):
         return jsonify({'success': False, 'error': 'Invalid file format. Please use CSV or TSV.'})
     
+    # Check file size (limit to 5MB)
+    file.seek(0, 2)  # Seek to end
+    file_size = file.tell()
+    file.seek(0)  # Reset to beginning
+    
+    if file_size > 5 * 1024 * 1024:  # 5MB limit
+        return jsonify({'success': False, 'error': 'File too large. Please keep files under 5MB.'})
+    
+    if file_size == 0:
+        return jsonify({'success': False, 'error': 'File is empty.'})
+    
     try:
         # Determine delimiter
         delimiter = ',' if file.filename.lower().endswith('.csv') else '\t'
         
-        # Read file content
-        content = file.read().decode('utf-8')
+        # Read file content with error handling for encoding
+        try:
+            content = file.read().decode('utf-8')
+        except UnicodeDecodeError:
+            # Try with different encodings
+            file.seek(0)
+            try:
+                content = file.read().decode('latin-1')
+            except UnicodeDecodeError:
+                return jsonify({'success': False, 'error': 'File encoding not supported. Please save your CSV file as UTF-8.'})
+        
         lines = content.split('\n')
         
         # Parse headers and data
         if len(lines) < 2:
             return jsonify({'success': False, 'error': 'File must have at least a header row and one data row'})
         
+        # Clean up lines (remove empty lines and strip whitespace)
+        lines = [line.strip() for line in lines if line.strip()]
+        
+        if len(lines) < 2:
+            return jsonify({'success': False, 'error': 'File must have at least a header row and one data row'})
+        
         headers = [h.strip() for h in lines[0].split(delimiter)]
+        
+        # Validate headers are not empty
+        if not headers or any(not h for h in headers):
+            return jsonify({'success': False, 'error': 'Header row contains empty columns. Please check your CSV format.'})
+        
         data_rows = []
         
         for i, line in enumerate(lines[1:], 1):
@@ -1738,7 +1769,10 @@ def upload_import_file():
                 if len(row_data) == len(headers):
                     data_rows.append(dict(zip(headers, row_data)))
                 else:
-                    return jsonify({'success': False, 'error': f'Row {i} has incorrect number of columns'})
+                    return jsonify({'success': False, 'error': f'Row {i+1} has {len(row_data)} columns but expected {len(headers)}. Please check your CSV format.'})
+        
+        if not data_rows:
+            return jsonify({'success': False, 'error': 'No valid data rows found in the file.'})
         
         # Determine import type based on headers
         import_type = None
@@ -1799,8 +1833,52 @@ def upload_import_file():
             'has_duplicates': len(duplicates) > 0
         })
         
+    except UnicodeDecodeError as e:
+        return jsonify({'success': False, 'error': f'File encoding error. Please ensure your CSV file is saved as UTF-8: {str(e)}'})
     except Exception as e:
+        # Log the full error for debugging
+        print(f"Upload error: {str(e)}")
+        print(f"Error type: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': f'Error processing file: {str(e)}'})
+
+@inventory_bp.route('/import/debug')
+@login_required
+def debug_import():
+    """Debug route to check import functionality"""
+    if not current_user.is_admin:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    try:
+        # Check session configuration
+        session_info = {
+            'session_type': str(type(session)),
+            'session_available': hasattr(session, 'get'),
+            'current_user': current_user.username if current_user else None,
+            'is_admin': current_user.is_admin if current_user else False
+        }
+        
+        # Check file upload limits
+        from flask import current_app
+        upload_info = {
+            'max_content_length': getattr(current_app.config, 'MAX_CONTENT_LENGTH', 'Not set'),
+            'upload_folder': getattr(current_app.config, 'UPLOAD_FOLDER', 'Not set')
+        }
+        
+        return jsonify({
+            'success': True,
+            'session_info': session_info,
+            'upload_info': upload_info,
+            'message': 'Debug information retrieved successfully'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'error_type': type(e).__name__
+        }), 500
 
 @inventory_bp.route('/import/review')
 @login_required
