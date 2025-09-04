@@ -1791,15 +1791,29 @@ def upload_import_file():
             if import_type == 'items':
                 item_number = row.get('Item Number', '').strip()
                 if item_number:
+                    # Validate required fields
+                    if not row.get('Item Name', '').strip():
+                        return jsonify({'success': False, 'error': f'Row with Item Number "{item_number}" is missing Item Name'})
+                    
                     existing_item = Item.query.filter_by(item_number=item_number, deleted_at=None).first()
                     if existing_item:
                         duplicates.append({
                             'row': row,
-                            'existing': existing_item,
+                            'existing': {
+                                'id': existing_item.id,
+                                'name': existing_item.name,
+                                'item_number': existing_item.item_number,
+                                'manufacturer': existing_item.manufacturer,
+                                'is_required': existing_item.is_required,
+                                'required_quantity': existing_item.required_quantity,
+                                'minimum_threshold': existing_item.minimum_threshold
+                            },
                             'type': 'items'
                         })
                     else:
                         processed_data.append(row)
+                else:
+                    return jsonify({'success': False, 'error': 'Found row with empty Item Number. All rows must have an Item Number.'})
             
             elif import_type == 'inventory':
                 item_number = row.get('Item Number', '').strip()
@@ -1817,12 +1831,14 @@ def upload_import_file():
                     
                     processed_data.append(row)
         
-        # Store data in session for step 3
+        # Store data in session for step 3 (ensure all data is JSON serializable)
         session['import_data'] = {
             'type': import_type,
             'data': processed_data,
             'duplicates': duplicates,
-            'headers': headers
+            'headers': headers,
+            'filename': file.filename,
+            'upload_time': datetime.now().isoformat()
         }
         
         return jsonify({
