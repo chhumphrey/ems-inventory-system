@@ -1790,6 +1790,11 @@ def upload_import_file():
         for row in data_rows:
             if import_type == 'items':
                 item_number = row.get('Item Number', '').strip()
+                
+                # Skip completely empty rows
+                if not item_number and not any(row.get(key, '').strip() for key in row.keys()):
+                    continue
+                
                 if item_number:
                     # Validate required fields
                     if not row.get('Item Name', '').strip():
@@ -1813,11 +1818,20 @@ def upload_import_file():
                     else:
                         processed_data.append(row)
                 else:
-                    return jsonify({'success': False, 'error': 'Found row with empty Item Number. All rows must have an Item Number.'})
+                    # Check if this row has any non-empty data
+                    has_data = any(row.get(key, '').strip() for key in row.keys())
+                    if has_data:
+                        return jsonify({'success': False, 'error': 'Found row with data but missing Item Number. All rows must have an Item Number.'})
+                    # If no data, skip the row silently
             
             elif import_type == 'inventory':
                 item_number = row.get('Item Number', '').strip()
                 location_id = row.get('Location ID', '').strip()
+                
+                # Skip completely empty rows
+                if not item_number and not location_id and not any(row.get(key, '').strip() for key in row.keys()):
+                    continue
+                
                 if item_number and location_id:
                     # Check if item exists
                     item = Item.query.filter_by(item_number=item_number, deleted_at=None).first()
@@ -1830,6 +1844,16 @@ def upload_import_file():
                         return jsonify({'success': False, 'error': f'Location with ID "{location_id}" not found in database'})
                     
                     processed_data.append(row)
+                else:
+                    # Check if this row has any non-empty data
+                    has_data = any(row.get(key, '').strip() for key in row.keys())
+                    if has_data:
+                        return jsonify({'success': False, 'error': 'Found row with data but missing required fields (Item Number and Location ID).'})
+                    # If no data, skip the row silently
+        
+        # After processing, check if we have any valid data
+        if not processed_data and not duplicates:
+            return jsonify({'success': False, 'error': 'No valid data found after processing. Please check your CSV format and ensure all required fields are filled.'})
         
         # Store data in session for step 3 (ensure all data is JSON serializable)
         session['import_data'] = {
