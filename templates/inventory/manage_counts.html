@@ -107,6 +107,10 @@
                                                    class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>
+                                                <a href="{{ url_for('inventory.export_inventory_count_csv', inventory_id=count.inventory_id) }}" 
+                                                   class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-download"></i> Export
+                                                </a>
                                                 <button type="button" 
                                                         class="btn btn-sm btn-outline-danger"
                                                         onclick="confirmDeleteCount({{ count.inventory_id }}, '{{ count.location_name }}', '{{ count.inventory_date.strftime('%Y-%m-%d %H:%M') }}')">

@@ -320,6 +320,46 @@ def manage_items():
                          status_filter=status_filter, 
                          required_filter=required_filter)
 
+@admin_bp.route('/items/export-csv')
+@login_required
+def export_items_csv():
+    """Export items to CSV format matching import template"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    # Get all active items
+    items = Item.query.filter_by(deleted_at=None).order_by(Item.name).all()
+    
+    # Create CSV content
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Write header row (matching import template format)
+    writer.writerow(['Item Name', 'Item Number', 'Manufacturer', 'Required by State Standards', 'Required Quantity', 'Minimum Threshold'])
+    
+    # Write data rows
+    for item in items:
+        writer.writerow([
+            item.name,
+            item.item_number,
+            item.manufacturer,
+            'Yes' if item.is_required else 'No',
+            item.required_quantity,
+            item.minimum_threshold
+        ])
+    
+    output.seek(0)
+    
+    # Create response with CSV content
+    response = Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=items_export.csv'}
+    )
+    
+    return response
+
 @admin_bp.route('/items/new', methods=['GET', 'POST'])
 @login_required
 def new_item():
@@ -1313,6 +1353,68 @@ def manage_inventory_counts():
                          location_filter=location_filter,
                          start_date=start_date,
                          end_date=end_date)
+
+@inventory_bp.route('/<int:inventory_id>/export-csv')
+@login_required
+def export_inventory_count_csv(inventory_id):
+    """Export a specific inventory count to CSV format matching import template"""
+    if not current_user.is_admin:
+        flash('Access denied. Administrator privileges required.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    # Get the inventory
+    inventory = Inventory.query.filter_by(id=inventory_id, is_active=True, deleted_at=None).first()
+    if not inventory:
+        flash('Inventory count not found.', 'danger')
+        return redirect(url_for('inventory.manage_inventory_counts'))
+    
+    # Get all inventory items for this inventory
+    inventory_items = db.session.query(
+        InventoryItem,
+        Item,
+        Location
+    ).join(
+        Item, InventoryItem.item_id == Item.id
+    ).join(
+        Location, InventoryItem.location_id == Location.id
+    ).filter(
+        InventoryItem.location_id == inventory.location_id,
+        InventoryItem.is_active == True,
+        InventoryItem.deleted_at == None
+    ).all()
+    
+    # Create CSV content
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Write header row (matching import template format)
+    writer.writerow(['Location ID', 'Item Number', 'Quantity', 'Expiration Date (YYYY-MM-DD)', 'Lot Number'])
+    
+    # Write data rows
+    for inventory_item, item, location in inventory_items:
+        writer.writerow([
+            location.id,
+            item.item_number,
+            inventory_item.quantity,
+            inventory_item.expiration_date.strftime('%Y-%m-%d') if inventory_item.expiration_date else '',
+            inventory_item.lot_number or ''
+        ])
+    
+    output.seek(0)
+    
+    # Create filename with location and date
+    location_name = location.name.replace(' ', '_')
+    date_str = inventory.inventory_date.strftime('%Y-%m-%d')
+    filename = f'inventory_count_{location_name}_{date_str}.csv'
+    
+    # Create response with CSV content
+    response = Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': f'attachment; filename={filename}'}
+    )
+    
+    return response
 
 @inventory_bp.route('/<int:inventory_id>/delete-count', methods=['POST'])
 @login_required
