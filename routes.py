@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from flask_login import login_required, current_user, login_user, logout_user
 from datetime import datetime, date, timedelta
-from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog
+from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog, PasswordResetToken
 from sqlalchemy import and_, or_, func
-from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm
+from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm, PasswordResetRequestForm, PasswordResetForm, ProfileForm, ChangePasswordForm
 import csv
 from io import StringIO
 from flask import Response
@@ -141,6 +141,122 @@ def logout():
     log_audit('LOGOUT', 'user', current_user.id)
     logout_user()
     return redirect(url_for('main.login'))
+
+@main_bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    
+    form = PasswordResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data, deleted_at=None).first()
+        if user:
+            # Generate password reset token
+            from app import generate_password_reset_token, send_password_reset_email
+            token = generate_password_reset_token(user)
+            
+            # Send email
+            if send_password_reset_email(user, token):
+                flash('Password reset instructions have been sent to your email address.', 'success')
+            else:
+                flash('Failed to send email. Please try again or contact support.', 'error')
+        else:
+            # Don't reveal if email exists or not for security
+            flash('If an account with that email exists, password reset instructions have been sent.', 'info')
+        return redirect(url_for('main.login'))
+    
+    return render_template('reset_password_request.html', form=form)
+
+@main_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    
+    # Verify the token
+    from app import verify_password_reset_token
+    user = verify_password_reset_token(token)
+    
+    if not user:
+        flash('Invalid or expired reset link.', 'error')
+        return redirect(url_for('main.reset_password_request'))
+    
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        # Reset the password
+        user.set_password(form.password.data)
+        
+        # Mark token as used
+        reset_token = PasswordResetToken.query.filter_by(token=token).first()
+        if reset_token:
+            reset_token.used = True
+        
+        db.session.commit()
+        log_audit('PASSWORD_RESET', 'user', user.id)
+        flash('Your password has been reset successfully!', 'success')
+        return redirect(url_for('main.login'))
+    
+    return render_template('reset_password.html', form=form)
+
+@main_bp.route('/profile')
+@login_required
+def profile():
+    form = ProfileForm(obj=current_user)
+    change_password_form = ChangePasswordForm()
+    return render_template('profile.html', form=form, change_password_form=change_password_form)
+
+@main_bp.route('/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+    form = ProfileForm()
+    if form.validate_on_submit():
+        # Check if email is already taken by another user
+        existing_user = User.query.filter(
+            User.email == form.email.data,
+            User.id != current_user.id,
+            User.deleted_at.is_(None)
+        ).first()
+        
+        if existing_user:
+            flash('Email address is already in use by another account.', 'error')
+            return redirect(url_for('main.profile'))
+        
+        # Update user profile
+        old_values = {
+            'first_name': current_user.first_name,
+            'last_name': current_user.last_name,
+            'email': current_user.email
+        }
+        
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.email = form.email.data
+        
+        db.session.commit()
+        log_audit('PROFILE_UPDATE', 'user', current_user.id, old_values, {
+            'first_name': current_user.first_name,
+            'last_name': current_user.last_name,
+            'email': current_user.email
+        })
+        
+        flash('Your profile has been updated successfully!', 'success')
+        return redirect(url_for('main.profile'))
+    
+    return render_template('profile.html', form=form)
+
+@main_bp.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.current_password.data):
+            current_user.set_password(form.new_password.data)
+            db.session.commit()
+            log_audit('PASSWORD_CHANGE', 'user', current_user.id)
+            flash('Your password has been changed successfully!', 'success')
+        else:
+            flash('Current password is incorrect.', 'error')
+    
+    return redirect(url_for('main.profile'))
 
 # Admin routes
 @admin_bp.route('/')

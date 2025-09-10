@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - EMS Inventory Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-user me-2"></i>User Profile
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('main.update_profile') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.first_name.label(class="form-label") }}
+                                {{ form.first_name(class="form-control") }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.first_name.errors %}
+                                            <small>{{ error }}</small><br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.last_name.label(class="form-label") }}
+                                {{ form.last_name(class="form-control") }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.last_name.errors %}
+                                            <small>{{ error }}</small><br>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">
+                                {% for error in form.email.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" value="{{ current_user.username }}" readonly>
+                        <small class="form-text text-muted">Username cannot be changed</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Account Type</label>
+                        <input type="text" class="form-control" value="{% if current_user.is_admin %}Administrator{% else %}Standard User{% endif %}" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Member Since</label>
+                        <input type="text" class="form-control" value="{{ current_user.created_at.strftime('%B %d, %Y') }}" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Last Login</label>
+                        <input type="text" class="form-control" value="{% if current_user.last_login %}{{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}{% else %}Never{% endif %}" readonly>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Update Profile
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-key me-2"></i>Change Password
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('main.change_password') }}">
+                    {{ change_password_form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ change_password_form.current_password.label(class="form-label") }}
+                        {{ change_password_form.current_password(class="form-control") }}
+                        {% if change_password_form.current_password.errors %}
+                            <div class="text-danger">
+                                {% for error in change_password_form.current_password.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ change_password_form.new_password.label(class="form-label") }}
+                        {{ change_password_form.new_password(class="form-control") }}
+                        {% if change_password_form.new_password.errors %}
+                            <div class="text-danger">
+                                {% for error in change_password_form.new_password.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ change_password_form.confirm_password.label(class="form-label") }}
+                        {{ change_password_form.confirm_password(class="form-control") }}
+                        {% if change_password_form.confirm_password.errors %}
+                            <div class="text-danger">
+                                {% for error in change_password_form.confirm_password.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-key me-1"></i>Change Password
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Account Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-2">
+                    <strong>User ID:</strong> {{ current_user.id }}
+                </p>
+                <p class="mb-2">
+                    <strong>Status:</strong> 
+                    <span class="badge {% if current_user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                        {% if current_user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </p>
+                {% if current_user.is_admin %}
+                <p class="mb-0">
+                    <strong>Permissions:</strong> Full system access
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

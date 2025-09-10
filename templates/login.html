@@ -43,6 +43,12 @@
                         {{ form.submit(class="btn btn-primary", style="background-color: #1976D2; border-color: #1976D2;") }}
                     </div>
                 </form>
+                
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('main.reset_password_request') }}" class="text-decoration-none">
+                        <i class="fas fa-key me-1"></i>Forgot your password?
+                    </a>
+                </div>
             </div>
             <div class="card-footer text-center text-muted">
                 <small>Volunteer Fire Company EMS Group</small>

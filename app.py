@@ -1,11 +1,14 @@
 from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash
 from datetime import datetime, date, timedelta
 import os
+import secrets
+import hashlib
 
 from config import Config
-from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog
+from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog, PasswordResetToken
 from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm
 from routes import main_bp, admin_bp, inventory_bp
 
@@ -15,6 +18,13 @@ def create_app():
     
     # Initialize extensions
     db.init_app(app)
+    
+    # Configure email for development
+    if app.config.get('MAIL_SUPPRESS_SEND', False):
+        app.config['MAIL_SUPPRESS_SEND'] = True
+        app.config['MAIL_DEBUG'] = True
+    
+    mail = Mail(app)
     
     # Initialize login manager
     login_manager = LoginManager()
@@ -77,6 +87,222 @@ def create_default_data():
             db.session.add(item)
         
         db.session.commit()
+
+def send_password_reset_email(user, token):
+    """Send password reset email to user"""
+    from gmail_service import send_email_via_gmail
+    from sendgrid_service import send_email_via_sendgrid
+    
+    # Try SendGrid first (easiest)
+    if app.config.get('USE_SENDGRID', False):
+        subject = 'Password Reset Request - EMS Inventory System'
+        reset_url = f"http://localhost:5000/reset_password/{token}"
+        
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background-color: #D32F2F; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+                <h2 style="margin: 0;"><i class="fas fa-ambulance"></i> EMS Inventory System</h2>
+            </div>
+            <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px;">
+                <h3 style="color: #333;">Password Reset Request</h3>
+                <p>Hello {user.get_full_name()},</p>
+                <p>You have requested to reset your password for the EMS Inventory Management System.</p>
+                <p>Click the button below to reset your password:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{reset_url}" style="background-color: #1976D2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+                </div>
+                <p style="color: #666; font-size: 14px;">This link will expire in 1 hour for security reasons.</p>
+                <p style="color: #666; font-size: 14px;">If you didn't request this password reset, please ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                <p style="color: #999; font-size: 12px; text-align: center;">
+                    Volunteer Fire Company EMS Group<br>
+                    This is an automated message, please do not reply.
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        text_content = f"""
+Password Reset Request - EMS Inventory System
+Hello {user.get_full_name()},
+You have requested to reset your password for the EMS Inventory Management System.
+Click the link below to reset your password:
+{reset_url}
+This link will expire in 1 hour for security reasons.
+If you didn't request this password reset, please ignore this email.
+Volunteer Fire Company EMS Group
+This is an automated message, please do not reply.
+        """
+        
+        return send_email_via_sendgrid(user.email, subject, html_content, text_content)
+    
+    # Try Gmail API second
+    elif app.config.get('USE_GMAIL_API', False):
+        subject = 'Password Reset Request - EMS Inventory System'
+        reset_url = f"http://localhost:5000/reset_password/{token}"
+        
+        html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background-color: #D32F2F; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+                <h2 style="margin: 0;"><i class="fas fa-ambulance"></i> EMS Inventory System</h2>
+            </div>
+            <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px;">
+                <h3 style="color: #333;">Password Reset Request</h3>
+                <p>Hello {user.get_full_name()},</p>
+                <p>You have requested to reset your password for the EMS Inventory Management System.</p>
+                <p>Click the button below to reset your password:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{reset_url}" style="background-color: #1976D2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+                </div>
+                <p style="color: #666; font-size: 14px;">This link will expire in 1 hour for security reasons.</p>
+                <p style="color: #666; font-size: 14px;">If you didn't request this password reset, please ignore this email.</p>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                <p style="color: #999; font-size: 12px; text-align: center;">
+                    Volunteer Fire Company EMS Group<br>
+                    This is an automated message, please do not reply.
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        text_content = f"""
+Password Reset Request - EMS Inventory System
+Hello {user.get_full_name()},
+You have requested to reset your password for the EMS Inventory Management System.
+Click the link below to reset your password:
+{reset_url}
+This link will expire in 1 hour for security reasons.
+If you didn't request this password reset, please ignore this email.
+Volunteer Fire Company EMS Group
+This is an automated message, please do not reply.
+        """
+        
+        return send_email_via_gmail(user.email, subject, html_content, text_content)
+    
+    # Fallback to SMTP
+    from flask_mail import Message
+    
+    msg = Message(
+        subject='Password Reset Request - EMS Inventory System',
+        recipients=[user.email],
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    
+    reset_url = f"http://localhost:5000/reset_password/{token}"
+    
+    msg.html = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background-color: #D32F2F; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+            <h2 style="margin: 0;"><i class="fas fa-ambulance"></i> EMS Inventory System</h2>
+        </div>
+        <div style="background-color: #f8f9fa; padding: 30px; border-radius: 0 0 5px 5px;">
+            <h3 style="color: #333;">Password Reset Request</h3>
+            <p>Hello {user.get_full_name()},</p>
+            <p>You have requested to reset your password for the EMS Inventory Management System.</p>
+            <p>Click the button below to reset your password:</p>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{reset_url}" style="background-color: #1976D2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+            </div>
+            <p style="color: #666; font-size: 14px;">This link will expire in 1 hour for security reasons.</p>
+            <p style="color: #666; font-size: 14px;">If you didn't request this password reset, please ignore this email.</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px; text-align: center;">
+                Volunteer Fire Company EMS Group<br>
+                This is an automated message, please do not reply.
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    msg.body = f"""
+Password Reset Request - EMS Inventory System
+
+Hello {user.get_full_name()},
+
+You have requested to reset your password for the EMS Inventory Management System.
+
+Click the link below to reset your password:
+{reset_url}
+
+This link will expire in 1 hour for security reasons.
+
+If you didn't request this password reset, please ignore this email.
+
+Volunteer Fire Company EMS Group
+This is an automated message, please do not reply.
+    """
+    
+    try:
+        if app.config.get('MAIL_SUPPRESS_SEND', False):
+            # In development mode, print email to console
+            print("=" * 60)
+            print("EMAIL WOULD BE SENT:")
+            print("=" * 60)
+            print(f"To: {msg.recipients[0]}")
+            print(f"From: {msg.sender}")
+            print(f"Subject: {msg.subject}")
+            print("-" * 60)
+            print("HTML Content:")
+            print(msg.html)
+            print("-" * 60)
+            print("Text Content:")
+            print(msg.body)
+            print("=" * 60)
+            return True
+        else:
+            from flask_mail import Mail
+            mail = Mail(app)
+            mail.send(msg)
+            return True
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        return False
+
+def generate_password_reset_token(user):
+    """Generate a secure password reset token for user"""
+    # Create a secure token
+    token = secrets.token_urlsafe(32)
+    
+    # Set expiration time (1 hour from now)
+    expires_at = datetime.utcnow() + timedelta(seconds=app.config['PASSWORD_RESET_EXPIRY'])
+    
+    # Create token record
+    reset_token = PasswordResetToken(
+        user_id=user.id,
+        token=token,
+        expires_at=expires_at
+    )
+    
+    # Remove any existing tokens for this user
+    PasswordResetToken.query.filter_by(user_id=user.id, used=False).delete()
+    
+    # Save new token
+    db.session.add(reset_token)
+    db.session.commit()
+    
+    return token
+
+def verify_password_reset_token(token):
+    """Verify password reset token and return user if valid"""
+    reset_token = PasswordResetToken.query.filter_by(
+        token=token, 
+        used=False
+    ).first()
+    
+    if not reset_token:
+        return None
+    
+    # Check if token is expired
+    if datetime.utcnow() > reset_token.expires_at:
+        return None
+    
+    return reset_token.user
 
 # Create the application instance
 app = create_app()

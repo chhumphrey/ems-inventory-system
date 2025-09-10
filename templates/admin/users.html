@@ -29,6 +29,7 @@
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
+                                <th>Name</th>
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Role</th>
@@ -40,8 +41,9 @@
                             {% for user in users %}
                             <tr>
                                 <td>
-                                    <strong>{{ user.username }}</strong>
+                                    <strong>{{ user.get_full_name() }}</strong>
                                 </td>
+                                <td>{{ user.username }}</td>
                                 <td>{{ user.email }}</td>
                                 <td>
                                     {% if user.is_admin %}
