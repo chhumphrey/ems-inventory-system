@@ -195,13 +195,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Export functionality (placeholder for future CSV export)
-    var exportButtons = document.querySelectorAll('.btn-export');
-    exportButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            alert('Export functionality will be implemented in a future update.');
-        });
-    });
+    // Export functionality - let the existing routes handle the exports
+    // No JavaScript intervention needed - the links work directly
 });
 
 // Utility functions

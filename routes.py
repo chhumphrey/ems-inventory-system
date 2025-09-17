@@ -330,6 +330,47 @@ def edit_user(user_id):
     
     return render_template('admin/user_form.html', form=form, title='Edit User')
 
+@admin_bp.route('/users/<int:user_id>/delete', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    if not current_user.is_admin:
+        flash('Access denied.')
+        return redirect(url_for('main.index'))
+    
+    user = User.query.get_or_404(user_id)
+    
+    # Prevent deletion of the current user
+    if user.id == current_user.id:
+        flash('You cannot delete your own account.', 'error')
+        return redirect(url_for('admin.manage_users'))
+    
+    # Check if user has any audit logs (optional safety check)
+    audit_count = AuditLog.query.filter_by(user_id=user_id).count()
+    if audit_count > 0:
+        flash(f'Cannot delete user "{user.username}" because they have {audit_count} audit log entries. Consider deactivating instead.', 'error')
+        return redirect(url_for('admin.manage_users'))
+    
+    # Store user data for audit log
+    old_values = {
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'is_admin': user.is_admin,
+        'is_active': user.is_active
+    }
+    
+    # Soft delete the user
+    user.deleted_at = datetime.utcnow()
+    user.is_active = False
+    db.session.commit()
+    
+    # Log the deletion
+    log_audit('DELETE', 'user', user.id, old_values=old_values)
+    
+    flash(f'User "{user.username}" has been deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_users'))
+
 @admin_bp.route('/locations')
 @login_required
 def manage_locations():
@@ -387,6 +428,42 @@ def edit_location(location_id):
         return redirect(url_for('admin.manage_locations'))
     
     return render_template('admin/location_form.html', form=form, title='Edit Location')
+
+@admin_bp.route('/locations/<int:location_id>/delete', methods=['POST'])
+@login_required
+def delete_location(location_id):
+    if not current_user.is_admin:
+        flash('Access denied.')
+        return redirect(url_for('main.index'))
+    
+    location = Location.query.get_or_404(location_id)
+    
+    # Check if location is used in any inventory
+    inventory_usage = Inventory.query.filter_by(location_id=location_id, deleted_at=None).first()
+    if inventory_usage:
+        flash(f'Cannot delete location "{location.name}" because it is currently in use in inventory. Please remove it from all inventories first.', 'error')
+        return redirect(url_for('admin.manage_locations'))
+    
+    # Store location data for audit log
+    old_values = {
+        'name': location.name,
+        'description': location.description,
+        'location_type': location.location_type,
+        'vehicle_id': location.vehicle_id,
+        'has_sections': location.has_sections,
+        'is_active': location.is_active
+    }
+    
+    # Soft delete the location
+    location.deleted_at = datetime.utcnow()
+    location.is_active = False
+    db.session.commit()
+    
+    # Log the deletion
+    log_audit('DELETE', 'location', location.id, old_values=old_values)
+    
+    flash(f'Location "{location.name}" has been deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_locations'))
 
 @admin_bp.route('/items')
 @login_required
