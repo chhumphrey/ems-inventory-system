@@ -196,8 +196,23 @@
 <script>
 function confirmDelete(itemName, itemId) {
     if (confirm(`Are you sure you want to delete item "${itemName}"? This action cannot be undone.`)) {
-        // For now, just show a message. You can implement actual deletion later
-        alert('Item deletion functionality will be implemented in a future update.');
+        // Create a form to submit the DELETE request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/items/${itemId}/delete`;
+        
+        // Add CSRF token if available
+        const csrfToken = document.querySelector('meta[name=csrf-token]');
+        if (csrfToken) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken.getAttribute('content');
+            form.appendChild(csrfInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
     }
 }
 

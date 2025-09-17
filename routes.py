@@ -526,6 +526,43 @@ def edit_item(item_id):
     
     return render_template('admin/item_form.html', form=form, title='Edit Item')
 
+@admin_bp.route('/items/<int:item_id>/delete', methods=['POST'])
+@login_required
+def delete_item(item_id):
+    if not current_user.is_admin:
+        flash('Access denied.')
+        return redirect(url_for('main.index'))
+    
+    item = Item.query.get_or_404(item_id)
+    
+    # Check if item is used in any inventory
+    inventory_usage = InventoryItem.query.filter_by(item_id=item_id, deleted_at=None).first()
+    if inventory_usage:
+        flash(f'Cannot delete item "{item.name}" because it is currently in use in inventory. Please remove it from all inventories first.', 'error')
+        return redirect(url_for('admin.manage_items'))
+    
+    # Store item data for audit log
+    old_values = {
+        'name': item.name,
+        'item_number': item.item_number,
+        'manufacturer': item.manufacturer,
+        'is_required': item.is_required,
+        'required_quantity': item.required_quantity,
+        'minimum_threshold': item.minimum_threshold,
+        'is_active': item.is_active
+    }
+    
+    # Soft delete the item
+    item.deleted_at = datetime.utcnow()
+    item.is_active = False
+    db.session.commit()
+    
+    # Log the deletion
+    log_audit('DELETE', 'item', item.id, old_values=old_values)
+    
+    flash(f'Item "{item.name}" has been deleted successfully.', 'success')
+    return redirect(url_for('admin.manage_items'))
+
 # Inventory routes
 @inventory_bp.route('/')
 @login_required
