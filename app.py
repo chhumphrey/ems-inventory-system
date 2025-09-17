@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash
 from datetime import datetime, date, timedelta
+from sqlalchemy import text, inspect
 import os
 import secrets
 import hashlib
@@ -41,13 +42,23 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(inventory_bp, url_prefix='/inventory')
     
-    # Initialize database (migration handled separately)
+    # Initialize database
     with app.app_context():
-        # Only create tables if they don't exist (for development)
-        # In production, use migrate_database.py script
-        if os.environ.get('FLASK_ENV') == 'development':
+        try:
+            # Try to create tables - this will work for both new and existing databases
             db.create_all()
-            create_default_data()
+            
+            # Only create default data if no users exist
+            if User.query.first() is None:
+                create_default_data()
+                print("✓ Database initialized with default data")
+            else:
+                print("✓ Database connected successfully")
+                
+        except Exception as e:
+            print(f"Database initialization error: {e}")
+            # Try to continue anyway
+            pass
     
     return app
 
