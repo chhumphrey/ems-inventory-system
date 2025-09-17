@@ -41,10 +41,13 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(inventory_bp, url_prefix='/inventory')
     
-    # Create database tables
+    # Initialize database (migration handled separately)
     with app.app_context():
-        db.create_all()
-        create_default_data()
+        # Only create tables if they don't exist (for development)
+        # In production, use migrate_database.py script
+        if os.environ.get('FLASK_ENV') == 'development':
+            db.create_all()
+            create_default_data()
     
     return app
 

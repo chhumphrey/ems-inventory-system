@@ -2,7 +2,9 @@ services:
   - type: web
     name: ems-inventory-system
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      python migrate_database.py
     startCommand: gunicorn --bind 0.0.0.0:$PORT wsgi:app
     envVars:
       - key: PYTHON_VERSION
@@ -11,5 +13,9 @@ services:
         value: production
       - key: SECRET_KEY
         value: your-secret-key-change-this-in-production
+      - key: USE_SENDGRID
+        value: true
+      - key: SENDGRID_API_KEY
+        fromService: sendgrid-api-key
     healthCheckPath: /
     autoDeploy: true
