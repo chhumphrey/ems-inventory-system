@@ -166,6 +166,16 @@ def test():
     """Simple test endpoint"""
     return "Test endpoint working"
 
+@main_bp.route('/env_test')
+def env_test():
+    """Test environment variables"""
+    env_vars = {
+        'DATABASE_URL': os.environ.get('DATABASE_URL', 'NOT_SET'),
+        'FLASK_ENV': os.environ.get('FLASK_ENV', 'NOT_SET'),
+        'PYTHON_VERSION': os.environ.get('PYTHON_VERSION', 'NOT_SET')
+    }
+    return f"<pre>{env_vars}</pre>"
+
 @main_bp.route('/db_status')
 def db_status():
     """Check database status"""
