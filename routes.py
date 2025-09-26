@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session, current_app
 from flask_login import login_required, current_user, login_user, logout_user
 from datetime import datetime, date, timedelta
 from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog, PasswordResetToken
@@ -170,7 +170,9 @@ def db_status():
     """Check database status"""
     try:
         user_count = User.query.count()
-        return f"Database status: {user_count} users"
+        db_url = current_app.config['SQLALCHEMY_DATABASE_URI']
+        is_postgres = 'postgresql' in db_url
+        return f"Database: {'PostgreSQL' if is_postgres else 'SQLite'}<br>Users: {user_count}<br>URL: {db_url[:50]}..."
     except Exception as e:
         return f"Database error: {e}"
 
