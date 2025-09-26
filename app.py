@@ -45,8 +45,12 @@ def create_app():
     # Initialize database
     with app.app_context():
         try:
+            # Debug: Print database configuration
+            db_uri = app.config['SQLALCHEMY_DATABASE_URI']
+            print(f"Database URI: {db_uri[:50]}...")
+            
             # Check if we're using PostgreSQL (production) or SQLite (development)
-            is_postgres = 'postgresql' in app.config['SQLALCHEMY_DATABASE_URI']
+            is_postgres = 'postgresql' in db_uri
             
             if is_postgres:
                 print("🐘 Using PostgreSQL database")

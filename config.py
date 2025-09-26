@@ -5,12 +5,15 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
     # Database configuration - use PostgreSQL in production, SQLite in development
-    if os.environ.get('DATABASE_URL'):
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url and database_url.startswith('postgresql://'):
         # Production: Use PostgreSQL from DATABASE_URL
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+        SQLALCHEMY_DATABASE_URI = database_url
+        print(f"🐘 Using PostgreSQL database: {database_url[:50]}...")
     else:
         # Development: Use SQLite
         SQLALCHEMY_DATABASE_URI = 'sqlite:///ems_inventory.db'
+        print("🗃️ Using SQLite database")
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
