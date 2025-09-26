@@ -4,7 +4,7 @@ Test PostgreSQL connection to diagnose the issue
 """
 
 import os
-import psycopg2
+import psycopg
 from urllib.parse import urlparse
 
 def test_postgres_connection():
@@ -19,10 +19,10 @@ def test_postgres_connection():
         parsed_url = urlparse(database_url)
         
         # Connect to PostgreSQL
-        conn = psycopg2.connect(
+        conn = psycopg.connect(
             host=parsed_url.hostname,
             port=parsed_url.port,
-            database=parsed_url.path[1:],  # Remove leading slash
+            dbname=parsed_url.path[1:],  # Remove leading slash
             user=parsed_url.username,
             password=parsed_url.password
         )

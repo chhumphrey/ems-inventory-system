@@ -8,6 +8,9 @@ class Config:
     database_url = os.environ.get('DATABASE_URL')
     if database_url and database_url.startswith('postgresql://'):
         # Production: Use PostgreSQL from DATABASE_URL
+        # Convert postgresql:// to postgresql+psycopg:// for psycopg3
+        if database_url.startswith('postgresql://'):
+            database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
         SQLALCHEMY_DATABASE_URI = database_url
         print(f"🐘 Using PostgreSQL database: {database_url[:50]}...")
     else:
