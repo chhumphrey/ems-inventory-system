@@ -143,50 +143,6 @@ def login():
             flash('Login error occurred. Please try again.')
     return render_template('login.html', form=form)
 
-@main_bp.route('/debug')
-def debug():
-    """Debug endpoint to check database state"""
-    try:
-        user_count = User.query.count()
-        admin_user = User.query.filter_by(username='admin').first()
-        
-        debug_info = {
-            'user_count': user_count,
-            'admin_exists': admin_user is not None,
-            'admin_email': admin_user.email if admin_user else None,
-            'admin_is_active': admin_user.is_active if admin_user else None
-        }
-        
-        return f"<pre>{debug_info}</pre>"
-    except Exception as e:
-        return f"<pre>Error: {e}</pre>"
-
-@main_bp.route('/test')
-def test():
-    """Simple test endpoint"""
-    return "Test endpoint working"
-
-@main_bp.route('/env_test')
-def env_test():
-    """Test environment variables"""
-    env_vars = {
-        'DATABASE_URL': os.environ.get('DATABASE_URL', 'NOT_SET'),
-        'FLASK_ENV': os.environ.get('FLASK_ENV', 'NOT_SET'),
-        'PYTHON_VERSION': os.environ.get('PYTHON_VERSION', 'NOT_SET')
-    }
-    return f"<pre>{env_vars}</pre>"
-
-@main_bp.route('/db_status')
-def db_status():
-    """Check database status"""
-    try:
-        user_count = User.query.count()
-        db_url = current_app.config['SQLALCHEMY_DATABASE_URI']
-        is_postgres = 'postgresql' in db_url
-        env_db_url = os.environ.get('DATABASE_URL', 'NOT_SET')
-        return f"Database: {'PostgreSQL' if is_postgres else 'SQLite'}<br>Users: {user_count}<br>URL: {db_url[:50]}...<br>ENV DATABASE_URL: {env_db_url[:50]}..."
-    except Exception as e:
-        return f"Database error: {e}"
 
 @main_bp.route('/logout')
 @login_required
