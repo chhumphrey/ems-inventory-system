@@ -165,6 +165,15 @@ def test():
     """Simple test endpoint"""
     return "Test endpoint working"
 
+@main_bp.route('/db_status')
+def db_status():
+    """Check database status"""
+    try:
+        user_count = User.query.count()
+        return f"Database status: {user_count} users"
+    except Exception as e:
+        return f"Database error: {e}"
+
 @main_bp.route('/logout')
 @login_required
 def logout():
