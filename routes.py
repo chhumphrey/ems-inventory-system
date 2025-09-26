@@ -123,26 +123,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     
-    # Ensure admin user exists (database should already be initialized)
-    try:
-        admin_user = User.query.filter_by(username='admin').first()
-        if not admin_user:
-            print("Creating admin user during login...")
-            from werkzeug.security import generate_password_hash
-            admin_user = User(
-                username='admin',
-                email='admin@emsinventory.com',
-                password_hash=generate_password_hash('admin123'),
-                is_admin=True,
-                is_active=True
-            )
-            db.session.add(admin_user)
-            db.session.commit()
-            print("✓ Admin user created")
-    except Exception as e:
-        print(f"Error ensuring admin user: {e}")
-        flash('Database error. Please contact administrator.')
-        return render_template('login.html', form=form)
+    # Database should already be initialized during app startup
     
     form = LoginForm()
     if form.validate_on_submit():

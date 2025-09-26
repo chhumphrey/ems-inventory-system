@@ -45,22 +45,27 @@ def create_app():
     # Initialize database
     with app.app_context():
         try:
-            # First, ensure tables exist
-            print("Initializing database...")
-            db.create_all()
-            print("✓ Database tables created/verified")
-            
-            # Run database migration
-            migrate_database()
-            
-            # Only create default data if no users exist
-            if User.query.first() is None:
+            # Check if database already exists and has data
+            try:
+                user_count = User.query.count()
+                if user_count > 0:
+                    print("✓ Database connected successfully - data exists")
+                    # Just ensure admin user exists
+                    ensure_admin_user()
+                else:
+                    print("✓ Database connected - no data, initializing...")
+                    # Run database migration first
+                    migrate_database()
+                    # Create default data
+                    create_default_data()
+                    print("✓ Database initialized with default data")
+            except Exception as db_error:
+                print(f"Database query failed, initializing fresh database: {db_error}")
+                # Database doesn't exist or is corrupted, create fresh
+                db.create_all()
+                migrate_database()
                 create_default_data()
-                print("✓ Database initialized with default data")
-            else:
-                print("✓ Database connected successfully")
-                # Ensure admin user exists
-                ensure_admin_user()
+                print("✓ Fresh database created with default data")
                 
         except Exception as e:
             print(f"Database initialization error: {e}")
