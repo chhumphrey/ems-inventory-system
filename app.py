@@ -76,14 +76,8 @@ def create_app():
                         
                 except Exception as pg_error:
                     print(f"❌ PostgreSQL connection failed: {pg_error}")
-                    print("🔄 Falling back to SQLite for this session")
-                    # Fall back to SQLite if PostgreSQL fails
-                    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ems_inventory.db'
-                    db.init_app(app)
-                    db.create_all()
-                    migrate_database()
-                    create_default_data()
-                    print("✓ Fallback to SQLite completed")
+                    print("❌ NOT falling back to SQLite - showing error")
+                    raise pg_error  # Re-raise the error to see what's wrong
             else:
                 print("🗃️ Using SQLite database")
                 # For SQLite, check if data exists first
