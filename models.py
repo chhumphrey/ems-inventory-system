@@ -28,13 +28,21 @@ class User(db.Model, UserMixin):
     
     def get_full_name(self):
         """Get user's full name, fallback to username if not set"""
-        if self.first_name and self.last_name:
-            return f"{self.first_name} {self.last_name}"
-        elif self.first_name:
-            return self.first_name
-        elif self.last_name:
-            return self.last_name
-        else:
+        try:
+            # Safely access first_name and last_name attributes
+            first_name = getattr(self, 'first_name', None)
+            last_name = getattr(self, 'last_name', None)
+            
+            if first_name and last_name:
+                return f"{first_name} {last_name}"
+            elif first_name:
+                return first_name
+            elif last_name:
+                return last_name
+            else:
+                return self.username
+        except Exception:
+            # Fallback to username if any error occurs
             return self.username
 
 class Location(db.Model):

@@ -73,13 +73,21 @@ def migrate_database():
         
         if 'first_name' not in user_columns:
             print("Adding first_name column to user table...")
-            db.engine.execute(text("ALTER TABLE user ADD COLUMN first_name VARCHAR(50)"))
-            print("✓ Added first_name column")
+            try:
+                db.engine.execute(text("ALTER TABLE user ADD COLUMN first_name VARCHAR(50)"))
+                print("✓ Added first_name column")
+            except Exception as e:
+                print(f"Error adding first_name column: {e}")
+                # Continue anyway
         
         if 'last_name' not in user_columns:
             print("Adding last_name column to user table...")
-            db.engine.execute(text("ALTER TABLE user ADD COLUMN last_name VARCHAR(50)"))
-            print("✓ Added last_name column")
+            try:
+                db.engine.execute(text("ALTER TABLE user ADD COLUMN last_name VARCHAR(50)"))
+                print("✓ Added last_name column")
+            except Exception as e:
+                print(f"Error adding last_name column: {e}")
+                # Continue anyway
         
         # Check if password_reset_token table exists
         tables = inspector.get_table_names()
