@@ -161,6 +161,23 @@ def login():
             flash('Login error occurred. Please try again.')
     return render_template('login.html', form=form)
 
+@main_bp.route('/debug')
+def debug():
+    """Debug endpoint to check database state"""
+    try:
+        user_count = User.query.count()
+        admin_user = User.query.filter_by(username='admin').first()
+        
+        debug_info = {
+            'user_count': user_count,
+            'admin_exists': admin_user is not None,
+            'admin_email': admin_user.email if admin_user else None,
+            'admin_is_active': admin_user.is_active if admin_user else None
+        }
+        
+        return f"<pre>{debug_info}</pre>"
+    except Exception as e:
+        return f"<pre>Error: {e}</pre>"
 
 @main_bp.route('/logout')
 @login_required
