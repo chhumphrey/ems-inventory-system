@@ -46,7 +46,7 @@ def create_app():
     with app.app_context():
         try:
             # Try to create tables - this will work for both new and existing databases
-            db.create_all()
+            # db.create_all()
             
             # Only create default data if no users exist
             if User.query.first() is None:
