@@ -14,18 +14,6 @@ from app import create_app
 # Create the application instance
 application = create_app()
 
-# Run database migration in production
-try:
-    from fix_production_db import fix_production_database
-    print("Running production database migration...")
-    if fix_production_database():
-        print("✓ Production database migration completed")
-    else:
-        print("⚠ Production database migration had issues, but continuing...")
-except Exception as e:
-    print(f"Database migration error: {e}")
-    # Continue anyway - the app might still work
-
 # For gunicorn compatibility
 app = application
 

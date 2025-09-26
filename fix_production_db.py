@@ -11,11 +11,25 @@ from datetime import datetime
 def fix_production_database():
     """Fix production database by adding missing columns"""
     
-    # Database path (adjust for production)
-    db_path = os.path.join('instance', 'ems_inventory.db')
+    # Try multiple possible database paths
+    possible_paths = [
+        os.path.join('instance', 'ems_inventory.db'),
+        os.path.join(os.getcwd(), 'instance', 'ems_inventory.db'),
+        'ems_inventory.db',
+        os.path.join('/opt/render/project/src', 'instance', 'ems_inventory.db'),
+        os.path.join('/app', 'instance', 'ems_inventory.db')
+    ]
     
-    if not os.path.exists(db_path):
-        print(f"Database not found at {db_path}")
+    db_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            db_path = path
+            break
+    
+    if not db_path:
+        print(f"Database not found in any of these locations: {possible_paths}")
+        print(f"Current working directory: {os.getcwd()}")
+        print(f"Files in current directory: {os.listdir('.')}")
         return False
     
     print(f"Fixing database at: {db_path}")

@@ -45,8 +45,8 @@ def create_app():
     # Initialize database
     with app.app_context():
         try:
-            # Try to create tables - this will work for both new and existing databases
-            # db.create_all()
+            # Run database migration first
+            migrate_database()
             
             # Only create default data if no users exist
             if User.query.first() is None:
@@ -61,6 +61,79 @@ def create_app():
             pass
     
     return app
+
+def migrate_database():
+    """Migrate database schema to add new columns and tables"""
+    try:
+        from sqlalchemy import text, inspect
+        
+        # Check if first_name column exists in user table
+        inspector = inspect(db.engine)
+        user_columns = [col['name'] for col in inspector.get_columns('user')]
+        
+        if 'first_name' not in user_columns:
+            print("Adding first_name column to user table...")
+            db.engine.execute(text("ALTER TABLE user ADD COLUMN first_name VARCHAR(50)"))
+            print("✓ Added first_name column")
+        
+        if 'last_name' not in user_columns:
+            print("Adding last_name column to user table...")
+            db.engine.execute(text("ALTER TABLE user ADD COLUMN last_name VARCHAR(50)"))
+            print("✓ Added last_name column")
+        
+        # Check if password_reset_token table exists
+        tables = inspector.get_table_names()
+        if 'password_reset_token' not in tables:
+            print("Creating password_reset_token table...")
+            db.engine.execute(text("""
+                CREATE TABLE password_reset_token (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    token VARCHAR(100) NOT NULL UNIQUE,
+                    expires_at DATETIME NOT NULL,
+                    used BOOLEAN DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES user (id)
+                )
+            """))
+            print("✓ Created password_reset_token table")
+        
+        # Check if audit_log user_id is nullable
+        audit_columns = inspector.get_columns('audit_log')
+        user_id_col = next((col for col in audit_columns if col['name'] == 'user_id'), None)
+        
+        if user_id_col and not user_id_col['nullable']:
+            print("Making user_id nullable in audit_log table...")
+            # For SQLite, we need to recreate the table
+            db.engine.execute(text("""
+                CREATE TABLE audit_log_new (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER,
+                    action VARCHAR(100) NOT NULL,
+                    table_name VARCHAR(100) NOT NULL,
+                    record_id INTEGER,
+                    old_values TEXT,
+                    new_values TEXT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    ip_address VARCHAR(45),
+                    FOREIGN KEY (user_id) REFERENCES user (id)
+                )
+            """))
+            
+            # Copy data from old table
+            db.engine.execute(text("INSERT INTO audit_log_new SELECT * FROM audit_log"))
+            
+            # Drop old table and rename new one
+            db.engine.execute(text("DROP TABLE audit_log"))
+            db.engine.execute(text("ALTER TABLE audit_log_new RENAME TO audit_log"))
+            
+            print("✓ Made user_id nullable in audit_log table")
+        
+        print("✓ Database migration completed")
+        
+    except Exception as e:
+        print(f"Database migration error: {e}")
+        # Continue anyway - the app might still work
 
 def create_default_data():
     """Create default admin user and sample data if database is empty"""
