@@ -54,19 +54,36 @@ def create_app():
             
             if is_postgres:
                 print("🐘 Using PostgreSQL database")
-                # For PostgreSQL, always create tables first
-                db.create_all()
-                migrate_database()
-                
-                # Check if we have data
-                user_count = User.query.count()
-                if user_count > 0:
-                    print("✓ PostgreSQL database connected - data exists")
-                    ensure_admin_user()
-                else:
-                    print("✓ PostgreSQL database connected - no data, initializing...")
+                try:
+                    # Test database connection first
+                    from sqlalchemy import text
+                    db.session.execute(text("SELECT 1"))
+                    print("✓ PostgreSQL connection successful")
+                    
+                    # Create tables
+                    db.create_all()
+                    migrate_database()
+                    
+                    # Check if we have data
+                    user_count = User.query.count()
+                    if user_count > 0:
+                        print("✓ PostgreSQL database connected - data exists")
+                        ensure_admin_user()
+                    else:
+                        print("✓ PostgreSQL database connected - no data, initializing...")
+                        create_default_data()
+                        print("✓ PostgreSQL database initialized with default data")
+                        
+                except Exception as pg_error:
+                    print(f"❌ PostgreSQL connection failed: {pg_error}")
+                    print("🔄 Falling back to SQLite for this session")
+                    # Fall back to SQLite if PostgreSQL fails
+                    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ems_inventory.db'
+                    db.init_app(app)
+                    db.create_all()
+                    migrate_database()
                     create_default_data()
-                    print("✓ PostgreSQL database initialized with default data")
+                    print("✓ Fallback to SQLite completed")
             else:
                 print("🗃️ Using SQLite database")
                 # For SQLite, check if data exists first
