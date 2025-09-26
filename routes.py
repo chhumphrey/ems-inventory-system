@@ -125,14 +125,19 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data, deleted_at=None).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            user.last_login = datetime.now()
-            db.session.commit()
-            log_audit('LOGIN', 'user', user.id)
-            return redirect(url_for('main.index'))
-        flash('Invalid username or password')
+        try:
+            user = User.query.filter_by(username=form.username.data, deleted_at=None).first()
+            if user and user.check_password(form.password.data):
+                login_user(user, remember=form.remember_me.data)
+                user.last_login = datetime.now()
+                db.session.commit()
+                log_audit('LOGIN', 'user', user.id)
+                return redirect(url_for('main.index'))
+            else:
+                flash('Invalid username or password')
+        except Exception as e:
+            print(f"Login error: {e}")
+            flash('Login error occurred. Please try again.')
     return render_template('login.html', form=form)
 
 @main_bp.route('/debug')
