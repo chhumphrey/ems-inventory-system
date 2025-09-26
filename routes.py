@@ -196,11 +196,20 @@ def test():
 def db_test():
     """Test database connection"""
     try:
-        db.create_all()
-        user_count = User.query.count()
-        return f"Database test successful. User count: {user_count}"
+        # Test database connection
+        db.engine.execute("SELECT 1")
+        return "Database connection successful"
     except Exception as e:
-        return f"Database test failed: {e}"
+        return f"Database connection failed: {e}"
+
+@main_bp.route('/create_tables')
+def create_tables():
+    """Manually create database tables"""
+    try:
+        db.create_all()
+        return "Tables created successfully"
+    except Exception as e:
+        return f"Error creating tables: {e}"
 
 @main_bp.route('/logout')
 @login_required
