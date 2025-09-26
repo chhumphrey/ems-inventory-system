@@ -123,8 +123,12 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     
-    # Ensure admin user exists before processing login
+    # Ensure database is initialized and admin user exists
     try:
+        # First, ensure tables exist
+        db.create_all()
+        
+        # Then check for admin user
         admin_user = User.query.filter_by(username='admin').first()
         if not admin_user:
             print("Creating admin user during login...")
@@ -140,7 +144,9 @@ def login():
             db.session.commit()
             print("✓ Admin user created")
     except Exception as e:
-        print(f"Error ensuring admin user: {e}")
+        print(f"Error ensuring database and admin user: {e}")
+        flash('Database initialization error. Please contact administrator.')
+        return render_template('login.html', form=form)
     
     form = LoginForm()
     if form.validate_on_submit():
