@@ -179,6 +179,11 @@ def debug():
     except Exception as e:
         return f"<pre>Error: {e}</pre>"
 
+@main_bp.route('/test')
+def test():
+    """Simple test endpoint"""
+    return "Test endpoint working"
+
 @main_bp.route('/logout')
 @login_required
 def logout():
