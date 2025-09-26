@@ -45,27 +45,43 @@ def create_app():
     # Initialize database
     with app.app_context():
         try:
-            # Check if database already exists and has data
-            try:
-                user_count = User.query.count()
-                if user_count > 0:
-                    print("✓ Database connected successfully - data exists")
-                    # Just ensure admin user exists
-                    ensure_admin_user()
-                else:
-                    print("✓ Database connected - no data, initializing...")
-                    # Run database migration first
-                    migrate_database()
-                    # Create default data
-                    create_default_data()
-                    print("✓ Database initialized with default data")
-            except Exception as db_error:
-                print(f"Database query failed, initializing fresh database: {db_error}")
-                # Database doesn't exist or is corrupted, create fresh
+            # Check if we're using PostgreSQL (production) or SQLite (development)
+            is_postgres = 'postgresql' in app.config['SQLALCHEMY_DATABASE_URI']
+            
+            if is_postgres:
+                print("🐘 Using PostgreSQL database")
+                # For PostgreSQL, always create tables first
                 db.create_all()
                 migrate_database()
-                create_default_data()
-                print("✓ Fresh database created with default data")
+                
+                # Check if we have data
+                user_count = User.query.count()
+                if user_count > 0:
+                    print("✓ PostgreSQL database connected - data exists")
+                    ensure_admin_user()
+                else:
+                    print("✓ PostgreSQL database connected - no data, initializing...")
+                    create_default_data()
+                    print("✓ PostgreSQL database initialized with default data")
+            else:
+                print("🗃️ Using SQLite database")
+                # For SQLite, check if data exists first
+                try:
+                    user_count = User.query.count()
+                    if user_count > 0:
+                        print("✓ SQLite database connected - data exists")
+                        ensure_admin_user()
+                    else:
+                        print("✓ SQLite database connected - no data, initializing...")
+                        migrate_database()
+                        create_default_data()
+                        print("✓ SQLite database initialized with default data")
+                except Exception as db_error:
+                    print(f"SQLite query failed, initializing fresh database: {db_error}")
+                    db.create_all()
+                    migrate_database()
+                    create_default_data()
+                    print("✓ Fresh SQLite database created with default data")
                 
         except Exception as e:
             print(f"Database initialization error: {e}")

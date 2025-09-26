@@ -3,7 +3,15 @@ from datetime import timedelta
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///ems_inventory.db'
+    
+    # Database configuration - use PostgreSQL in production, SQLite in development
+    if os.environ.get('DATABASE_URL'):
+        # Production: Use PostgreSQL from DATABASE_URL
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    else:
+        # Development: Use SQLite
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///ems_inventory.db'
+    
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)
     
