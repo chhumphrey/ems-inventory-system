@@ -45,7 +45,12 @@ def create_app():
     # Initialize database
     with app.app_context():
         try:
-            # Run database migration first
+            # First, ensure tables exist
+            print("Initializing database...")
+            db.create_all()
+            print("✓ Database tables created/verified")
+            
+            # Run database migration
             migrate_database()
             
             # Only create default data if no users exist
@@ -149,12 +154,6 @@ def migrate_database():
     except Exception as e:
         print(f"Database migration error: {e}")
         # Continue anyway - the app might still work
-        # Try to create tables if they don't exist
-        try:
-            db.create_all()
-            print("✓ Created missing tables")
-        except Exception as e2:
-            print(f"Error creating tables: {e2}")
 
 def ensure_admin_user():
     """Ensure admin user exists in the database"""
