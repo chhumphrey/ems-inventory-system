@@ -6,6 +6,10 @@ class Config:
     
     # Database configuration - use PostgreSQL in production, SQLite in development
     database_url = os.environ.get('DATABASE_URL')
+    
+    # Debug: Print environment variable
+    print(f"DEBUG: DATABASE_URL from environment: {database_url}")
+    
     if database_url and database_url.startswith('postgresql://'):
         # Production: Use PostgreSQL from DATABASE_URL
         # Convert postgresql:// to postgresql+psycopg:// for psycopg3
