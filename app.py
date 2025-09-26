@@ -54,6 +54,8 @@ def create_app():
                 print("✓ Database initialized with default data")
             else:
                 print("✓ Database connected successfully")
+                # Ensure admin user exists
+                ensure_admin_user()
                 
         except Exception as e:
             print(f"Database initialization error: {e}")
@@ -142,6 +144,30 @@ def migrate_database():
     except Exception as e:
         print(f"Database migration error: {e}")
         # Continue anyway - the app might still work
+
+def ensure_admin_user():
+    """Ensure admin user exists in the database"""
+    try:
+        # Check if admin user exists
+        admin_user = User.query.filter_by(username='admin').first()
+        
+        if not admin_user:
+            print("Creating admin user...")
+            admin_user = User(
+                username='admin',
+                email='admin@emsinventory.com',
+                password_hash=generate_password_hash('admin123'),
+                is_admin=True,
+                is_active=True
+            )
+            db.session.add(admin_user)
+            db.session.commit()
+            print("✓ Admin user created successfully")
+        else:
+            print("✓ Admin user exists")
+            
+    except Exception as e:
+        print(f"Error ensuring admin user: {e}")
 
 def create_default_data():
     """Create default admin user and sample data if database is empty"""
