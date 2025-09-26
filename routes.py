@@ -126,7 +126,9 @@ def login():
     # Ensure database is initialized and admin user exists
     try:
         # First, ensure tables exist
+        print("Creating database tables...")
         db.create_all()
+        print("✓ Database tables created")
         
         # Then check for admin user
         admin_user = User.query.filter_by(username='admin').first()
@@ -143,6 +145,8 @@ def login():
             db.session.add(admin_user)
             db.session.commit()
             print("✓ Admin user created")
+        else:
+            print("✓ Admin user already exists")
     except Exception as e:
         print(f"Error ensuring database and admin user: {e}")
         flash('Database initialization error. Please contact administrator.')
