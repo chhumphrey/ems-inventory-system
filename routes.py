@@ -169,47 +169,6 @@ def login():
             flash('Login error occurred. Please try again.')
     return render_template('login.html', form=form)
 
-@main_bp.route('/debug')
-def debug():
-    """Debug endpoint to check database state"""
-    try:
-        user_count = User.query.count()
-        admin_user = User.query.filter_by(username='admin').first()
-        
-        debug_info = {
-            'user_count': user_count,
-            'admin_exists': admin_user is not None,
-            'admin_email': admin_user.email if admin_user else None,
-            'admin_is_active': admin_user.is_active if admin_user else None
-        }
-        
-        return f"<pre>{debug_info}</pre>"
-    except Exception as e:
-        return f"<pre>Error: {e}</pre>"
-
-@main_bp.route('/test')
-def test():
-    """Simple test endpoint"""
-    return "Test endpoint working"
-
-@main_bp.route('/db_test')
-def db_test():
-    """Test database connection"""
-    try:
-        # Test database connection
-        db.engine.execute("SELECT 1")
-        return "Database connection successful"
-    except Exception as e:
-        return f"Database connection failed: {e}"
-
-@main_bp.route('/create_tables')
-def create_tables():
-    """Manually create database tables"""
-    try:
-        db.create_all()
-        return "Tables created successfully"
-    except Exception as e:
-        return f"Error creating tables: {e}"
 
 @main_bp.route('/logout')
 @login_required
