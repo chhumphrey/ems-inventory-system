@@ -59,7 +59,12 @@ def create_app():
                 
         except Exception as e:
             print(f"Database initialization error: {e}")
-            # Try to continue anyway
+            # Try to continue anyway - don't let database issues crash the app
+            try:
+                # At minimum, ensure admin user exists
+                ensure_admin_user()
+            except Exception as e2:
+                print(f"Error ensuring admin user: {e2}")
             pass
     
     return app
@@ -144,6 +149,12 @@ def migrate_database():
     except Exception as e:
         print(f"Database migration error: {e}")
         # Continue anyway - the app might still work
+        # Try to create tables if they don't exist
+        try:
+            db.create_all()
+            print("✓ Created missing tables")
+        except Exception as e2:
+            print(f"Error creating tables: {e2}")
 
 def ensure_admin_user():
     """Ensure admin user exists in the database"""
