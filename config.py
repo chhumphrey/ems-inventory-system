@@ -10,6 +10,11 @@ class Config:
     # Debug: Print environment variable
     print(f"DEBUG: DATABASE_URL from environment: {database_url}")
     
+    # Temporary test: Force PostgreSQL for production
+    if os.environ.get('RENDER') == 'true':  # Render sets this environment variable
+        print("🔄 RENDER detected, forcing PostgreSQL connection")
+        database_url = "postgresql://ems_inventory_user:UiEmnfMBgWYtJ4pjEkqS5AGmffH98OCO@dpg-d3b12bjuibrs73f3qs10-a.ohio-postgres.render.com/ems_inventory"
+    
     if database_url and database_url.startswith('postgresql://'):
         # Production: Use PostgreSQL from DATABASE_URL
         # Convert postgresql:// to postgresql+psycopg:// for psycopg3
