@@ -56,6 +56,19 @@
                             <li><a class="dropdown-item" href="{{ url_for('admin.manage_locations') }}">Locations</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('admin.manage_items') }}">Items</a></li>
                             <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('attendance.dashboard') }}">
+                                <i class="fas fa-user-check me-2"></i>Attendance Dashboard
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('attendance.members_list') }}">
+                                <i class="fas fa-user-friends me-2"></i>Members
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('attendance.events_list') }}">
+                                <i class="fas fa-calendar-alt me-2"></i>Events
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('attendance.reports') }}">
+                                <i class="fas fa-chart-bar me-2"></i>Attendance Reports
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('inventory.manage_inventory_counts') }}">
                                 <i class="fas fa-clipboard-list me-2"></i>Manage Counts
                             </a></li>

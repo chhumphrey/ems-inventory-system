@@ -75,6 +75,69 @@
     </div>
 </div>
 
+<div class="row mb-4 mt-4">
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #00BCD4;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Organizations</h6>
+                        <h3 class="mb-0">{{ organizations|length }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-building fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #FF5722;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Members</h6>
+                        <h3 class="mb-0">{{ total_members }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-friends fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #607D8B;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Events</h6>
+                        <h3 class="mb-0">{{ total_events }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white" style="background-color: #795548;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Attendance Records</h6>
+                        <h3 class="mb-0">{{ total_attendance_records }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-6">
         <div class="card">
@@ -134,7 +197,38 @@
 </div>
 
 <div class="row mt-4">
-    <div class="col-12">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header" style="background-color: #00BCD4; color: white;">
+                <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>Attendance Management</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('attendance.dashboard') }}" class="btn btn-outline-info">
+                        <i class="fas fa-tachometer-alt me-2"></i>Attendance Dashboard
+                    </a>
+                    <a href="{{ url_for('attendance.members_list') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-user-friends me-2"></i>Manage Members ({{ total_members }})
+                    </a>
+                    <a href="{{ url_for('attendance.events_list') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-calendar-alt me-2"></i>Manage Events ({{ total_events }})
+                    </a>
+                    <a href="{{ url_for('attendance.reports') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Attendance Reports
+                    </a>
+                    <hr>
+                    <a href="{{ url_for('attendance.new_member') }}" class="btn btn-primary" style="background-color: #00BCD4; border-color: #00BCD4;">
+                        <i class="fas fa-plus me-2"></i>Add New Member
+                    </a>
+                    <a href="{{ url_for('attendance.new_event') }}" class="btn btn-primary" style="background-color: #607D8B; border-color: #607D8B;">
+                        <i class="fas fa-plus me-2"></i>Create New Event
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
         <div class="card">
             <div class="card-header" style="background-color: #4CAF50; color: white;">
                 <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Information</h5>

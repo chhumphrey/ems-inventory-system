@@ -280,7 +280,38 @@ def admin_dashboard():
     locations = Location.query.filter_by(deleted_at=None).all()
     items = Item.query.filter_by(deleted_at=None).all()
     
-    return render_template('admin/dashboard.html', users=users, locations=locations, items=items)
+    # Get attendance statistics
+    organizations = Organization.query.filter_by(deleted_at=None).all()
+    org = organizations[0] if organizations else None
+    
+    if org:
+        total_members = Member.query.filter(
+            Member.org_id == org.id,
+            Member.deleted_at == None
+        ).count()
+        
+        total_events = Event.query.filter(
+            Event.org_id == org.id,
+            Event.deleted_at == None
+        ).count()
+        
+        total_attendance_records = AttendanceRecord.query.filter(
+            AttendanceRecord.org_id == org.id
+        ).count()
+    else:
+        total_members = 0
+        total_events = 0
+        total_attendance_records = 0
+    
+    return render_template('admin/dashboard.html', 
+                         users=users, 
+                         locations=locations, 
+                         items=items,
+                         organizations=organizations,
+                         total_members=total_members,
+                         total_events=total_events,
+                         total_attendance_records=total_attendance_records,
+                         org=org)
 
 @admin_bp.route('/users')
 @login_required
