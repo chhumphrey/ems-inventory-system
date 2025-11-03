@@ -2603,6 +2603,61 @@ def members_list():
                          members=members,
                          search=search)
 
+@attendance_bp.route('/members/quick_add', methods=['POST'])
+@login_required
+def quick_add_member():
+    """Quick add a new member with minimal fields"""
+    try:
+        org = get_default_organization()
+        
+        badge_number = request.form.get('badge_number', '').strip()
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        
+        # Validate required fields
+        if not first_name or not last_name:
+            flash('First name and last name are required.', 'error')
+            return redirect(url_for('attendance.members_list'))
+        
+        # Check if member with same badge number already exists (if badge number provided)
+        if badge_number:
+            existing = Member.query.filter(
+                Member.org_id == org.id,
+                Member.badge_number == badge_number,
+                Member.deleted_at == None
+            ).first()
+            if existing:
+                flash(f'Member with badge number {badge_number} already exists.', 'error')
+                return redirect(url_for('attendance.members_list'))
+        
+        # Create new member
+        member = Member(
+            org_id=org.id,
+            badge_number=badge_number or None,
+            first_name=first_name,
+            last_name=last_name,
+            email=None,
+            phone=None,
+            membership_type='active',
+            is_active=True
+        )
+        db.session.add(member)
+        db.session.commit()
+        
+        log_audit('CREATE', 'member', member.id, new_values={
+            'badge_number': badge_number,
+            'first_name': first_name,
+            'last_name': last_name
+        })
+        
+        flash(f'Member {member.get_full_name()} added successfully.', 'success')
+        return redirect(url_for('attendance.members_list'))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error adding member: {str(e)}', 'error')
+        return redirect(url_for('attendance.members_list'))
+
 @attendance_bp.route('/members/new', methods=['GET', 'POST'])
 @login_required
 def new_member():

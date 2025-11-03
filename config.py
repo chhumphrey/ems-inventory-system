@@ -4,20 +4,24 @@ from datetime import timedelta
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
-    # Database configuration - use PostgreSQL in production, SQLite in development
+    # Database configuration - use DATABASE_URL if set (allows dev to share prod database)
+    # Otherwise fall back to SQLite for local-only development
     database_url = os.environ.get('DATABASE_URL')
     
-    if database_url and database_url.startswith('postgresql://'):
-        # Production: Use PostgreSQL from DATABASE_URL
+    if database_url:
+        # Use DATABASE_URL if provided (allows dev and prod to share same database)
         # Convert postgresql:// to postgresql+psycopg:// for psycopg3
         if database_url.startswith('postgresql://'):
             database_url = database_url.replace('postgresql://', 'postgresql+psycopg://', 1)
         SQLALCHEMY_DATABASE_URI = database_url
-        print(f"🐘 Using PostgreSQL database: {database_url[:50]}...")
+        if 'postgresql' in database_url:
+            print(f"🐘 Using PostgreSQL database: {database_url[:50]}...")
+        else:
+            print(f"🗃️ Using database from DATABASE_URL: {database_url[:50]}...")
     else:
-        # Development: Use SQLite
+        # Development: Use SQLite (only if DATABASE_URL not set)
         SQLALCHEMY_DATABASE_URI = 'sqlite:///ems_inventory.db'
-        print("🗃️ Using SQLite database")
+        print("🗃️ Using local SQLite database (DATABASE_URL not set)")
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(hours=8)

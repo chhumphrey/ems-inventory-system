@@ -8,10 +8,52 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2><i class="fas fa-users me-2"></i>Members</h2>
             <a href="{{ url_for('attendance.new_member') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Add Member
+                <i class="fas fa-plus me-2"></i>Add Member (Full Form)
             </a>
         </div>
         <hr>
+    </div>
+</div>
+
+<!-- Quick Add Form -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt me-2"></i>Quick Add Member
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('attendance.quick_add_member') }}" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="badge_number" class="form-label">Badge Number <span class="text-muted">(optional)</span></label>
+                        <input type="text" class="form-control" id="badge_number" name="badge_number" 
+                               placeholder="e.g., 123" autocomplete="off">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" 
+                               placeholder="First Name" required autocomplete="off">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" 
+                               placeholder="Last Name" required autocomplete="off">
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-check me-1"></i>Add
+                        </button>
+                    </div>
+                </form>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Quick add creates a member with basic info. Use "Add Member (Full Form)" for complete details.
+                </small>
+            </div>
+        </div>
     </div>
 </div>
 
