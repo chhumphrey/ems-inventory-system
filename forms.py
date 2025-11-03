@@ -110,6 +110,7 @@ class MemberForm(FlaskForm):
         ('active', 'Active'),
         ('reserve', 'Reserve'),
         ('probationary', 'Probationary'),
+        ('life', 'Life'),
         ('inactive', 'Inactive')
     ], validators=[Optional()])
     submit = SubmitField('Save Member')
