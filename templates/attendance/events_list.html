@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Events{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2><i class="fas fa-calendar me-2"></i>Events</h2>
+            <a href="{{ url_for('attendance.new_event') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Event
+            </a>
+        </div>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-12">
+        <form method="GET" action="{{ url_for('attendance.events_list') }}" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search events..." value="{{ search }}">
+            </div>
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="training" {% if event_type == 'training' %}selected{% endif %}>Training</option>
+                    <option value="drill" {% if event_type == 'drill' %}selected{% endif %}>Drill</option>
+                    <option value="incident" {% if event_type == 'incident' %}selected{% endif %}>Incident</option>
+                    <option value="meeting" {% if event_type == 'meeting' %}selected{% endif %}>Meeting</option>
+                    <option value="other" {% if event_type == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-search me-1"></i>Search
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('attendance.events_list') }}" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if events %}
+    <div class="row">
+        {% for event in events %}
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">
+                            <span class="badge bg-primary">{{ event.type|title }}</span>
+                            {% if event.location %}
+                                <span class="badge bg-info">{{ event.location.name }}</span>
+                            {% endif %}
+                        </p>
+                        <p class="card-text">
+                            <i class="fas fa-clock me-1"></i>{{ event.starts_at.strftime('%b %d, %Y %I:%M %p') }}
+                            {% if event.ends_at %}
+                                - {{ event.ends_at.strftime('%I:%M %p') }}
+                            {% endif %}
+                        </p>
+                        {% if event.description %}
+                            <p class="card-text">{{ event.description[:100] }}...</p>
+                        {% endif %}
+                        <a href="{{ url_for('attendance.event_detail', event_id=event.id) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>View & Manage Attendance
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>No events found. 
+        <a href="{{ url_for('attendance.new_event') }}" class="alert-link">Create your first event!</a>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+

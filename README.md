@@ -7,6 +7,9 @@ A comprehensive inventory management system designed specifically for volunteer 
 ### Core Functionality
 - **User Authentication**: Secure login system with role-based access control
 - **Inventory Management**: Track items across multiple locations (ambulances, supply rooms, go bags)
+- **Attendance Tracking**: Record attendance for training, drills, meetings, and incidents
+- **Member Management**: Manage EMS personnel with badges, contact info, and membership types
+- **Event Management**: Create and manage events with locations, dates, and attendance rosters
 - **Expiration Tracking**: Monitor expiration dates for time-sensitive medical supplies
 - **Location Management**: Organize inventory by physical locations and vehicles
 - **Soft Delete**: Maintain data integrity with soft-delete functionality
@@ -22,6 +25,14 @@ A comprehensive inventory management system designed specifically for volunteer 
 - **State Standards Compliance**: Track required quantities for state-mandated supplies
 - **Threshold Alerts**: Monitor minimum stock levels
 - **Lot Number Tracking**: Track specific batches of supplies
+
+### Attendance Features
+- **Event Management**: Create training, drills, meetings, and incident events
+- **Member Roster**: Manage personnel with badge numbers and contact information
+- **Attendance Tracking**: Record presence, late arrival, excused absences, and absent status
+- **Multiple Check-in Methods**: Support for roster, QR code, PIN, kiosk, and admin entry
+- **Attendance Reports**: Generate reports by member, event type, and date range
+- **Real-time Updates**: Live attendance tracking with instant status updates
 
 ### Reporting
 - **Current Inventory**: Real-time view of all supplies across locations
@@ -142,6 +153,12 @@ ems-inventory-system/
 - **InventoryDetails**: Detailed count records
 - **AuditLog**: Complete activity logging
 
+### Attendance Module Tables
+- **Organizations**: Multi-tenant organization support
+- **Members**: EMS personnel with badges and contact information
+- **Events**: Training, drills, meetings, and incidents
+- **AttendanceRecords**: Attendance tracking with status and methods
+
 ### Key Features
 - **Soft Delete**: Records are marked as deleted rather than removed
 - **Audit Trail**: All changes are logged with user and timestamp
@@ -182,15 +199,41 @@ The system is designed to work on all devices:
 
 For technical support or feature requests, please contact your system administrator or refer to the application logs.
 
+## Using the Attendance Module
+
+### Getting Started
+1. Navigate to the **Attendance** menu in the main navigation
+2. Add members using the **Members** page
+3. Create events for training, drills, meetings, or incidents
+4. Record attendance using the event detail page
+5. View attendance reports to track participation
+
+### Member Management
+- Add members with badge numbers, contact information, and membership types
+- Track active, reserve, probationary, and inactive members
+- Search members by name or badge number
+
+### Event Management
+- Create events with type, title, date/time, and location
+- Link events to physical locations from your inventory system
+- Track training hours and participation
+
+### Recording Attendance
+- Use the event detail page to record attendance for all members
+- Mark members as Present, Late, Excused, or Absent
+- Track check-in times automatically
+- View attendance statistics and counts in real-time
+
 ## Future Enhancements
 
 Planned features for future versions:
+- **QR Code Check-in**: Generate QR codes for quick member check-in
 - **Barcode Scanning**: Mobile barcode scanning for faster inventory counts
 - **API Integration**: REST API for third-party integrations
 - **Advanced Reporting**: Custom report builder and scheduling
 - **Email Alerts**: Automated notifications for low stock and expiring items
 - **Backup/Restore**: Automated database backup and restoration
-- **Multi-tenant**: Support for multiple EMS organizations
+- **Mobile App**: Native mobile application for field use
 
 ## License
 

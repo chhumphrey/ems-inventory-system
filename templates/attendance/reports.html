@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Reports{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-bar me-2"></i>Attendance Reports</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('attendance.reports') }}" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Member</label>
+                        <select name="member_id" class="form-select">
+                            <option value="">All Members</option>
+                            {% for member in members %}
+                                <option value="{{ member.id }}" {% if member.id == selected_member_id %}selected{% endif %}>
+                                    {{ member.get_full_name() }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if attendance_records %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Attendance Records</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Member</th>
+                                    <th>Event</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Method</th>
+                                    <th>Check-In Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in attendance_records %}
+                                    <tr>
+                                        <td>{{ record.event.starts_at.strftime('%b %d, %Y') }}</td>
+                                        <td><strong>{{ record.member.get_full_name() }}</strong></td>
+                                        <td>{{ record.event.title }}</td>
+                                        <td>
+                                            <span class="badge bg-primary">{{ record.event.type|title }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{% if record.status == 'present' %}success{% elif record.status == 'late' %}warning{% elif record.status == 'excused' %}info{% else %}danger{% endif %}">
+                                                {{ record.status|title }}
+                                            </span>
+                                        </td>
+                                        <td>{{ record.method|title }}</td>
+                                        <td>
+                                            {% if record.check_in_time %}
+                                                {{ record.check_in_time.strftime('%I:%M %p') }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>No attendance records found for the selected filters.
+    </div>
+{% endif %}
+
+{% endblock %}
+
+

@@ -147,3 +147,91 @@ class AuditLog(db.Model):
     
     # Relationships
     user = db.relationship('User', backref='audit_logs')
+
+# Attendance Module Models
+
+class Organization(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    def __repr__(self):
+        return f'<Organization {self.name}>'
+
+class Member(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Optional link to user account
+    badge_number = db.Column(db.String(50))
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120))
+    phone = db.Column(db.String(20))
+    membership_type = db.Column(db.String(50))  # active, reserve, probationary, etc.
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    # Relationships
+    organization = db.relationship('Organization', backref='members')
+    user = db.relationship('User', backref='member_profile')
+    
+    def get_full_name(self):
+        return f'{self.first_name} {self.last_name}'
+    
+    def __repr__(self):
+        return f'<Member {self.get_full_name()}>'
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
+    type = db.Column(db.String(50), nullable=False)  # training, drill, incident, meeting, other
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    starts_at = db.Column(db.DateTime, nullable=False)
+    ends_at = db.Column(db.DateTime)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Soft delete
+    deleted_at = db.Column(db.DateTime)
+    
+    # Relationships
+    organization = db.relationship('Organization', backref='events')
+    location = db.relationship('Location', backref='events')
+    created_by_user = db.relationship('User', backref='created_events')
+    
+    def __repr__(self):
+        return f'<Event {self.title}>'
+
+class AttendanceRecord(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    status = db.Column(db.String(20), nullable=False)  # present, late, excused, absent
+    method = db.Column(db.String(20), nullable=False)  # roster, qr, pin, kiosk, admin
+    check_in_time = db.Column(db.DateTime)
+    check_out_time = db.Column(db.DateTime)
+    notes = db.Column(db.Text)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    organization = db.relationship('Organization', backref='attendance_records')
+    event = db.relationship('Event', backref='attendance_records')
+    member = db.relationship('Member', backref='attendance_records')
+    created_by_user = db.relationship('User', backref='recorded_attendance')
+    
+    def __repr__(self):
+        return f'<AttendanceRecord {self.member_id} at {self.event_id}>'

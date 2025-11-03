@@ -82,3 +82,52 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password', message='Passwords must match')])
     submit = SubmitField('Change Password')
+
+# Attendance Module Forms
+
+class EventForm(FlaskForm):
+    type = SelectField('Event Type', choices=[
+        ('training', 'Training'),
+        ('drill', 'Drill'),
+        ('incident', 'Incident'),
+        ('meeting', 'Meeting'),
+        ('other', 'Other')
+    ], validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(), Length(max=200)])
+    description = TextAreaField('Description')
+    starts_at = StringField('Start Date/Time', validators=[DataRequired()])
+    ends_at = StringField('End Date/Time')
+    location_id = SelectField('Location', coerce=int, validators=[Optional()])
+    submit = SubmitField('Save Event')
+
+class MemberForm(FlaskForm):
+    badge_number = StringField('Badge Number', validators=[Optional(), Length(max=50)])
+    first_name = StringField('First Name', validators=[DataRequired(), Length(max=100)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(max=100)])
+    email = StringField('Email', validators=[Optional(), Email()])
+    phone = StringField('Phone', validators=[Optional(), Length(max=20)])
+    membership_type = SelectField('Membership Type', choices=[
+        ('active', 'Active'),
+        ('reserve', 'Reserve'),
+        ('probationary', 'Probationary'),
+        ('inactive', 'Inactive')
+    ], validators=[Optional()])
+    submit = SubmitField('Save Member')
+
+class AttendanceRecordForm(FlaskForm):
+    member_id = SelectField('Member', coerce=int, validators=[DataRequired()])
+    status = SelectField('Status', choices=[
+        ('present', 'Present'),
+        ('late', 'Late'),
+        ('excused', 'Excused'),
+        ('absent', 'Absent')
+    ], validators=[DataRequired()])
+    method = SelectField('Method', choices=[
+        ('roster', 'Roster'),
+        ('qr', 'QR Code'),
+        ('pin', 'PIN'),
+        ('kiosk', 'Kiosk'),
+        ('admin', 'Admin Entry')
+    ], validators=[DataRequired()])
+    notes = TextAreaField('Notes')
+    submit = SubmitField('Save Attendance')

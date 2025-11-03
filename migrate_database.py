@@ -113,6 +113,37 @@ def migrate_database():
                     except Exception as e:
                         print(f"Warning: Could not modify audit_log table: {e}")
                 
+                # Check and create attendance module tables
+                from models import Organization, Member, Event, AttendanceRecord
+                
+                if 'organization' not in existing_tables:
+                    print("Creating organization table...")
+                    Organization.__table__.create(db.engine)
+                    print("✓ Created organization table")
+                else:
+                    print("✓ organization table already exists")
+                
+                if 'member' not in existing_tables:
+                    print("Creating member table...")
+                    Member.__table__.create(db.engine)
+                    print("✓ Created member table")
+                else:
+                    print("✓ member table already exists")
+                
+                if 'event' not in existing_tables:
+                    print("Creating event table...")
+                    Event.__table__.create(db.engine)
+                    print("✓ Created event table")
+                else:
+                    print("✓ event table already exists")
+                
+                if 'attendance_record' not in existing_tables:
+                    print("Creating attendance_record table...")
+                    AttendanceRecord.__table__.create(db.engine)
+                    print("✓ Created attendance_record table")
+                else:
+                    print("✓ attendance_record table already exists")
+                
                 # Commit all changes
                 db.session.commit()
                 print("✓ All migrations applied successfully")

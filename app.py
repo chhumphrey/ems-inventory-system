@@ -11,7 +11,7 @@ import hashlib
 from config import Config
 from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog, PasswordResetToken
 from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm
-from routes import main_bp, admin_bp, inventory_bp
+from routes import main_bp, admin_bp, inventory_bp, attendance_bp
 
 def create_app():
     app = Flask(__name__)
@@ -41,6 +41,7 @@ def create_app():
     app.register_blueprint(main_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(inventory_bp, url_prefix='/inventory')
+    app.register_blueprint(attendance_bp, url_prefix='/attendance')
     
     # Initialize database
     with app.app_context():

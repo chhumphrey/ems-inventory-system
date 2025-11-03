@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2><i class="fas fa-calendar-plus me-2"></i>{{ title }}</h2>
+        <hr>
+
+        <form method="POST" action="{{ url_for('attendance.new_event') if title == 'New Event' else url_for('attendance.edit_event') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.type.label(class="form-label") }}
+                {{ form.type(class="form-select") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control", placeholder="Event Title") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control", rows="3") }}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.starts_at.label(class="form-label") }}
+                    {{ form.starts_at(class="form-control", type="datetime-local") }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.ends_at.label(class="form-label") }}
+                    {{ form.ends_at(class="form-control", type="datetime-local") }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form.location_id.label(class="form-label") }}
+                {{ form.location_id(class="form-select") }}
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('attendance.events_list') }}" class="btn btn-secondary">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </a>
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+

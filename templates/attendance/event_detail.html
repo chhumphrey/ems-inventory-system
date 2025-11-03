@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-calendar me-2"></i>{{ event.title }}</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5><i class="fas fa-info-circle me-2"></i>Event Details</h5>
+                <p><strong>Type:</strong> <span class="badge bg-primary">{{ event.type|title }}</span></p>
+                <p><strong>Start:</strong> {{ event.starts_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                {% if event.ends_at %}
+                    <p><strong>End:</strong> {{ event.ends_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                {% endif %}
+                {% if event.location %}
+                    <p><strong>Location:</strong> {{ event.location.name }}</p>
+                {% endif %}
+                {% if event.description %}
+                    <p><strong>Description:</strong></p>
+                    <p>{{ event.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>Quick Actions</h5>
+                <a href="{{ url_for('attendance.events_list') }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                    <i class="fas fa-list me-1"></i>All Events
+                </a>
+                <a href="{{ url_for('attendance.members_list') }}" class="btn btn-outline-info btn-sm w-100 mb-2">
+                    <i class="fas fa-users me-1"></i>Manage Members
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>Attendance Roster</h5>
+                <div>
+                    <span class="badge bg-success me-2" id="present-count">0 Present</span>
+                    <span class="badge bg-warning me-2" id="late-count">0 Late</span>
+                    <span class="badge bg-info me-2" id="excused-count">0 Excused</span>
+                    <span class="badge bg-danger me-2" id="absent-count">0 Absent</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Badge #</th>
+                                <th>Status</th>
+                                <th>Method</th>
+                                <th>Check-In</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in members %}
+                                <tr id="member-row-{{ member.id }}">
+                                    <td>{{ member.get_full_name() }}</td>
+                                    <td>{{ member.badge_number or 'N/A' }}</td>
+                                    <td>
+                                        {% if member.id in attendance_map %}
+                                            <span class="badge bg-{% if attendance_map[member.id].status == 'present' %}success{% elif attendance_map[member.id].status == 'late' %}warning{% elif attendance_map[member.id].status == 'excused' %}info{% else %}danger{% endif %}">
+                                                {{ attendance_map[member.id].status|title }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Not Recorded</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if member.id in attendance_map %}
+                                            {{ attendance_map[member.id].method|title }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if member.id in attendance_map and attendance_map[member.id].check_in_time %}
+                                            {{ attendance_map[member.id].check_in_time.strftime('%I:%M %p') }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            {% if member.id in attendance_map %}
+                                                <button class="btn btn-outline-primary btn-sm" onclick="recordAttendance({{ member.id }}, 'present')">
+                                                    <i class="fas fa-check"></i> Present
+                                                </button>
+                                                <button class="btn btn-outline-warning btn-sm" onclick="recordAttendance({{ member.id }}, 'late')">
+                                                    <i class="fas fa-clock"></i> Late
+                                                </button>
+                                                <button class="btn btn-outline-info btn-sm" onclick="recordAttendance({{ member.id }}, 'excused')">
+                                                    <i class="fas fa-user-times"></i> Excused
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-primary btn-sm" onclick="recordAttendance({{ member.id }}, 'present')">
+                                                    <i class="fas fa-check"></i> Mark Present
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function recordAttendance(memberId, status) {
+    // Show loading state
+    const btn = event.target.closest('button');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    
+    fetch('{{ url_for('attendance.record_attendance', event_id=event.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            member_id: memberId,
+            status: status,
+            method: 'admin',
+            notes: ''
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload the page to show updated attendance
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while recording attendance.');
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+    });
+}
+
+// Count attendance statistics
+document.addEventListener('DOMContentLoaded', function() {
+    const presentCount = document.querySelectorAll('[id^="member-row-"]').length;
+    let present = 0, late = 0, excused = 0, absent = 0;
+    
+    {% for record in attendance_records %}
+        {% if record.status == 'present' %}
+            present++;
+        {% elif record.status == 'late' %}
+            late++;
+        {% elif record.status == 'excused' %}
+            excused++;
+        {% elif record.status == 'absent' %}
+            absent++;
+        {% endif %}
+    {% endfor %}
+    
+    document.getElementById('present-count').textContent = present + ' Present';
+    document.getElementById('late-count').textContent = late + ' Late';
+    document.getElementById('excused-count').textContent = excused + ' Excused';
+    document.getElementById('absent-count').textContent = absent + ' Absent';
+});
+</script>
+{% endblock %}
+
+

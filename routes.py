@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 import os
 from flask_login import login_required, current_user, login_user, logout_user
 from datetime import datetime, date, timedelta
-from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog, PasswordResetToken
+from models import db, User, Location, Item, InventoryItem, Inventory, InventoryDetail, AuditLog, PasswordResetToken, Organization, Member, Event, AttendanceRecord
 from sqlalchemy import and_, or_, func
-from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm, PasswordResetRequestForm, PasswordResetForm, ProfileForm, ChangePasswordForm
+from forms import LoginForm, UserForm, LocationForm, ItemForm, InventoryItemForm, InventoryForm, SearchForm, PasswordResetRequestForm, PasswordResetForm, ProfileForm, ChangePasswordForm, EventForm, MemberForm, AttendanceRecordForm
 import csv
 from io import StringIO
 from flask import Response
@@ -15,6 +15,7 @@ import os
 main_bp = Blueprint('main', __name__)
 admin_bp = Blueprint('admin', __name__)
 inventory_bp = Blueprint('inventory', __name__)
+attendance_bp = Blueprint('attendance', __name__)
 
 def log_audit(action, table_name, record_id, old_values=None, new_values=None):
     """Log audit trail for all changes"""
@@ -2331,8 +2332,344 @@ def commit_import():
         db.session.rollback()
         return jsonify({'success': False, 'error': f'Error committing import: {str(e)}'})
 
+# Attendance Module Routes
 
+# Helper function to get or create default organization
+def get_default_organization():
+    """Get or create a default organization for the system"""
+    org = Organization.query.filter_by(deleted_at=None).first()
+    if not org:
+        org = Organization(name='EMS Organization', description='Default EMS Organization', is_active=True)
+        db.session.add(org)
+        db.session.commit()
+    return org
 
+@attendance_bp.route('/')
+@login_required
+def dashboard():
+    """Attendance module dashboard"""
+    org = get_default_organization()
+    
+    # Get upcoming events
+    upcoming_events = Event.query.filter(
+        Event.org_id == org.id,
+        Event.deleted_at == None,
+        Event.starts_at >= datetime.now()
+    ).order_by(Event.starts_at.asc()).limit(10).all()
+    
+    # Get recent attendance records
+    recent_attendance = AttendanceRecord.query.filter(
+        AttendanceRecord.org_id == org.id
+    ).order_by(AttendanceRecord.created_at.desc()).limit(10).all()
+    
+    # Get statistics
+    total_events = Event.query.filter(
+        Event.org_id == org.id,
+        Event.deleted_at == None
+    ).count()
+    
+    total_members = Member.query.filter(
+        Member.org_id == org.id,
+        Member.deleted_at == None,
+        Member.is_active == True
+    ).count()
+    
+    return render_template('attendance/dashboard.html',
+                         org=org,
+                         upcoming_events=upcoming_events,
+                         recent_attendance=recent_attendance,
+                         total_events=total_events,
+                         total_members=total_members)
 
+@attendance_bp.route('/events')
+@login_required
+def events_list():
+    """List all events"""
+    org = get_default_organization()
+    
+    # Get filter parameters
+    event_type = request.args.get('type', '').strip()
+    search = request.args.get('search', '').strip()
+    
+    # Build query
+    query = Event.query.filter(
+        Event.org_id == org.id,
+        Event.deleted_at == None
+    )
+    
+    # Apply filters
+    if event_type:
+        query = query.filter(Event.type == event_type)
+    
+    if search:
+        query = query.filter(
+            or_(
+                Event.title.ilike(f'%{search}%'),
+                Event.description.ilike(f'%{search}%')
+            )
+        )
+    
+    events = query.order_by(Event.starts_at.desc()).all()
+    
+    return render_template('attendance/events_list.html',
+                         events=events,
+                         event_type=event_type,
+                         search=search)
+
+@attendance_bp.route('/events/new', methods=['GET', 'POST'])
+@login_required
+def new_event():
+    """Create a new event"""
+    org = get_default_organization()
+    form = EventForm()
+    
+    # Populate location choices
+    form.location_id.choices = [(0, 'None')] + [
+        (l.id, l.name) for l in Location.query.filter_by(deleted_at=None, is_active=True).all()
+    ]
+    
+    if form.validate_on_submit():
+        # Parse datetime strings
+        starts_at = datetime.strptime(form.starts_at.data, '%Y-%m-%dT%H:%M') if form.starts_at.data else datetime.now()
+        ends_at = datetime.strptime(form.ends_at.data, '%Y-%m-%dT%H:%M') if form.ends_at.data else None
+        
+        event = Event(
+            org_id=org.id,
+            type=form.type.data,
+            title=form.title.data,
+            description=form.description.data,
+            starts_at=starts_at,
+            ends_at=ends_at,
+            location_id=form.location_id.data if form.location_id.data != 0 else None,
+            created_by=current_user.id
+        )
+        db.session.add(event)
+        db.session.commit()
+        
+        log_audit('CREATE', 'event', event.id, new_values=form.data)
+        flash('Event created successfully.', 'success')
+        return redirect(url_for('attendance.events_list'))
+    
+    return render_template('attendance/event_form.html', form=form, title='New Event')
+
+@attendance_bp.route('/events/<int:event_id>')
+@login_required
+def event_detail(event_id):
+    """View event details and manage attendance"""
+    org = get_default_organization()
+    event = Event.query.filter_by(id=event_id, org_id=org.id, deleted_at=None).first_or_404()
+    
+    # Get all members
+    members = Member.query.filter(
+        Member.org_id == org.id,
+        Member.deleted_at == None,
+        Member.is_active == True
+    ).order_by(Member.last_name, Member.first_name).all()
+    
+    # Get attendance records for this event
+    attendance_records = AttendanceRecord.query.filter_by(
+        event_id=event.id,
+        org_id=org.id
+    ).all()
+    
+    # Create a mapping of member_id to attendance record
+    attendance_map = {record.member_id: record for record in attendance_records}
+    
+    return render_template('attendance/event_detail.html',
+                         event=event,
+                         members=members,
+                         attendance_map=attendance_map)
+
+@attendance_bp.route('/events/<int:event_id>/attendance', methods=['POST'])
+@login_required
+def record_attendance(event_id):
+    """Record attendance for an event"""
+    try:
+        org = get_default_organization()
+        event = Event.query.filter_by(id=event_id, org_id=org.id, deleted_at=None).first_or_404()
+        
+        data = request.get_json()
+        member_id = data.get('member_id')
+        status = data.get('status', 'present')
+        method = data.get('method', 'admin')
+        notes = data.get('notes', '')
+        
+        # Check if attendance record already exists
+        existing_record = AttendanceRecord.query.filter_by(
+            event_id=event.id,
+            member_id=member_id,
+            org_id=org.id
+        ).first()
+        
+        if existing_record:
+            # Update existing record
+            existing_record.status = status
+            existing_record.method = method
+            existing_record.notes = notes
+            existing_record.updated_at = datetime.now()
+            if status == 'present' and not existing_record.check_in_time:
+                existing_record.check_in_time = datetime.now()
+            action = 'UPDATE'
+        else:
+            # Create new record
+            new_record = AttendanceRecord(
+                org_id=org.id,
+                event_id=event.id,
+                member_id=member_id,
+                status=status,
+                method=method,
+                notes=notes,
+                created_by=current_user.id
+            )
+            if status == 'present':
+                new_record.check_in_time = datetime.now()
+            db.session.add(new_record)
+            action = 'CREATE'
+        
+        db.session.commit()
+        
+        # Get the member for response
+        member = Member.query.get(member_id)
+        
+        log_audit(action, 'attendance_record', new_record.id if action == 'CREATE' else existing_record.id,
+                  new_values={'event_id': event.id, 'member_id': member_id, 'status': status})
+        
+        return jsonify({
+            'success': True,
+            'message': f'Attendance recorded for {member.get_full_name()}',
+            'member_name': member.get_full_name()
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@attendance_bp.route('/members')
+@login_required
+def members_list():
+    """List all members"""
+    org = get_default_organization()
+    
+    search = request.args.get('search', '').strip()
+    
+    query = Member.query.filter(
+        Member.org_id == org.id,
+        Member.deleted_at == None
+    )
+    
+    if search:
+        query = query.filter(
+            or_(
+                Member.first_name.ilike(f'%{search}%'),
+                Member.last_name.ilike(f'%{search}%'),
+                Member.badge_number.ilike(f'%{search}%')
+            )
+        )
+    
+    members = query.order_by(Member.last_name, Member.first_name).all()
+    
+    return render_template('attendance/members_list.html',
+                         members=members,
+                         search=search)
+
+@attendance_bp.route('/members/new', methods=['GET', 'POST'])
+@login_required
+def new_member():
+    """Create a new member"""
+    org = get_default_organization()
+    form = MemberForm()
+    
+    if form.validate_on_submit():
+        member = Member(
+            org_id=org.id,
+            badge_number=form.badge_number.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+            membership_type=form.membership_type.data or 'active',
+            is_active=True
+        )
+        db.session.add(member)
+        db.session.commit()
+        
+        log_audit('CREATE', 'member', member.id, new_values=form.data)
+        flash('Member created successfully.', 'success')
+        return redirect(url_for('attendance.members_list'))
+    
+    return render_template('attendance/member_form.html', form=form, title='New Member')
+
+@attendance_bp.route('/members/<int:member_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_member(member_id):
+    """Edit a member"""
+    org = get_default_organization()
+    member = Member.query.filter_by(id=member_id, org_id=org.id, deleted_at=None).first_or_404()
+    form = MemberForm(obj=member)
+    
+    if form.validate_on_submit():
+        old_values = {
+            'first_name': member.first_name,
+            'last_name': member.last_name,
+            'badge_number': member.badge_number,
+            'membership_type': member.membership_type
+        }
+        
+        member.badge_number = form.badge_number.data
+        member.first_name = form.first_name.data
+        member.last_name = form.last_name.data
+        member.email = form.email.data
+        member.phone = form.phone.data
+        member.membership_type = form.membership_type.data
+        
+        db.session.commit()
+        
+        log_audit('UPDATE', 'member', member.id, old_values, form.data)
+        flash('Member updated successfully.', 'success')
+        return redirect(url_for('attendance.members_list'))
+    
+    return render_template('attendance/member_form.html', form=form, title='Edit Member', member=member)
+
+@attendance_bp.route('/reports')
+@login_required
+def reports():
+    """Attendance reports"""
+    org = get_default_organization()
+    
+    # Get parameters
+    member_id = request.args.get('member_id', type=int)
+    start_date = request.args.get('start_date', '')
+    end_date = request.args.get('end_date', '')
+    
+    # Build attendance query
+    query = AttendanceRecord.query.filter_by(org_id=org.id).join(
+        Member, AttendanceRecord.member_id == Member.id
+    ).join(
+        Event, AttendanceRecord.event_id == Event.id
+    )
+    
+    if member_id:
+        query = query.filter(AttendanceRecord.member_id == member_id)
+    
+    if start_date:
+        query = query.filter(Event.starts_at >= datetime.strptime(start_date, '%Y-%m-%d'))
+    
+    if end_date:
+        query = query.filter(Event.starts_at <= datetime.strptime(end_date, '%Y-%m-%d'))
+    
+    attendance_records = query.order_by(Event.starts_at.desc()).all()
+    
+    # Get members for filter
+    members = Member.query.filter(
+        Member.org_id == org.id,
+        Member.deleted_at == None
+    ).order_by(Member.last_name, Member.first_name).all()
+    
+    return render_template('attendance/reports.html',
+                         attendance_records=attendance_records,
+                         members=members,
+                         selected_member_id=member_id,
+                         start_date=start_date,
+                         end_date=end_date)
 
 

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-user-check me-2"></i>Attendance Dashboard</h2>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-primary">{{ total_events }}</h3>
+                <p class="card-text">Total Events</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-info">{{ total_members }}</h3>
+                <p class="card-text">Active Members</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <a href="{{ url_for('attendance.events_list') }}" class="btn btn-primary">
+                    <i class="fas fa-calendar me-2"></i>View All Events
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <a href="{{ url_for('attendance.new_event') }}" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Create Event
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-calendar-alt me-2"></i>Upcoming Events</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_events %}
+                    <div class="list-group">
+                        {% for event in upcoming_events %}
+                            <a href="{{ url_for('attendance.event_detail', event_id=event.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ event.title }}</h6>
+                                    <small class="text-muted">{{ event.starts_at.strftime('%b %d, %Y %I:%M %p') }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    <span class="badge bg-primary">{{ event.type }}</span>
+                                </p>
+                                <small>{{ event.description[:100] if event.description else 'No description' }}...</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No upcoming events. <a href="{{ url_for('attendance.new_event') }}">Create one!</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-history me-2"></i>Recent Attendance</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_attendance %}
+                    <div class="list-group">
+                        {% for record in recent_attendance %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ record.member.get_full_name() }}</h6>
+                                    <span class="badge bg-{% if record.status == 'present' %}success{% elif record.status == 'late' %}warning{% elif record.status == 'excused' %}info{% else %}danger{% endif %}">
+                                        {{ record.status|title }}
+                                    </span>
+                                </div>
+                                <p class="mb-1">{{ record.event.title }}</p>
+                                <small class="text-muted">{{ record.created_at.strftime('%b %d, %Y %I:%M %p') }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No recent attendance records.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
