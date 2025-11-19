@@ -1095,6 +1095,16 @@ def update_inventory_item(inventory_id):
     try:
         data = request.get_json()
         inventory_item_id = data.get('inventory_item_id')  # Use specific inventory item ID
+        
+        # Ensure inventory_item_id is an integer
+        try:
+            inventory_item_id = int(inventory_item_id) if inventory_item_id is not None else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid inventory_item_id'}), 400
+        
+        if inventory_item_id is None:
+            return jsonify({'success': False, 'error': 'inventory_item_id is required'}), 400
+        
         quantity = int(data.get('quantity', 0))
         expiration_date = data.get('expiration_date')
         lot_number = data.get('lot_number', '')
@@ -1125,9 +1135,23 @@ def update_inventory_item(inventory_id):
         }
         
         inventory_item.quantity = quantity
-        inventory_item.expiration_date = datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None
-        inventory_item.lot_number = lot_number
-        inventory_item.section = section
+        # Handle expiration_date - convert empty strings to None and validate format
+        if expiration_date and expiration_date.strip():
+            try:
+                inventory_item.expiration_date = datetime.strptime(expiration_date.strip(), '%Y-%m-%d').date()
+            except (ValueError, AttributeError):
+                inventory_item.expiration_date = None
+        else:
+            inventory_item.expiration_date = None
+        
+        # Handle lot_number - convert empty strings to None
+        inventory_item.lot_number = lot_number.strip() if lot_number and lot_number.strip() else None
+        
+        # Handle section - convert empty strings to None and enforce 5 character limit
+        if section and section.strip():
+            inventory_item.section = section.strip()[:5]  # Enforce 5 character limit
+        else:
+            inventory_item.section = None
         
         if quantity == 0:
             # Soft delete if quantity is 0
@@ -1167,6 +1191,16 @@ def add_item_to_inventory(inventory_id):
     try:
         data = request.get_json()
         item_id = data.get('item_id')
+        
+        # Ensure item_id is an integer
+        try:
+            item_id = int(item_id) if item_id is not None else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid item_id'}), 400
+        
+        if item_id is None:
+            return jsonify({'success': False, 'error': 'item_id is required'}), 400
+        
         quantity = int(data.get('quantity', 0))
         expiration_date = data.get('expiration_date')
         lot_number = data.get('lot_number', '')
@@ -1177,14 +1211,26 @@ def add_item_to_inventory(inventory_id):
         
         inventory = Inventory.query.get_or_404(inventory_id)
         
+        # Parse expiration_date safely
+        parsed_expiration_date = None
+        if expiration_date and expiration_date.strip():
+            try:
+                parsed_expiration_date = datetime.strptime(expiration_date.strip(), '%Y-%m-%d').date()
+            except (ValueError, AttributeError):
+                parsed_expiration_date = None
+        
+        # Normalize lot_number and section
+        normalized_lot_number = lot_number.strip() if lot_number and lot_number.strip() else None
+        normalized_section = section.strip()[:5] if section and section.strip() else None
+        
         # Check if item already exists in inventory with same expiration date and lot number
         # Allow multiple instances of the same item with different expiration dates or lot numbers
         existing_item = InventoryItem.query.filter_by(
             item_id=item_id,
             location_id=inventory.location_id,
-            expiration_date=datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None,
-            lot_number=lot_number,
-            section=section,
+            expiration_date=parsed_expiration_date,
+            lot_number=normalized_lot_number,
+            section=normalized_section,
             is_active=True,
             deleted_at=None
         ).first()
@@ -1209,10 +1255,10 @@ def add_item_to_inventory(inventory_id):
         inventory_item = InventoryItem(
             item_id=item_id,
             location_id=inventory.location_id,
-            section=section,
+            section=normalized_section,
             quantity=quantity,
-            expiration_date=datetime.strptime(expiration_date, '%Y-%m-%d').date() if expiration_date else None,
-            lot_number=lot_number
+            expiration_date=parsed_expiration_date,
+            lot_number=normalized_lot_number
         )
         db.session.add(inventory_item)
         db.session.commit()
@@ -1244,6 +1290,15 @@ def remove_item_from_inventory(inventory_id):
     try:
         data = request.get_json()
         item_id = data.get('item_id')
+        
+        # Ensure item_id is an integer
+        try:
+            item_id = int(item_id) if item_id is not None else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid item_id'}), 400
+        
+        if item_id is None:
+            return jsonify({'success': False, 'error': 'item_id is required'}), 400
         
         inventory = Inventory.query.get_or_404(inventory_id)
         
@@ -1292,6 +1347,16 @@ def update_item_definition(inventory_id):
     try:
         data = request.get_json()
         item_id = data.get('item_id')
+        
+        # Ensure item_id is an integer
+        try:
+            item_id = int(item_id) if item_id is not None else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid item_id'}), 400
+        
+        if item_id is None:
+            return jsonify({'success': False, 'error': 'item_id is required'}), 400
+        
         name = data.get('name', '').strip()
         item_number = data.get('item_number', '').strip()
         manufacturer = data.get('manufacturer', '').strip()
@@ -1442,6 +1507,24 @@ def duplicate_inventory_item(inventory_id):
         data = request.get_json()
         item_id = data.get('item_id')
         inventory_item_id = data.get('inventory_item_id')
+        
+        # Ensure item_id is an integer
+        try:
+            item_id = int(item_id) if item_id is not None else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid item_id'}), 400
+        
+        if item_id is None:
+            return jsonify({'success': False, 'error': 'item_id is required'}), 400
+        
+        # Ensure inventory_item_id is an integer
+        try:
+            inventory_item_id = int(inventory_item_id) if inventory_item_id is not None else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'error': 'Invalid inventory_item_id'}), 400
+        
+        if inventory_item_id is None:
+            return jsonify({'success': False, 'error': 'inventory_item_id is required'}), 400
         
         inventory = Inventory.query.get_or_404(inventory_id)
         
